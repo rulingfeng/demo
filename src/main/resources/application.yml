@@ -1,0 +1,101 @@
+server:
+  port: 8886
+
+spring:
+  rabbitmq:
+    host: 120.26.81.182
+    port: 5672
+    virtual-host: /mall
+    username: mall
+    password: mall
+    publisher-confirms: true #如果对异步消息需要回调必须设置为true
+  # redis
+  redis:
+#    host: 120.26.81.182
+    host: localhost
+    port: 6379
+#  datasource:
+#    url: jdbc:mysql://120.26.81.182:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: root
+  datasource:
+    druid:
+      db1:
+        jdbc-url: jdbc:mysql://120.26.81.182:3306/mall?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
+        username: root
+        password: root
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        initialSize: 5
+        minIdle: 5
+        maxActive: 20
+      db2:
+        jdbc-url: jdbc:mysql://120.26.81.182:3306/test?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
+        username: root
+        password: root
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        initialSize: 5
+        minIdle: 5
+        maxActive: 20
+  data:
+    elasticsearch:
+#      cluster-name: docker-cluster
+      cluster-name: elasticsearch
+      cluster-nodes: 192.168.1.188:9300
+#      cluster-nodes: 115.231.102.138:29300
+      repositories:
+        enable: true
+management:
+  health:
+    elasticsearch:
+      enabled: false
+
+gzhInfo:
+  info:
+    appId: wx708aac93e62dc9f7
+    appSecret: b6242314c7583619ea0ce11aab7ee5a3
+    token: sps123
+  templateId:
+    carIn: hmn1ctYAYBMK-EkSJMkPmEnclwpQoPdbt6jPbGhJwh4
+    pay: fEsdADdL0gcJUY6nMbTYuuhvHTRRBAMJGcU8rKIebaE
+    carInError: hmn1ctYAYBMK-EkSJMkPmEnclwpQoPdbt6jPbGhJwh4
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    #root: info #日志配置DEBUG,INFO,WARN,ERROR
+    com.example.demo.dao: debug
+
+payment:
+  config: http://192.168.0.113:9999
+  appId: wx708aac93e62dc9f7
+  appSecret: b6242314c7583619ea0ce11aab7ee5a3
+
+performance:
+  loopThreads: 20
+  workThreads: 200
+
+jetcache:
+  statIntervalMinutes: 15
+  areaInCacheName: false
+  local:
+    default:
+      type: linkedhashmap
+      keyConvertor: fastjson
+  remote:
+    default:
+      type: redis
+      keyConvertor: fastjson
+      valueEncoder: java
+      valueDecoder: java
+      poolConfig:
+        minIdle: 5
+        maxIdle: 20
+        maxTotal: 50
+      host: localhost
+      port: 6379
+
+
