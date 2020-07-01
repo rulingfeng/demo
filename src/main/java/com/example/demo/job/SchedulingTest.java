@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * @Description:
@@ -54,6 +56,9 @@ public class SchedulingTest {
    // @Scheduled(cron ="0/5 * * * * ?" )
     public void scheduledddTest(){
         System.out.println(Thread.currentThread().getName()+"111111");
+        AtomicInteger atomicInteger = new AtomicInteger();
+        atomicInteger.incrementAndGet();
+        LongAdder longAdder = new LongAdder();
 
     }
 

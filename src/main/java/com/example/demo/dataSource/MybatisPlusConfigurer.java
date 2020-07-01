@@ -4,7 +4,7 @@ package com.example.demo.dataSource;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
+//import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.github.pagehelper.PageInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
@@ -33,14 +33,14 @@ public class MybatisPlusConfigurer {
      * SQL执行效率插件
      * 设置 dev test 环境开启
      */
-    @Bean
-    //@Profile({"dev", "qa"})
-    public PerformanceInterceptor performanceInterceptor() {
-        PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();
-        performanceInterceptor.setMaxTime(1000);
-        performanceInterceptor.setFormat(true);
-        return performanceInterceptor;
-    }
+//    @Bean
+//    //@Profile({"dev", "qa"})
+//    public PerformanceInterceptor performanceInterceptor() {
+//        PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();
+//        performanceInterceptor.setMaxTime(1000);
+//        performanceInterceptor.setFormat(true);
+//        return performanceInterceptor;
+//    }
 
     @Bean(name = "db1")
     @ConfigurationProperties(prefix = "spring.datasource.druid.db1")
