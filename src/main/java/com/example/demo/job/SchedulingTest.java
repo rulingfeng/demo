@@ -34,8 +34,7 @@ public class SchedulingTest {
 
 
 
-    @Scheduled(cron ="0/5 * * * * ?")
-
+    //@Scheduled(cron ="0/5 * * * * ?")
     public void scheduleTest(){
         System.out.println(Thread.currentThread().getName()+"定时任务取消订单");
         long currentTimeMillis = System.currentTimeMillis();
@@ -53,7 +52,7 @@ public class SchedulingTest {
     }
 
 
-   @Scheduled(cron ="0/5 * * * * ?" )
+    //@Scheduled(cron ="0/5 * * * * ?" )
     public void scheduledddTest(){
         System.out.println(Thread.currentThread().getName()+"111111");
         AtomicInteger atomicInteger = new AtomicInteger();

@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.controller.RedisListQueueController;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import org.apache.poi.hssf.usermodel.*;
@@ -30,6 +31,9 @@ class DemoApplicationTests {
     private static final int size = 1000000;// 100万
     private static BloomFilter<Integer> bloomFilter =BloomFilter.create(Funnels.integerFunnel(), size,0.03);
 
+    @Autowired
+    RedisListQueueController redisListQueueController;
+
     @Test
     void contextLoads() {
         System.out.println();
@@ -48,8 +52,9 @@ class DemoApplicationTests {
 
     @Test
     public void in(){
-        Long increment = redisTemplate.opsForValue().increment("increment");
-        System.out.println(increment);
+        String add = redisListQueueController.add();
+        System.out.println(add
+        );
     }
 
     @Test

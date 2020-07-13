@@ -36,20 +36,16 @@ public class OrderDelayQueue {
 
     @PostConstruct
     public void customerRunnable(){
-        Runnable customerRunnable = new Runnable() {
-            @Override
-            public void run() {
-                log.info("进到支付订单延迟队列>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                while (true) {
-                    try {
-                        Integer id = deque.take().getId();
-                        log.info("消费到一个订单id:{}" , id);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        new Thread(()->{
+            log.info("进到支付订单延迟队列>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            while (true) {
+                try {
+                    Integer id = deque.take().getId();
+                    log.info("消费到一个订单id:{}" , id);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        };
-        new Thread(customerRunnable).start();
+        }).start();
     }
 }
