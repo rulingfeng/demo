@@ -66,6 +66,16 @@ public class TestController implements ApplicationEventPublisherAware {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+
+    @GetMapping("/abserverd")
+    public void abserver(){
+        User user = new User();
+        user.setId(111);
+        user.setUserName("健康");
+        applicationEventPublisher.publishEvent(new NoticeEventObj(user,"3"));
+
+    }
+
     @GetMapping("/aaa")
     @ApiOperation("测试撒是")
     //@GlobalTransactional

@@ -52,6 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         applicationContext.publishEvent(new NoticeEventObj(1111,"订阅"));
 
         Thread.sleep(1000);
+        System.out.println(1);
         return;
     }
 
