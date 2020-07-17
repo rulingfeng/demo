@@ -15,6 +15,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 事件消费者
  *
