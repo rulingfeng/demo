@@ -10,16 +10,15 @@ import com.example.demo.common.DataSourceTypeEnum;
 import com.example.demo.dao.TestMapper;
 import com.example.demo.dataSource.DataSource;
 import com.example.demo.dataSource.DataSourceType;
-import com.example.demo.model.Goods;
-import com.example.demo.model.SmsHomeBrand;
-import com.example.demo.model.Stock;
-import com.example.demo.model.User;
+import com.example.demo.model.*;
 import com.example.demo.service.ITestService;
 
+import com.example.demo.service.UserCarService;
 import com.example.demo.service.UserService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.sql.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @ProjectName: demo
@@ -49,6 +52,8 @@ public class TestServiceImpl implements ITestService {
     private TestMapper testMapper;
     @Autowired
     UserService userService;
+    @Autowired
+    UserCarService userCarService;
     @Override
     public PageInfo<SmsHomeBrand> selectAll() {
         PageInfo<SmsHomeBrand> page = PageHelper.startPage(1, 5).doSelectPageInfo(() -> testMapper.selectAll());
@@ -140,5 +145,54 @@ public class TestServiceImpl implements ITestService {
     @CacheUpdate(name = "jetCache",key = "#id",value = "#id")
     public Integer update(Integer id) {
         return 5;
+    }
+
+    private int coreThreads = Runtime.getRuntime().availableProcessors();
+
+    private ThreadFactory namedThread = new ThreadFactoryBuilder().setNameFormat("worker-thread-%d").build();
+
+    private final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(coreThreads, coreThreads << 1 + 1,
+            300, TimeUnit.SECONDS, new LinkedBlockingQueue<>(3), namedThread);
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    //用CompletableFuture异步执行时没有事务的
+    public void compleableSave() {
+        User user1 = new User();
+        user1.setId(6);
+        user1.setUserName(6+"");
+        user1.setAge(6+"");
+        boolean save = userService.save(user1);
+
+
+        List<Integer> list = Arrays.asList(1, 2);
+        List<CompletableFuture<Boolean>> collect =
+                list.stream().map(i -> CompletableFuture.supplyAsync(() -> this.dfsdf(i), threadPoolExecutor)).collect(Collectors.toList());
+        CompletableFuture.allOf(collect.toArray(new CompletableFuture[0])).join();
+
+        User user = new User();
+        user.setId(8);
+        user.setUserName(8+"");
+        user.setAge(8+"");
+        boolean save1 = userService.save(user);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean dfsdf(Integer num){
+        User user = new User();
+        user.setId(num);
+        user.setUserName(num+"");
+        user.setAge(num+"");
+        boolean save = userService.save(user);
+
+        UserCar userCar = new UserCar();
+        userCar.setId(num);
+        userCar.setCar(num+"");
+        userCar.setUserId(num);
+        boolean save1 = userCarService.save(userCar);
+
+        return save && save1;
     }
 }

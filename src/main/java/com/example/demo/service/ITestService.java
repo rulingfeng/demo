@@ -35,4 +35,7 @@ public interface ITestService {
 
     Integer delete(Integer id);
     Integer update(Integer id);
+
+    void compleableSave();
+    boolean dfsdf(Integer num);
 }
