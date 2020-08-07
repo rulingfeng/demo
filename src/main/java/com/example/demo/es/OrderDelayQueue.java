@@ -1,5 +1,6 @@
 package com.example.demo.es;
 
+import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.DelayQueue;
+import java.util.concurrent.*;
 
 /**
  * @ProjectName: parking_road
@@ -36,16 +35,30 @@ public class OrderDelayQueue {
 
     @PostConstruct
     public void customerRunnable(){
-        new Thread(()->{
+//        new Thread(()->{
+//            log.info("进到支付订单延迟队列>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//            while (true) {
+//                try {
+//                    Integer id = deque.take().getId();
+//                    log.info("消费到一个订单id:{}" , id);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+        CompletableFuture.supplyAsync(() -> {
             log.info("进到支付订单延迟队列>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             while (true) {
                 try {
-                    Integer id = deque.take().getId();
-                    log.info("消费到一个订单id:{}" , id);
+                    TimeUnit.SECONDS.sleep(1);
+                    System.out.println(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+
+        });
+
+
     }
 }
