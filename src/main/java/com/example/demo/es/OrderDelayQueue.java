@@ -46,7 +46,7 @@ public class OrderDelayQueue {
 //                }
 //            }
 //        }).start();
-        CompletableFuture.supplyAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             log.info("进到支付订单延迟队列>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             while (true) {
                 try {
