@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.example.demo.mapstruct.UserConverter;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -23,7 +24,10 @@ public class User extends Model<User> implements Serializable {
     @TableField("age")
     protected String age;
 
+    @TableField(exist = false)
+    protected String type;
 
-
+    @TableField(exist = false)
+    protected String brithday;
 
 }

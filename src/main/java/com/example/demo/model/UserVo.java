@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import org.elasticsearch.client.license.LicensesStatus;
 
@@ -18,16 +20,24 @@ import java.util.stream.Stream;
  * @Date: 2020/5/14 11:02
  */
 @Data
-public class UserVo extends User {
-    private String age;
+public class UserVo  {
 
-    public void a(){
-        System.out.println(this.id);
-    }
+
+    private Integer id;
+
+    private String name;
+
+    private String age1;
+
+    private UserCar type;
+
+    private Date brithday;
+
+
 
     @Override
     public String toString() {
-        return id +"-"+ userName + "-" + age;
+        return id +"-"+ name + "-" + age1;
     }
 
     public static void main(String[] args)  {

@@ -2,12 +2,15 @@ package com.example.demo.controller;
 
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo.dao.TestMapper;
 import com.example.demo.dao.UserMapper;
 import com.example.demo.event.NoticeEventObj;
+import com.example.demo.mapstruct.UserConverter;
 import com.example.demo.model.SmsHomeBrand;
 import com.example.demo.model.Stock;
 import com.example.demo.model.User;
+import com.example.demo.model.UserVo;
 import com.example.demo.service.ITestService;
 import com.github.pagehelper.Page;
 //import io.seata.spring.annotation.GlobalTransactional;
@@ -30,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 /**
  * @ProjectName: demo
@@ -60,12 +64,25 @@ public class TestController implements ApplicationEventPublisherAware {
 
     private ApplicationEventPublisher applicationEventPublisher;
 
+
     private static Integer count = 10;
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+    @GetMapping("/testMapstruct")
+    public void testMapstruct(){
+        User user = new User();
+        user.setId(1);
+        user.setUserName("你");
+        user.setAge("18");
+        user.setType("888");
+        user.setBrithday("2020-08-21 10:10:10");
+        UserVo userVo = UserConverter.INSTANCE.userToUserVo(user);
+        System.out.println(JSONObject.toJSONString(userVo));
+        //{"age1":"18","brithday":1597975810000,"id":1,"name":"改名","type":{"id":888}}
+    }
 
     @GetMapping("/abserverd")
     public void abserver(){
@@ -73,7 +90,6 @@ public class TestController implements ApplicationEventPublisherAware {
         user.setId(111);
         user.setUserName("健康");
         applicationEventPublisher.publishEvent(new NoticeEventObj(user,"3"));
-
     }
 
     @GetMapping("/aaa")

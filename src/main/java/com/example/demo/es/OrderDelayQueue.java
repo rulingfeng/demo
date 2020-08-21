@@ -48,14 +48,14 @@ public class OrderDelayQueue {
 //        }).start();
         CompletableFuture.runAsync(() -> {
             log.info("进到支付订单延迟队列>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            while (true) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                    System.out.println(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+//            while (true) {
+//                try {
+//                    TimeUnit.SECONDS.sleep(1);
+//                    System.out.println(1);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
 
         });
 
