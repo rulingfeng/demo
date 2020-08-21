@@ -30,4 +30,5 @@ public class User extends Model<User> implements Serializable {
     @TableField(exist = false)
     protected String brithday;
 
+
 }

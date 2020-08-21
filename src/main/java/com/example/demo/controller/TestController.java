@@ -17,6 +17,7 @@ import com.github.pagehelper.Page;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -82,6 +84,47 @@ public class TestController implements ApplicationEventPublisherAware {
         UserVo userVo = UserConverter.INSTANCE.userToUserVo(user);
         System.out.println(JSONObject.toJSONString(userVo));
         //{"age1":"18","brithday":1597975810000,"id":1,"name":"改名","type":{"id":888}}
+    }
+
+    @GetMapping("/mapa")
+    public void mapa(){
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < 1000000; i++) {
+            User user = new User();
+            user.setId(1+i);
+            user.setUserName("你"+i);
+            user.setAge("18"+i);
+            user.setType("888"+i);
+            user.setBrithday("2020-08-21 10:10:10");
+            list.add(user);
+        }
+        long l = System.currentTimeMillis();
+        List<UserVo> collect = list.parallelStream().map(i -> UserConverter.INSTANCE.userToUserVo(i)).collect(Collectors.toList());
+        System.out.println(System.currentTimeMillis() - l);
+        System.out.println(collect.size());
+    }
+    @GetMapping("/mapb")
+    public void mapb(){
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < 1000000; i++) {
+            User user = new User();
+            user.setId(1+i);
+            user.setUserName("你"+i);
+            user.setAge("18"+i);
+            user.setType("888"+i);
+            user.setBrithday("2020-08-21 10:10:10");
+            list.add(user);
+            BeanUtils.copyProperties(user,UserVo.class);
+        }
+        long l = System.currentTimeMillis();
+        List<UserVo> collect = Collections.synchronizedList(new ArrayList<>(10005));
+        list.parallelStream().forEach(i->{
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(i,userVo);
+            collect.add(userVo);
+        });
+        System.out.println(System.currentTimeMillis() - l);
+        System.out.println(collect.size());
     }
 
     @GetMapping("/abserverd")
