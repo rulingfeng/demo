@@ -1,10 +1,12 @@
 package com.example.demo.model;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import org.elasticsearch.client.license.LicensesStatus;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -40,7 +42,5 @@ public class UserVo  {
         return id +"-"+ name + "-" + age1;
     }
 
-    public static void main(String[] args)  {
 
-    }
 }

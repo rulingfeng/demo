@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Data
@@ -29,6 +30,8 @@ public class User extends Model<User> implements Serializable {
 
     @TableField(exist = false)
     protected String brithday;
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSONObject;
@@ -16,6 +17,7 @@ import com.github.pagehelper.Page;
 //import io.seata.spring.annotation.GlobalTransactional;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.swagger.annotations.ApiOperation;
+import jdk.nashorn.internal.objects.annotations.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.AssertTrue;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,7 +62,7 @@ public class TestController implements ApplicationEventPublisherAware {
     @Resource
     private UserMapper userMapper;
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
@@ -84,6 +87,32 @@ public class TestController implements ApplicationEventPublisherAware {
         UserVo userVo = UserConverter.INSTANCE.userToUserVo(user);
         System.out.println(JSONObject.toJSONString(userVo));
         //{"age1":"18","brithday":1597975810000,"id":1,"name":"改名","type":{"id":888}}
+    }
+
+
+
+    @GetMapping("/testRedisHash")
+    public String testRedisHash(){
+
+        redisTemplate.opsForValue().set("valueSet","你好");
+        redisTemplate.opsForHash().put("testHash","name","ru");
+        redisTemplate.opsForHash().put("testHash","age","18");
+        redisTemplate.opsForHash().put("testHash","home","杭州");
+        System.out.println(redisTemplate.opsForHash().get("testHash","name"));
+        System.out.println(redisTemplate.opsForHash().get("testHash","age"));
+        System.out.println(redisTemplate.opsForHash().get("testHash","home"));
+        System.out.println(redisTemplate.opsForHash().get("testHash","homemem")); //null
+        //redisTemplate.opsForHash().delete("testHash","name","age");
+        return "ok";
+    }
+    @GetMapping("/testAssert")
+    public String testAssert(){
+
+        System.out.println(1);
+        Integer a = null;
+        org.springframework.util.Assert.notNull(a,"不能为空");
+        System.out.println("finish");
+        return "ok";
     }
 
     @GetMapping("/mapa")
