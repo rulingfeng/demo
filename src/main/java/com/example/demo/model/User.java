@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -32,6 +33,10 @@ public class User extends Model<User> implements Serializable {
     protected String brithday;
 
 
-
+    public static void main(String[] args) {
+        String a = "\"{\"age\":\"1\",\"id\":1,\"userName\":\"名1\"}\"";
+        User user = JSONObject.parseObject(a.substring(1,a.length()-1), User.class);
+        System.out.println(user);
+    }
 
 }

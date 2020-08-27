@@ -34,6 +34,9 @@ public class May25Controller {
     @Autowired
     ITestService testService;
 
+
+
+
     @GetMapping("/set")
     public String set(){
         List<Integer> list = new ArrayList<>();
@@ -53,6 +56,7 @@ public class May25Controller {
             }
         }
         System.out.println("误判:"+list.size());
+
         return null;
     }
     @GetMapping("/queue")
