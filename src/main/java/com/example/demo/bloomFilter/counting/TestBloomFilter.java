@@ -8,7 +8,7 @@ public class TestBloomFilter {
 	
 	private static void testStandardBF()
 	{
-		double expectedNoOfElements = 2000000;
+		double expectedNoOfElements = 50000;
 		double tolerableFalsePositiveRate = 0.1;
 		double precentageOfActualInsertation = 0.9;
 		String testString = "testString";
@@ -41,8 +41,8 @@ public class TestBloomFilter {
         String host = "localhost";
         int port = 6379;
         
-		double expectedNoOfElements = 1000000;
-		double tolerableFalsePositiveRate = 0.1;
+		double expectedNoOfElements = 50000;
+		double tolerableFalsePositiveRate = 0.03;
 		double precentageOfActualInsertation = 0.9;
 		String testString = "testString";
 		
