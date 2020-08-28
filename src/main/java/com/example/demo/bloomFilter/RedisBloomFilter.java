@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 public class RedisBloomFilter {
     private long count = 100000;
-    private double fpp = 0.03;
+    private double fpp = 0.03f;
 
     @Autowired
     private RedisTemplate redisTemplate;

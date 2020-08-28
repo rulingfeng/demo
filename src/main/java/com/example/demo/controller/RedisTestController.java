@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.model.User;
+import com.example.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,35 @@ public class RedisTestController {
 
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    UserService userService;
+
+    //redis实时队列  list数据结构
+    @GetMapping("/boom")
+    public User boom() {
+
+//        for (int i = 0; i < 3; i++) {
+//            new Thread(()->{
+//                for (int k = 1; k < 10000; k++) {
+//                    new Thread( ()->{
+//                        User byId = userService.getById(1);
+//                        System.out.println(byId);
+//                    }).start();
+//                }
+//
+//            }).start();
+//
+//        }
+        User byId = userService.getById(1);
+
+
+
+
+
+        return byId;
+    }
+
+
 
     //redis实时队列  list数据结构
     @GetMapping("/add")

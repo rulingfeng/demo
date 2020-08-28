@@ -34,9 +34,7 @@ public class User extends Model<User> implements Serializable {
 
 
     public static void main(String[] args) {
-        String a = "\"{\"age\":\"1\",\"id\":1,\"userName\":\"名1\"}\"";
-        User user = JSONObject.parseObject(a.substring(1,a.length()-1), User.class);
-        System.out.println(user);
+
     }
 
 }
