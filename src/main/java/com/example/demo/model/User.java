@@ -9,6 +9,7 @@ import com.example.demo.mapstruct.UserConverter;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -34,7 +35,8 @@ public class User extends Model<User> implements Serializable {
 
 
     public static void main(String[] args) {
-
+        BigDecimal divide = new BigDecimal((1000000 - 956120) + "").divide(new BigDecimal(1000000 + ""), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
+        System.out.println(divide.intValue());
     }
 
 }

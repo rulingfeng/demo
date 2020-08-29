@@ -1,14 +1,22 @@
 package com.example.demo.controller;
 
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.mvel2.util.Make;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,30 +42,29 @@ public class RedisTestController {
     @Autowired
     UserService userService;
 
+
     //redis实时队列  list数据结构
     @GetMapping("/boom")
-    public User boom() {
+    public void boom() {
+        Boolean execute = (Boolean)redisTemplate.execute((RedisCallback) connection -> {
+            byte[] bytes = connection.stringCommands().get("miaosha".getBytes());
+            Integer num = Integer.valueOf(new String(bytes));
+            if (num > 0) {
+                connection.stringCommands().set("miaosha".getBytes(), String.valueOf(num - 1).getBytes());
+                return true;
+            } else {
+                return false;
+            }
 
-//        for (int i = 0; i < 3; i++) {
-//            new Thread(()->{
-//                for (int k = 1; k < 10000; k++) {
-//                    new Thread( ()->{
-//                        User byId = userService.getById(1);
-//                        System.out.println(byId);
-//                    }).start();
-//                }
-//
-//            }).start();
-//
-//        }
-        User byId = userService.getById(1);
-
+        });
+        System.out.println(execute);
+        List exec = redisTemplate.exec();
 
 
 
-
-        return byId;
     }
+
+
 
 
 
@@ -115,9 +122,10 @@ public class RedisTestController {
         Integer start = (current - 1) * size;
         Integer end = start + size - 1;
         List<byte[]> list =(List<byte[]>) redisTemplate.execute((RedisCallback) con -> con.listCommands().lRange("listObjectPage".getBytes(), start, end));
-        List<String> collect = list.stream().map(i -> new String(i)).collect(Collectors.toList());
-        Long listPage = redisTemplate.opsForList().size("listObjectPage");
-        System.out.println("listObjectPage:"+listPage);
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        List<Object> collect = list.stream().map(i -> jackson2JsonRedisSerializer.deserialize(i)).collect(Collectors.toList());
+//        Long listPage = redisTemplate.opsForList().size("listObjectPage");
+//        System.out.println("listObjectPage:"+listPage);
         return JSONObject.toJSONString(collect);
 
     }

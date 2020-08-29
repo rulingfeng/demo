@@ -1,4 +1,4 @@
-package com.example.demo.bloomFilter;
+package com.example.demo.redis.bloomFilter;
 
 import com.google.common.hash.Funnels;
 import com.google.common.hash.Hashing;

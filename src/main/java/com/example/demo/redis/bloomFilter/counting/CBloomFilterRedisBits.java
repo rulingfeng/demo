@@ -1,4 +1,4 @@
-package com.example.demo.bloomFilter.counting;
+package com.example.demo.redis.bloomFilter.counting;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;

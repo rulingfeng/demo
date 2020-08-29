@@ -1,4 +1,4 @@
-package com.example.demo.bloomFilter.counting;/*
+package com.example.demo.redis.bloomFilter.counting;/*
  * Copyright (c) 1995, 2007, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
