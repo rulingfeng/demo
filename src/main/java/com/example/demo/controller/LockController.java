@@ -78,7 +78,7 @@ public class LockController {
         return "成功";
     }
 
-    @GetMapping("demo")
+    @GetMapping("/demo")
     public String demo(){
 
         Jedis jedis = new Jedis();
@@ -90,6 +90,7 @@ public class LockController {
         return andSet.toString();
     }
 
+    //解析xml
     public static void main(String[] args) {
         String xmlString = "<xml>"
                 + "<appid><![CDATA[wx2421b1c4370ec43b]]></appid>"
