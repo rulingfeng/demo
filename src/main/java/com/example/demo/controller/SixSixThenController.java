@@ -24,6 +24,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,13 +66,15 @@ public class SixSixThenController {
 
 
     @GetMapping("/list")
+    @Transactional
     public String list() {
-        User byId = userService.getById(1);
-        if(null == byId){
-            System.out.println("null");
-        }else{
-            System.out.println(byId.toString());
-        }
+        User user = new User();
+        user.setId(1);
+        user.setAge((Math.random()*100)+"");
+        boolean b = userService.updateById(user);
+
+            System.out.println(b);
+
         return "调用成功";
     }
 }

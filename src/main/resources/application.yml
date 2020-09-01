@@ -21,12 +21,12 @@ spring:
   datasource:
     druid:
       db1:
-        jdbc-url: jdbc:mysql://120.26.81.182:3306/mall?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
-        #jdbc-url: jdbc:mysql://192.168.0.117:3306/test?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
-        username: root
-        password: root
+        #jdbc-url: jdbc:mysql://120.26.81.182:3306/mall?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
+        jdbc-url: jdbc:mysql://192.168.0.117:3306/test?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
 #        username: root
-#        password: 123456
+#        password: root
+        username: root
+        password: 123456
         driver-class-name: com.mysql.cj.jdbc.Driver
         initialSize: 5
         minIdle: 5
