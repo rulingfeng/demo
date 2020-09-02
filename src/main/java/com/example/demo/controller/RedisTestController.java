@@ -31,7 +31,12 @@ import redis.clients.jedis.Jedis;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicIntegerArray;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.concurrent.atomic.LongAccumulator;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +68,7 @@ public class RedisTestController {
     //redis实时队列  list数据结构
     @GetMapping("/redissonLock")
     public void redissonLock() {
-         Boolean flag ;
+        Boolean flag ;
         lock.lock();
         Integer num = Integer.valueOf(redisTemplate.opsForValue().get("miaosha").toString());
         if (num > 0) {
