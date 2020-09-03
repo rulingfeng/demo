@@ -14,6 +14,7 @@ import com.example.demo.service.ITestService;
 import com.example.demo.service.UserService;
 import com.example.demo.service.impl.RedisToDbOneImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +57,8 @@ public class SixSixThenController {
     @Autowired
     UserService  userService;
 
+
+
     @GetMapping("/tran")
     public String tran() throws InterruptedException {
         userService.testTransational();
@@ -73,7 +77,7 @@ public class SixSixThenController {
         user.setAge((Math.random()*100)+"");
         boolean b = userService.updateById(user);
 
-            System.out.println(b);
+        System.out.println(b);
 
         return "调用成功";
     }

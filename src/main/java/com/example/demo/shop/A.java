@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author RU
@@ -15,6 +16,18 @@ import javax.annotation.PostConstruct;
 @Component
 public class A {
 
+    private final static ThreadLocal threadLocal = new ThreadLocal();
+    private final static InheritableThreadLocal inheritableThreadLocal = new InheritableThreadLocal();
+
+
+
+    public static native void sleep(long millis) ;
+
+    public static void main(String[] args) {
+        sleep(1000);
+        System.out.println(1);
+    }
+
 
     private B b;
 
@@ -23,6 +36,7 @@ public class A {
 //    public A(B b) {
 //        this.b = b;
 //    }
+
 
     //set注入
     @Autowired
