@@ -2,8 +2,13 @@ package com.example.demo.shop;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,16 +21,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class A {
 
-    private final static ThreadLocal threadLocal = new ThreadLocal();
+    private final static ThreadLocal<String> threadLocal = new ThreadLocal();
     private final static InheritableThreadLocal inheritableThreadLocal = new InheritableThreadLocal();
 
 
 
-    public static native void sleep(long millis) ;
 
-    public static void main(String[] args) {
-        sleep(1000);
-        System.out.println(1);
+
+    public static void main(String[] args)  {
+
+
     }
 
 
