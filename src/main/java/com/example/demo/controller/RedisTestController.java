@@ -67,6 +67,7 @@ public class RedisTestController {
 
     //redis实时队列  list数据结构
     @GetMapping("/redissonLock")
+    @Transactional
     public void redissonLock() {
         Boolean flag ;
         lock.lock();
