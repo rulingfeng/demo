@@ -2,13 +2,13 @@ server:
   port: 8886
 
 spring:
-  rabbitmq:
-    host: 120.26.81.182
-    port: 5672
-    virtual-host: /mall
-    username: mall
-    password: mall
-    publisher-confirms: true #如果对异步消息需要回调必须设置为true
+#  rabbitmq:
+#    host: 120.26.81.182
+#    port: 5672
+#    virtual-host: /mall
+#    username: mall
+#    password: mall
+#    publisher-confirms: true #如果对异步消息需要回调必须设置为true
   # redis
   redis:
 #    host: 120.26.81.182
@@ -39,14 +39,14 @@ spring:
         initialSize: 5
         minIdle: 5
         maxActive: 20
-  data:
-    elasticsearch:
-#      cluster-name: docker-cluster
-      cluster-name: elasticsearch
-      cluster-nodes: 192.168.1.188:9300
-#      cluster-nodes: 115.231.102.138:29300
-      repositories:
-        enable: true
+#  data:
+#    elasticsearch:
+##      cluster-name: docker-cluster
+#      cluster-name: elasticsearch
+#      cluster-nodes: 192.168.1.188:9300
+##      cluster-nodes: 115.231.102.138:29300
+#      repositories:
+#        enable: true
 management:
   health:
     elasticsearch:

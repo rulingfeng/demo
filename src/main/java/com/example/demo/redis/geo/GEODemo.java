@@ -28,6 +28,13 @@ public class GEODemo {
         System.out.println(result);
 
     }
+    //最后的<=1单位是km
+//    select * from `crm_visit_record` where (
+//            acos(
+//            sin((30.288004*3.1415)/180) * sin((out_latitude*3.1415)/180) +
+//    cos((30.288004*3.1415)/180) * cos((out_latitude*3.1415)/180) * cos((120.015488*3.1415)/180 - (out_longitude*3.1415)/180)
+//            )*6370.996
+//            )<=1;
 
     public static void main(String[] args) {
         calDistance(120.1256,30.1251,120.1256,31.1251);

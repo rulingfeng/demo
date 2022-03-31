@@ -1,6 +1,10 @@
 package com.example.demo;
 
+import com.beust.jcommander.internal.Lists;
 import com.example.demo.controller.RedisListQueueController;
+import com.example.demo.redis.bitmap.RedisBitMapDemo;
+import com.example.demo.redis.bloomFilter.RedisBloomFilter;
+import com.example.demo.redis.hyperloglog.RedisHyperLogLogDemo;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import org.apache.poi.hssf.usermodel.*;
@@ -22,6 +26,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
+
+import static org.apache.coyote.http11.Constants.a;
 
 @SpringBootTest(classes = DemoApplication.class)
 @RunWith(SpringRunner.class)
@@ -30,9 +39,11 @@ class DemoApplicationTests {
     private RedisTemplate redisTemplate;
     private static final int size = 1000000;// 100万
     private static BloomFilter<Integer> bloomFilter =BloomFilter.create(Funnels.integerFunnel(), size,0.03);
-
+    @Autowired
+    private RedisBitMapDemo redisBitMapDemo;
     @Autowired
     RedisListQueueController redisListQueueController;
+
 
     @Test
     void contextLoads() {
@@ -58,7 +69,9 @@ class DemoApplicationTests {
     }
 
     @Test
-    void excel() throws IOException {
+    void excel() throws IOException, InterruptedException {
+
+
 
     }
 

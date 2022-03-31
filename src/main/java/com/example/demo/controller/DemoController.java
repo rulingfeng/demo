@@ -52,8 +52,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/demo")
 @Slf4j
 public class DemoController {
-    @Autowired
-    private ElasticsearchTemplate elasticsearchTemplate;
+//    @Autowired
+//    private ElasticsearchTemplate elasticsearchTemplate;
     @Autowired
     private AmqpTemplate amqpTemplate;
     @Autowired
