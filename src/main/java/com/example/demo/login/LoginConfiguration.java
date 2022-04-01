@@ -16,5 +16,6 @@ public class LoginConfiguration  implements WebMvcConfigurer {
         //loginRegistry.excludePathPatterns("/","/index.html","/css/**","/js/**","/image/**","/assets/**","/ueditor/**");//根据自己目录添加更改
       //  loginRegistry.excludePathPatterns("/admin");//根据自己目录添加更改
        loginRegistry.excludePathPatterns("/login/*");//根据自己目录添加更改
+       loginRegistry.excludePathPatterns("/**");//根据自己目录添加更改
     }
 }
