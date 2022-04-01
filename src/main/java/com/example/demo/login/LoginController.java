@@ -28,7 +28,7 @@ public class LoginController {
     public String login(){
         System.out.println("登录成功");
         HashMap<String, String> map = Maps.newHashMap();
-        map.put("mobile","13755558888");
+        map.put("mobile","13755558866");
         map.put("name","李四");
         map.put("address","杭州");
 

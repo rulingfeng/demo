@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.demo.config.PaymentPropertiesConfig;
 import com.example.demo.es.OrderDelayQueue;
 import com.example.demo.es.OrderDelayedElement;
+import com.example.demo.login.UserContextHolder;
 import com.example.demo.model.SmsHomeBrand;
 import com.example.demo.model.User;
 import com.example.demo.model.WXTemplateMsgDto;
@@ -120,6 +121,7 @@ public class DemoController {
         log.info("aaa方法执行完毕--------------------------------");
         currentMap.put("aaa","bbb");
         currentMap.put("ccc","ddd");
+        currentMap.put("userId", UserContextHolder.getInstance().getUserId());
         return currentMap;
     }
 
