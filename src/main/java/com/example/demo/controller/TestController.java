@@ -33,6 +33,7 @@ import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import java.util.*;
 import java.util.concurrent.*;
@@ -74,6 +75,11 @@ public class TestController implements ApplicationEventPublisherAware {
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @PostMapping("/testVaild")
+    public void testVaild(@RequestBody @Valid User user){
+        System.out.println(user);
     }
 
     @GetMapping("/testMapstruct")
