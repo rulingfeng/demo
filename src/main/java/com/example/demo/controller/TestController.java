@@ -27,6 +27,7 @@ import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import redis.clients.jedis.Jedis;
@@ -77,8 +78,9 @@ public class TestController implements ApplicationEventPublisherAware {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+    //see BindingResultAspect
     @PostMapping("/testVaild")
-    public void testVaild(@RequestBody @Valid User user){
+    public void testVaild(@RequestBody @Valid User user, BindingResult result){
         System.out.println(user);
     }
 

@@ -9,6 +9,7 @@ import com.example.demo.annotation.FlagValidator;
 import com.example.demo.mapstruct.UserConverter;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ public class User extends Model<User> implements Serializable {
     protected Integer id;
 
     @TableField("user_name")
+    @NotBlank(message = "名字不能为空")
     protected String userName;
 
     @TableField("age")

@@ -1,6 +1,7 @@
 package com.example.demo.aspect;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo.model.DealAmountPo;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
@@ -43,16 +44,13 @@ public class OrderRateAspect {
             Object proceed = joinPoint.proceed();
             return proceed;
         }
-        //第一种
-        //String result = JSON.toJSONString(s);
-        //output(response, "失败");
-        //第二种
-        Object o ;
-        DealAmountPo dealAmountPo = new DealAmountPo();
-        dealAmountPo.setActPrice(500);
-        dealAmountPo.setCartMainId(1L);
-        o = dealAmountPo.toString();
-        return o;
+
+        output(response, "{\n" +
+                "    \"code\": 404,\n" +
+                "    \"message\": \"您被限流啦\"\n" +
+                "}");
+
+        return null;
 
     }
 
