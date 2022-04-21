@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.ShearCaptcha;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -42,6 +44,9 @@ public class User extends Model<User> implements Serializable {
     public static void main(String[] args) {
         BigDecimal divide = new BigDecimal((1000000 - 956120) + "").divide(new BigDecimal(1000000 + ""), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
         System.out.println(divide.intValue());
+
+        ShearCaptcha shearCaptcha= CaptchaUtil.createShearCaptcha(150, 30, 4, 2);
+        System.out.println(shearCaptcha.getCode());
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.ShearCaptcha;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
@@ -34,8 +36,11 @@ import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -77,6 +82,42 @@ public class TestController implements ApplicationEventPublisherAware {
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
+
+
+
+    //获取图片验证码
+    @GetMapping("/kaptcha")
+    public void kaptcha(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
+        httpServletResponse.setHeader("Cache-Control", "no-store");
+        httpServletResponse.setHeader("Pragma", "no-cache");
+        httpServletResponse.setDateHeader("Expires", 0);
+        httpServletResponse.setContentType("image/png");
+
+        ShearCaptcha shearCaptcha= CaptchaUtil.createShearCaptcha(150, 30, 4, 2);
+
+        // 验证码存入session
+        httpServletRequest.getSession().setAttribute("verifyCode", shearCaptcha);
+
+        // 输出图片流
+        shearCaptcha.write(httpServletResponse.getOutputStream());
+        System.out.println(shearCaptcha.getCode());
+    }
+
+    //验证图片验证码
+    @GetMapping("/verifyKaptcha")
+    public String kaptcha(@RequestParam("userName") String userName,
+                        @RequestParam("password") String password,
+                        @RequestParam("verifyCode") String verifyCode,
+                        HttpSession session) {
+        ShearCaptcha shearCaptcha = (ShearCaptcha) session.getAttribute("verifyCode");
+        if (shearCaptcha == null || !shearCaptcha.verify(verifyCode)) {
+            return "验证码错误";
+        }
+        return "成功";
+    }
+
+
+
 
     //see BindingResultAspect
     @PostMapping("/testVaild")
