@@ -36,6 +36,46 @@ public class GEODemo {
 //            )*6370.996
 //            )<=1;
 
+
+    //最后20000是m 20km以内
+//    SELECT
+//    a.id,
+//    a.region_id,
+//    a.store_name,
+//    a.store_code,
+//    a.store_short_code,
+//    a.store_tel,
+//    a.is_business,
+//    a.open_time,
+//    a.is_support_delivery,
+//    a.delivery_time,
+//    a.delivery_range,
+//    a.is_auto_pickup,
+//    a.default_delivery_price,
+//    a.free_delivery_price,
+//    a.delivery_amount,
+//    a.province,
+//    a.city,
+//    a.area,
+//    a.address,
+//    a.longitude,
+//    a.latitude,
+//    b.distance
+//    FROM inm_store_store a
+//    INNER JOIN (
+//            SELECT id,
+//            st_distance ( point ( longitude, latitude ),point (120.51, 30.12 ))* 111195 distance
+//    FROM inm_store_store
+//        ) b
+//    ON a.id = b.id
+//    WHERE a.is_delete = 0
+//    AND a.is_business = 1
+//    AND a.latitude IS NOT NULL
+//    AND a.longitude IS NOT NULL
+//    AND b.distance  <=  20000
+//    ORDER BY b.distance
+//    LIMIT 5
+
     public static void main(String[] args) {
         calDistance(120.1256,30.1251,120.1256,31.1251);
     }
