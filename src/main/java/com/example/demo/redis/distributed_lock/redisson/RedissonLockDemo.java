@@ -19,7 +19,7 @@ public class RedissonLockDemo {
 
     public void dg(){
         ThreadPoolExecutor threadPoolExecutor =
-                new ThreadPoolExecutor(1, 8, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+                new ThreadPoolExecutor(8, 16, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         long start = System.currentTimeMillis();
         Config config = new Config();
         config.useSingleServer().setAddress("redis://127.0.0.1:6379");

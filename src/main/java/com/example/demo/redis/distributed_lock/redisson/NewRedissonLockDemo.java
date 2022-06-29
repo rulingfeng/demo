@@ -23,8 +23,9 @@ public class NewRedissonLockDemo {
 
     public void dg(){
         ThreadPoolExecutor threadPoolExecutor =
-                new ThreadPoolExecutor(1, 8, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+                new ThreadPoolExecutor(8, 16, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         RLock lock = redissonClient.getLock("newlock1");
+        //RLock lock2 = redissonClient.getLock("newlock2");
 
         for (int i = 1; i <= 10; i++) {
 
@@ -33,11 +34,19 @@ public class NewRedissonLockDemo {
 
                 lock.lock();
                 System.out.println(1);
-                lock.unlock();
+               // lock2.lock();
+                System.out.println(2);
                 System.out.println(l);
+               // lock2.unlock();
+                System.out.println(l);
+                lock.unlock();
             });
         }
     }
+
+
+
+
 
 
 }

@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,6 +76,7 @@ class DemoApplicationTests {
     @Test
     void excel() throws IOException, InterruptedException {
         newRedissonLockDemo.dg();
+        TimeUnit.SECONDS.sleep(5);
 
     }
 
