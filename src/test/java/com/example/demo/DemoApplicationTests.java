@@ -4,6 +4,7 @@ import com.beust.jcommander.internal.Lists;
 import com.example.demo.controller.RedisListQueueController;
 import com.example.demo.redis.bitmap.RedisBitMapDemo;
 import com.example.demo.redis.bloomFilter.RedisBloomFilter;
+import com.example.demo.redis.distributed_lock.redisson.NewRedissonLockDemo;
 import com.example.demo.redis.hyperloglog.RedisHyperLogLogDemo;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
@@ -20,6 +21,7 @@ import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -43,6 +45,8 @@ class DemoApplicationTests {
     private RedisBitMapDemo redisBitMapDemo;
     @Autowired
     RedisListQueueController redisListQueueController;
+    @Resource
+    private NewRedissonLockDemo newRedissonLockDemo;
 
 
     @Test
@@ -70,8 +74,7 @@ class DemoApplicationTests {
 
     @Test
     void excel() throws IOException, InterruptedException {
-
-
+        newRedissonLockDemo.dg();
 
     }
 

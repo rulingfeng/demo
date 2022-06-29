@@ -30,7 +30,7 @@ public class RedissonLockDemo {
             threadPoolExecutor.execute(() -> {
                 lock.lock();
                 //inventory--;
-                //System.out.println(inventory);
+                System.out.println(2);
                 lock.unlock();
             });
         }
@@ -38,5 +38,9 @@ public class RedissonLockDemo {
        // System.out.println("执行线程数:" + NUM + "   总耗时:" + (end - start) + "  库存数为:" + inventory);
     }
 
+    public static void main(String[] args) {
+        RedissonLockDemo redissonLockDemo = new RedissonLockDemo();
+        redissonLockDemo.dg();
+    }
 
 }
