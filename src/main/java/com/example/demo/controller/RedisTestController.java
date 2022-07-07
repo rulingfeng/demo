@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.model.User;
+import com.example.demo.redis.util.RedisAllUtils;
 import com.example.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -17,6 +19,7 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -31,7 +34,9 @@ import redis.clients.jedis.Jedis;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.LongAccumulator;
@@ -53,6 +58,8 @@ public class RedisTestController {
     RedisTemplate redisTemplate;
     @Autowired
     UserService userService;
+    @Autowired
+    RedisAllUtils redisAllUtils;
 
     LongAdder ad  = new LongAdder();
      final RedissonClient client;
@@ -64,6 +71,51 @@ public class RedisTestController {
          client = Redisson.create(config);
          lock = client.getLock("lockkey");
      }
+
+    //redis延迟队列 Zset的数据结构, 通过score设置过期时间,然后在提取时传入时间从而实现延迟
+    @GetMapping("/delayQueue")
+    public String delayQueue() {
+         String key = "delayqueue5";
+        User user = new User();
+        user.setId(1);
+        long l = System.currentTimeMillis();
+        //存 (发送消息)
+        redisAllUtils.zAdd(key,user,(l + 9000L));
+        user.setId(2);
+        //存 (发送消息)
+        redisAllUtils.zAdd(key,user,(l + 5000L));
+        user.setId(3);
+        //存 (发送消息)
+        redisAllUtils.zAdd(key,user,(l + 7000L));
+        System.out.println(l);
+
+        new Thread(()->{
+            //延迟消费
+            while (true){
+                long l1 = System.currentTimeMillis();
+                Set<Object> objects = redisAllUtils.zRangeByScore(key, 0d, (double) l1);
+                if(!CollectionUtil.isEmpty(objects)){
+                    for (Object objectTypedTuple : objects) {
+                        User user1 = JSONObject.parseObject(JSONObject.toJSONString(objectTypedTuple), User.class);
+                        System.out.print(user1);
+                        Long delayqueue1 = redisAllUtils.zRemove(key, objectTypedTuple);
+                        System.out.println("删除"+delayqueue1);
+                        System.out.println(l1);
+                    }
+                }
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }).start();
+
+        return "ok";
+    }
+
 
     //redis实时队列  list数据结构
     @GetMapping("/redissonLock")
