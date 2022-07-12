@@ -1,14 +1,17 @@
 package com.example.demo.redis.util;
 
+import cn.hutool.core.util.BooleanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.*;
+import org.springframework.data.redis.connection.BitFieldSubCommands;
 import org.springframework.data.redis.connection.DataType;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.connection.RedisGeoCommands;
+import org.springframework.data.redis.connection.stream.*;
+import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +30,9 @@ public class RedisAllUtils {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    private static RedisGeoCommands.GeoRadiusCommandArgs arg = RedisGeoCommands.GeoRadiusCommandArgs
+            .newGeoRadiusArgs().includeDistance().includeCoordinates().sortAscending();
 
     // -------------------key 相关操作---------------------
 
@@ -219,16 +225,7 @@ public class RedisAllUtils {
         return redisTemplate.opsForValue().getAndSet(key, value);
     }
 
-    /**
-     * 对 key 所储存的字符串值，获取指定偏移量上的位( bit )
-     *
-     * @param key    键
-     * @param offset 偏移量
-     * @return 指定偏移量上的 位( 0 / 1)
-     */
-    public Boolean getBit(String key, long offset) {
-        return redisTemplate.opsForValue().getBit(key, offset);
-    }
+
 
     /**
      * 批量获取 key 的 值
@@ -240,17 +237,7 @@ public class RedisAllUtils {
         return redisTemplate.opsForValue().multiGet(keys);
     }
 
-    /**
-     * 设置ASCII码, 字符串'a'的ASCII码是97, 转为二进制是'01100001', 此方法是将二进制第 offset 位值变为 value
-     *
-     * @param key    要设置的 键
-     * @param offset 偏移多少位
-     * @param value  值, true 为 1,  false 为 0
-     * @return 设置成功返回 true, 设置失败返回 false
-     */
-    public Boolean setBit(String key, long offset, boolean value) {
-        return redisTemplate.opsForValue().setBit(key, offset, value);
-    }
+
 
     /**
      * 将值 value 关联到 key ，并将 key 的过期时间设为 timeout
@@ -1336,4 +1323,304 @@ public class RedisAllUtils {
     public Cursor<ZSetOperations.TypedTuple<Object>> zScan(String key, ScanOptions options) {
         return redisTemplate.opsForZSet().scan(key, options);
     }
+
+    // ------------------Geo地理位置的相关操作--------------------------------
+    /**
+     * @Title: 添加元素,一个一个添加
+     * @Description: TODO(添加geo)
+     * @param key key
+     * @param point 经纬度
+     * @param member 成员
+     * @return Long 返回影响的行
+     */
+    public Long geoAdd(String key, Point point, String member) {
+        return redisTemplate.opsForGeo().add(key, point, member);
+    }
+
+    /**
+     * @Title: 添加元素,批量添加
+     * @Description: TODO(添加geo)
+     * @param key key
+     * @param locations 地理位置的一个集合
+     * @return Long 返回影响的行
+     */
+    public Long geoAddGeoLocation(String key,List<RedisGeoCommands.GeoLocation<Object>> locations) {
+        return redisTemplate.opsForGeo().add(key, locations);
+    }
+
+    /**
+     * @Title: 删除元素/成员
+     * @param key
+     * @param members 成员
+     * @return Long 返回影响的行
+     */
+    public Long geoRemove(String key, String... members) {
+        return redisTemplate.opsForGeo().remove(key, members);
+    }
+
+    /**
+     * @Title: 查询成员的经纬度
+     * @Description: TODO(查询地址的经纬度)
+     * @param key key
+     * @param members 成员
+     * @return List<Point>
+     */
+    public List<Point> geoPos(String key, String... members) {
+        return redisTemplate.opsForGeo().position(key, members);
+    }
+
+    /**
+     * @Title: 查询成员的经纬度hash值
+     * @Description: TODO(查询位置的geohash)
+     * @param key
+     * @param members
+     * @return List<String>
+     */
+    public List<String> geoHash(String key, String... members) {
+        return redisTemplate.opsForGeo().hash(key, members);
+    }
+
+    /**
+     * @Title: 查询2个成员之间的距离
+     * @param key key
+     * @param member1 成员1
+     * @param member2 成员2
+     * @param metric 单位
+     * @return Double 距离
+     */
+    public Double geoDist(String key, String member1, String member2, Metric metric) {
+        return redisTemplate.opsForGeo().distance(key, member1, member2, metric).getValue();
+    }
+
+    /**
+     * @Title: 查询附近坐标地址
+     * @param key key
+     * @param center 中心坐标
+     * @param radius 半径
+     * @param metric 半径单位
+     * @param maxCount 查询的最大数量,适用于传统的分页查询
+     * @return List<String> 包含坐标x,y，key，地名number(name),和距离distance搜索点的距离
+     * @throws
+     */
+    public List<Object> geoSearchByPoint(String key, Point center, Double radius, Metric metric,Integer maxCount) {
+        Distance distance = new Distance(radius, metric);
+        Circle within = new Circle(center, distance);
+        GeoResults<RedisGeoCommands.GeoLocation<String>> geoResults = null;
+        //判断是否要有查询最大数量,返回值包含距离includeDistance和坐标includeCoordinates
+//        if (maxCount!=null) {
+//            //有最大数量
+//            geoResults=stringRedisTemplate.opsForGeo()
+//                    .search(key, GeoReference.fromCircle(within), distance, RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().includeDistance().includeCoordinates().limit(maxCount));
+//        }else{
+//            //没有最大数量
+//            geoResults=stringRedisTemplate.opsForGeo()
+//                    .search(key, GeoReference.fromCircle(within), distance,RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().includeDistance().includeCoordinates());
+//        }
+        List<GeoResult<RedisGeoCommands.GeoLocation<String>>> geoResultList = geoResults.getContent();
+        if(geoResultList==null || geoResultList.isEmpty()){
+            return  null;
+        }
+
+        for(GeoResult<RedisGeoCommands.GeoLocation<String>> geoResult:geoResultList){
+            String name = geoResult.getContent().getName();
+
+            Point point = geoResult.getContent().getPoint();
+            double x = point.getX();
+            double y = point.getY();
+            Distance distance1 = geoResult.getDistance();
+        }
+        return null;
+    }
+
+
+
+
+    /**
+     * @Title: 查询附近坐标地址
+     * @param key key
+     * @param center 中心坐标
+     * @param radius 半径
+     * @param metric 半径单位
+     * @return  包含坐标x,y，key，地名number(name),和距离distance搜索点的距离
+     * @throws
+     */
+    public GeoResults geoSearchByPoint2(String key, Point center, Double radius, Metric metric) {
+        GeoResults geoResults = redisTemplate.opsForGeo().radius(key, new Circle(center, new Distance(radius, Metrics.KILOMETERS)), arg);
+        return geoResults;
+    }
+
+    /**
+     * @Title: 根据成员查询附近点
+     * @param key
+     * @param member 成员
+     * @param radius 半径
+     * @param metric 半径单位
+     * @return  包含坐标x,y，key，地名number(name),和距离搜索点的距离
+     */
+    public GeoResults geoSearchByMember(String key, String member, Double radius, Metric metric) {
+        GeoResults geoResults = redisTemplate.opsForGeo().radius(key, member, new Distance(radius, Metrics.KILOMETERS));
+        return geoResults;
+    }
+
+    //============================bitMap位图的相关操作（常用的）=============================
+
+    /**
+     * 对 key 所储存的字符串值，获取指定偏移量上的位( bit )
+     * 判断该key字段offset位否为1
+     *
+     * @param key    键
+     * @param offset 偏移量
+     * @return 指定偏移量上的 位( 0 / 1)
+     */
+    public Boolean getBit(String key, long offset) {
+        return redisTemplate.opsForValue().getBit(key, offset);
+    }
+
+    /**
+     * 设置ASCII码, 字符串'a'的ASCII码是97, 转为二进制是'01100001', 此方法是将二进制第 offset 位值变为 value
+     * 设置key字段第offset位bit数值
+     * @param key    要设置的 键
+     * @param offset 偏移多少位
+     * @param value  值, true 为 1,  false 为 0
+     * @return 设置成功返回 true, 设置失败返回 false
+     */
+    public Boolean setBit(String key, long offset, boolean value) {
+        return redisTemplate.opsForValue().setBit(key, offset, value);
+    }
+
+    /**
+     * 获取key的所有记录（unsigned不带符号的，即首位数字也表示值）
+     * 有点类似于String类型的substring道理
+     * @param key 键
+     * @param bits 获取的位数
+     * @param offset 从那个位置开始
+     * @return 返回的是一个十进制的集合，这儿只用了一个get命令所以只有一个数据，所以就不用集合了
+     */
+    public Long bitField(String key, int bits, long offset){
+        try {
+            List<Long> longs = redisTemplate.opsForValue().bitField(key,
+                    BitFieldSubCommands.create().
+                            get(BitFieldSubCommands.BitFieldType.unsigned(bits)).valueAt(offset));
+            if (longs==null || longs.isEmpty()) {
+                return null;
+            }
+            return longs.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    /**
+     *  统计key字段value为1的总数
+     * @param key 键
+     * @return
+     */
+    public Long bitCountAll(String key) {
+        try {
+            return (Long) redisTemplate.execute((RedisCallback) con -> con.bitCount(key.getBytes()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  null;
+        }
+    }
+
+    /**
+     * 统计key字段value为1的总数,从start开始到end结束
+     * 注意搜索的是字节，1个字节8个bit位，所以0，1表示搜索的是，前面2个字节，共16个bit位。
+     * 换言之，0，1是前面16天的统计签到次数（1的个数）
+     * @param key   字段
+     * @param start 起始
+     * @param end   结束
+     * @return 总数
+     */
+    public Long bitCount(String key, Long start, Long end) {
+        try {
+            return (Long) redisTemplate.execute((RedisCallback) con -> con.bitCount(key.getBytes(), start, end));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    //============================Stream-group消费者组（消息队列）相关操作=============================
+
+    /**
+     * 读取消费者组的信息
+     * @param groupName 消费者组名称
+     * @param consumerName 消费者名称
+     * @param count 每次读取的数量
+     * @param seconds 阻塞时间
+     * @param streamsKey 消息队列的key
+     * @param readOffset 读取方式
+     * @link 命令：XREADGROUP GROUP group consumer [COUNT count] [BLOCK milliseconds] [NOACK] STREAMS key [key ...] ID [ID ...]
+     * @since redis 5.0+
+     * @return 返回读取消息的数量list集合
+     */
+    public List<MapRecord<String, Object, Object>> xReadGroup(String groupName, String consumerName,
+                                                              int count, long seconds, String streamsKey,
+                                                              ReadOffset readOffset){
+        //判断读取的数量,小于了1就表示读取数量为0，毫无意义
+        if (0 == count) {
+            return null;
+        }
+        StreamReadOptions block = StreamReadOptions.empty().count(count).block(Duration.ofSeconds(seconds));
+        //判断是否需要阻塞读取
+        if (seconds==0) {
+            block=StreamReadOptions.empty().count(count);
+        }
+        List<MapRecord<String, Object, Object>> list = redisTemplate.opsForStream().
+                read(Consumer.from(groupName, consumerName),block, StreamOffset.create(streamsKey, readOffset));
+        return list;
+    }
+
+    /**
+     * 确认读取消息组的数量
+     * @param streamsKey
+     * @param groupName
+     * @param recordIds
+     * @line  命令:XACK key group ID [ID ...]
+     * @since redis 5.0+
+     * @return 读取的数量
+     */
+    public long xAck(String streamsKey, String groupName, String... recordIds){
+        Long ackNums = redisTemplate.opsForStream().acknowledge(streamsKey, groupName, recordIds);
+        if (null==ackNums) {
+            return 0;
+        }
+        return ackNums;
+    }
+
+    //============================hyperloglog相关操作=============================
+
+    /**
+     * 将给定的值(value)添加到key(键)中。
+     * @param key 键
+     * @param value 值
+     * @return
+     */
+    public Long hyperloglogAdd(String key,String... value){
+        return redisTemplate.opsForHyperLogLog().add(key, value);
+    }
+
+    /**
+     * 查询当前key中的值的数量  (uv)
+     * @param key 键
+     * @return
+     */
+    public Long hyperloglogSize(String key){
+        return redisTemplate.opsForHyperLogLog().size(key);
+    }
+
+    /**
+     * 删除指定key
+     * @param key 键
+     * @return
+     */
+    public void hyperloglogDel(String key){
+        redisTemplate.opsForHyperLogLog().delete(key);
+    }
+
 }

@@ -24,7 +24,6 @@ public class RedisHyperLogLogDemo {
         System.out.println(redisTemplate.opsForHyperLogLog().size(str));                //3
         System.out.println(redisTemplate.opsForHyperLogLog().add(str,"d","e")); //1
         System.out.println(redisTemplate.opsForHyperLogLog().size(str));                //5
-
         //有效期设置
         redisTemplate.expire(str,5, TimeUnit.SECONDS);
 

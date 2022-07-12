@@ -208,18 +208,6 @@ public class RedisTestController {
         return "";
     }
 
-    @GetMapping("/hyperLogLog")
-    public String hyperLogLog(){
-        for (int i = 0; i < 50_0000; i++) {
-            redisTemplate.opsForHyperLogLog().add("hyper",i);
-        }
-//        redisTemplate.opsForHyperLogLog().add("hyper",222);
-//        redisTemplate.opsForHyperLogLog().add("hyper",111);
-//        redisTemplate.opsForHyperLogLog().add("hyper",333);
-        System.out.println(redisTemplate.opsForHyperLogLog().size("hyper"));
-
-        return "";
-    }
 
     @GetMapping("/listPage")
     public String list(@RequestParam("current")Integer current,@RequestParam("size")Integer size){
