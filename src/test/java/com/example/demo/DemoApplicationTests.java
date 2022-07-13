@@ -4,6 +4,7 @@ import com.beust.jcommander.internal.Lists;
 import com.example.demo.controller.RedisListQueueController;
 import com.example.demo.redis.bitmap.RedisBitMapDemo;
 import com.example.demo.redis.bloomFilter.RedisBloomFilter;
+import com.example.demo.redis.bloomFilter.redisson.RedissonBlommFilterDemo;
 import com.example.demo.redis.distributed_lock.redisson.NewRedissonLockDemo;
 import com.example.demo.redis.hyperloglog.RedisHyperLogLogDemo;
 import com.google.common.hash.BloomFilter;
@@ -47,7 +48,7 @@ class DemoApplicationTests {
     @Autowired
     RedisListQueueController redisListQueueController;
     @Resource
-    private NewRedissonLockDemo newRedissonLockDemo;
+    private RedissonBlommFilterDemo redissonBlommFilterDemo;
 
 
     @Test
@@ -75,8 +76,7 @@ class DemoApplicationTests {
 
     @Test
     void excel() throws IOException, InterruptedException {
-        newRedissonLockDemo.dg();
-        TimeUnit.SECONDS.sleep(5);
+
 
     }
 
