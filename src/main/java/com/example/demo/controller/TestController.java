@@ -25,6 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.transaction.annotation.Isolation;
@@ -76,11 +77,33 @@ public class TestController implements ApplicationEventPublisherAware {
 
     private ApplicationEventPublisher applicationEventPublisher;
 
+    @Autowired
+    private Environment environment;
+
+    private final List<String> TEST_PROFILE = Arrays.asList("-dev","-test");
 
     private static Integer count = 10;
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    public void getSpringEnvironment(){
+        //获取spring的application.yml等其他文件的配置信息
+        String url = environment.getProperty("spring.datasource.druid.db1.jdbc-url");
+        String profile = environment.getProperty("test.payment.profile");
+        if(profile == null){
+            profile = "";
+        }
+        System.out.println("url:"+url);
+        System.out.println("profile:"+profile);
+        //拿数据库连接地址?号隔开   拿库的名字做比较
+        String temp = url.split("\\?")[0];
+        for (String s : TEST_PROFILE) {
+            if(temp.endsWith(s) && profile.contains(s)){
+                System.out.println("test或dev");
+            }
+        }
     }
 
 

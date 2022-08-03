@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.example.demo.annotation.FlagValidator;
+import com.example.demo.common.RSAUtil;
 import com.example.demo.mapstruct.UserConverter;
 import lombok.Data;
 import org.apache.commons.codec.Decoder;
@@ -57,6 +58,7 @@ public class User extends Model<User> implements Serializable {
 
         ShearCaptcha shearCaptcha= CaptchaUtil.createShearCaptcha(150, 30, 4, 2);
         System.out.println(shearCaptcha.getCode());
+
 
 
 
