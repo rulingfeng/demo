@@ -6,6 +6,8 @@ package com.example.demo.common;
  * @description:
  */
 public class PublicMain {
+    public static void main(String[] args) {
 
+    }
 
 }

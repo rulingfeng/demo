@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -16,6 +17,7 @@ public class UserCar extends Model<UserCar> implements Serializable {
     protected Integer id;
 
     @TableField("user_id")
+    @NotNull(message = "userId不能为空")
     protected Integer userId;
 
     @TableField("car")

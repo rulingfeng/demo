@@ -19,7 +19,9 @@ import org.dom4j.*;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.Serializable;
@@ -50,6 +52,10 @@ public class User extends Model<User> implements Serializable {
 
     @TableField(exist = false)
     protected String brithday;
+
+    @Valid
+    @NotEmpty(message = "list不能为空的")
+    protected List<UserCar> list;
 
 
     public static void main(String[] args) throws IOException, DocumentException {

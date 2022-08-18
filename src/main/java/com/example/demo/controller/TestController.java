@@ -148,6 +148,7 @@ public class TestController implements ApplicationEventPublisherAware {
         System.out.println(user);
     }
 
+
     @GetMapping("/testMapstruct")
     public void testMapstruct(){
         User user = new User();
