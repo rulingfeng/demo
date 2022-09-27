@@ -10,10 +10,12 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.serializer.*;
 
 import javax.annotation.Resource;
@@ -93,6 +95,14 @@ public class CacheConfig extends CachingConfigurerSupport {
 
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
+    }
+
+    @Bean
+    public DefaultRedisScript redisScript() {
+        DefaultRedisScript redisScript = new DefaultRedisScript();
+        redisScript.setLocation(new ClassPathResource("stock.lua"));
+        redisScript.setResultType(Long.class);
+        return redisScript;
     }
 
 
