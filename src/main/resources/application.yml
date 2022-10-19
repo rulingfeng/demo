@@ -12,7 +12,7 @@ spring:
   # redis
   redis:
 #    host: 120.26.81.182
-    host: localhost
+    host: 10.11.2.58
     port: 6379
 #  datasource:
 #    url: jdbc:mysql://120.26.81.182:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
@@ -39,14 +39,11 @@ spring:
         initialSize: 5
         minIdle: 5
         maxActive: 20
-#  data:
-#    elasticsearch:
-##      cluster-name: docker-cluster
-#      cluster-name: elasticsearch
-#      cluster-nodes: 192.168.1.188:9300
-##      cluster-nodes: 115.231.102.138:29300
-#      repositories:
-#        enable: true
+  data:
+    elasticsearch:
+      cluster-name: 10.11.2.51:9200
+      repositories:
+        enable: true
 management:
   health:
     elasticsearch:

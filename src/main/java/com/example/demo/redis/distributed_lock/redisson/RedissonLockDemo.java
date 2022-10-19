@@ -22,7 +22,7 @@ public class RedissonLockDemo {
                 new ThreadPoolExecutor(8, 16, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         long start = System.currentTimeMillis();
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+        config.useSingleServer().setAddress("redis://10.11.2.58:6379");
         final RedissonClient client = Redisson.create(config);
         final RLock lock = client.getLock("lock1");
 

@@ -26,7 +26,7 @@ public class RedisDistributedLockTest {
             RedisDistributedLock lock = null;
             String unLockIdentify = null;
             try {
-                Jedis conn = new Jedis("127.0.0.1",6379);
+                Jedis conn = new Jedis("10.11.2.58",6379);
                 lock = new RedisDistributedLock(conn, "test1");
                 unLockIdentify = lock.acquire();
                 System.out.println(Thread.currentThread().getName() + "正在运行");

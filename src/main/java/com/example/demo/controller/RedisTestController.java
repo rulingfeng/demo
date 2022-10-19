@@ -67,7 +67,7 @@ public class RedisTestController {
 
      public RedisTestController(){
          Config config = new Config();
-         config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+         config.useSingleServer().setAddress("redis://10.11.2.58:6379");
          client = Redisson.create(config);
          lock = client.getLock("lockkey");
      }
