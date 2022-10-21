@@ -2,6 +2,12 @@ server:
   port: 8886
 
 spring:
+  mail:
+    host: smtp.163.com
+    username: lingfengruup@163.com
+    #进入163邮箱，进入邮箱中心——设置POP3/SMTP/IMAP---客户端授权密码
+    password: FOGYPMGXHTBEDNQK
+    from: lingfengruup@163.com
 #  rabbitmq:
 #    host: 120.26.81.182
 #    port: 5672

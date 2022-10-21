@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.beust.jcommander.internal.Lists;
 import com.example.demo.controller.RedisListQueueController;
+import com.example.demo.email.SendEmailService;
 import com.example.demo.redis.bitmap.RedisBitMapDemo;
 import com.example.demo.redis.bloomFilter.RedisBloomFilter;
 import com.example.demo.redis.bloomFilter.redisson.RedissonBlommFilterDemo;
@@ -49,8 +50,13 @@ class DemoApplicationTests {
     RedisListQueueController redisListQueueController;
     @Resource
     private RedissonBlommFilterDemo redissonBlommFilterDemo;
+@Resource
+    SendEmailService sendEmailService;
 
-
+    @Test
+    void sendEmail(){
+        sendEmailService.sendMessage();
+    }
     @Test
     void contextLoads() {
         System.out.println();
