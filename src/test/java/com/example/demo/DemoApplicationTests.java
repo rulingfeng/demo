@@ -2,32 +2,22 @@ package com.example.demo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo.controller.RedisListQueueController;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.example.demo.dao.OrderMapper;
 import com.example.demo.elasticsearch.bo.EsGoods;
-import com.example.demo.redis.bitmap.RedisBitMapDemo;
-import com.example.demo.redis.bloomFilter.redisson.RedissonBlommFilterDemo;
+import com.example.demo.model.Order;
+import com.example.demo.service.OrderService;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
+import org.apache.lucene.search.similarities.Lambda;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -45,13 +35,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static org.boon.core.Typ.list;
 
 @SpringBootTest(classes = DemoApplication.class)
 @RunWith(SpringRunner.class)
@@ -60,45 +50,50 @@ class DemoApplicationTests {
     private RedisTemplate redisTemplate;
     private static final int size = 1000000;// 100万
     private static BloomFilter<Integer> bloomFilter =BloomFilter.create(Funnels.integerFunnel(), size,0.03);
-    @Autowired
-    private RedisBitMapDemo redisBitMapDemo;
-    @Autowired
-    RedisListQueueController redisListQueueController;
-    @Resource
-    private RedissonBlommFilterDemo redissonBlommFilterDemo;
+
 
     @Autowired
     private RestHighLevelClient highLevelClient;
+    @Autowired
+    OrderMapper orderMapper;
+    @Autowired
+    OrderService orderService;
 
-@Test
+    @Test
     public void addDocumentTest() throws IOException, InterruptedException {
-
-            EsGoods esGoods = new EsGoods();
-            esGoods.setId(14L);
-            esGoods.setBrand("inm"+14);
-            esGoods.setCategory("nai");
-            esGoods.setImages("hhtp");
-            esGoods.setPrice(5.8);
-            esGoods.setTitle("我来自浙江"+14);
-            esGoods.setStartTime(new Date());
-            esGoods.setEndTime(new Date());
-            // 拿到索引
-            IndexRequest request = new IndexRequest("goods");
-            // 设置文档id
-            request.id(String.valueOf(14));
-
-            // 将User对象转化为JSON，数据放入请求
-            request.source(JSON.toJSONString(esGoods), XContentType.JSON);
-            // 客户端发送请求后获取响应
-            IndexResponse index = highLevelClient.index(request, RequestOptions.DEFAULT);
-
-            System.out.println(index.toString());
-            // 索引状态
-            System.out.println(index.status());
-
-
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date time = calendar.getTime();
+        for (long i = 804806472l; i <804806572l ; i++) {
+            Order order = new Order();
+            order.setOrderNo(i);
+            order.setTime(time);
+            int insert = orderMapper.insert(order);
+            System.out.println(insert);
+        }
 
     }
+    @Test
+    void search(){
+//        List<Order> list = orderService.lambdaQuery().eq(Order::getOrderNo, 1210525142804806472L).list();
+        //全库表
+        List<Order> list = orderService.lambdaQuery().list();
+        System.out.println(list);
+    }
+
+    @Test
+    void update(){
+        boolean update = orderService.lambdaUpdate().set(Order::getUserId, 123L).eq(Order::getOrderNo, 1210525142804806472L).update();
+        System.out.println(update);
+    }
+
+    @Test
+    void detele(){
+        LambdaQueryChainWrapper<Order> eq = orderService.lambdaQuery().eq(Order::getOrderNo, 1210525142804806472L);
+        boolean update = orderService.remove(eq);
+        System.out.println(update);
+    }
+
 
 
     @Test
@@ -225,12 +220,6 @@ class DemoApplicationTests {
     }
 
 
-    @Test
-    public void in(){
-        String add = redisListQueueController.add();
-        System.out.println(add
-        );
-    }
 
     @Test
     void excel() throws IOException, InterruptedException {

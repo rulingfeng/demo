@@ -1,13 +1,9 @@
 package com.example.demo.event;
 
-import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * 事件消费者
@@ -19,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 @EnableAsync
 public class NoticeEvent_2 {
 
-    @Autowired
-    UserService userService;
 
     @TransactionalEventListener(fallbackExecution = true)
     @Async

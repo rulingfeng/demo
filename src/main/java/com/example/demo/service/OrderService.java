@@ -1,32 +1,9 @@
 package com.example.demo.service;
 
-public interface OrderService {
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.demo.model.Order;
 
-    /**
-     * 创建订单
-     * @param sid
-     *  库存ID
-     * @return
-     *  订单ID
-     */
-    public int createWrongOrder(int sid);
+public interface OrderService extends IService<Order> {
 
 
-    /**
-     * 创建订单 乐观锁
-     * @param sid
-     * @return
-     * @throws Exception
-     */
-    public int createOptimisticOrder(int sid);
-
-    /**
-     * 创建订单 悲观锁 for update
-     * @param sid
-     * @return
-     * @throws Exception
-     */
-    public int createPessimisticOrder(int sid);
-
-    public int createVerifiedOrder(Integer sid, Integer userId, String verifyHash) throws Exception;
 }

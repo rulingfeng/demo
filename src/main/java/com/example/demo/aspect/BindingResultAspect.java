@@ -3,7 +3,6 @@ package com.example.demo.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.common.CommonResult;
-import com.example.demo.model.User;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

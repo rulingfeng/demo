@@ -18,30 +18,43 @@ spring:
 #    url: jdbc:mysql://120.26.81.182:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
 #    username: root
 #    password: root
-  datasource:
-    druid:
-      db1:
-        jdbc-url: jdbc:mysql://120.26.81.182:3306/mall?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
-       # jdbc-url: jdbc:mysql://192.168.0.117:3306/test?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
-        username: root
-        password: root
-#        username: root
-#        password: 123456
+
+
+
+
+
+  main:
+    allow-bean-definition-overriding: true
+  shardingsphere:
+    datasource:
+      m1:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        initialSize: 5
-        minIdle: 5
-        maxActive: 20
-      db2:
-        jdbc-url: jdbc:mysql://120.26.81.182:3306/test?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
+        password: shmliy
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://121.43.183.45:3306/order_db?serverTimezone=GMT
         username: root
-        password: root
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        initialSize: 5
-        minIdle: 5
-        maxActive: 20
+      names: m1
+    props:
+      sql:
+        show: true
+    sharding:
+      tables:
+        order:
+          actual-data-nodes: m1.order_$->{1..4}
+#            key-generator:
+#              column: cid
+#              type: SNOWFLAKE
+          table-strategy:
+            inline:
+              algorithm-expression: order_$->{order_no % 4 + 1}
+              sharding-column: order_no
+
+
+
+
   data:
     elasticsearch:
-      cluster-name: 10.11.2.51:9200
+      cluster-name: 121.43.183.45:9200
       repositories:
         enable: true
 management:

@@ -1,15 +1,8 @@
 package com.example.demo.common;
 
-import com.example.demo.java8.concurrent.Synchronized1;
-import com.example.demo.model.User;
-import com.example.demo.model.UserCar;
 import com.google.common.collect.Lists;
-import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.*;
 
 /**
