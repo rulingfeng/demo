@@ -27,19 +27,23 @@ spring:
     allow-bean-definition-overriding: true
   shardingsphere:
     datasource:
+      #和下面的m1对应
       m1:
         driver-class-name: com.mysql.cj.jdbc.Driver
         password: shmliy
         type: com.alibaba.druid.pool.DruidDataSource
         url: jdbc:mysql://121.43.183.45:3306/order_db?serverTimezone=GMT
         username: root
+        #定义的库变量
       names: m1
     props:
       sql:
         show: true
     sharding:
       tables:
+        #表名 重要！！！
         order:
+          # 1..2 就是2张表  1..4就是  4张表
           actual-data-nodes: m1.order_$->{1..4}
 #            key-generator:
 #              column: cid
