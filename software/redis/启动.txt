@@ -1,1 +1,0 @@
-当前文件夹 cmd 执行redis-server.exe ./redis.windows.conf
