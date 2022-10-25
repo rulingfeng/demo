@@ -2,12 +2,23 @@ package com.example.demo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.demo.dao.OrderDetailMapper;
 import com.example.demo.dao.OrderMapper;
 import com.example.demo.elasticsearch.bo.EsGoods;
 import com.example.demo.model.Order;
+import com.example.demo.model.OrderDetail;
+import com.example.demo.model.OrderError;
+import com.example.demo.model.OrderLog;
+import com.example.demo.service.OrderDetailService;
+import com.example.demo.service.OrderErrorService;
+import com.example.demo.service.OrderLogService;
 import com.example.demo.service.OrderService;
+
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import org.apache.lucene.search.similarities.Lambda;
@@ -58,6 +69,66 @@ class DemoApplicationTests {
     OrderMapper orderMapper;
     @Autowired
     OrderService orderService;
+    @Autowired
+    OrderDetailService orderDetailService;
+    @Autowired
+    OrderLogService orderLogService;
+    @Autowired
+    OrderErrorService orderErrorService;
+
+    //单库多表
+    @Test
+    public void addDocumentDetailTest() throws IOException, InterruptedException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date time = calendar.getTime();
+        for (long i = 888; i <896l ; i++) {
+            Order order = new Order();
+            order.setOrderNo(i);
+            order.setTime(time);
+            int insert = orderMapper.insert(order);
+            for (int j = 0; j < 2; j++) {
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.setOrderNo(order.getOrderNo());
+                orderDetail.setTime(new Date());
+                orderDetailService.save(orderDetail);
+            }
+
+        }
+    }
+
+    //多库多表
+    @Test
+     void addDocumentmoreTest()  {
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.DAY_OF_MONTH, -1);
+//        Date time = calendar.getTime();
+//        //模拟用户id，指定落到那个库
+//        for (long k = 2l; k < 4l; k++) {
+//            //模拟订单no，指定落到哪个表
+//            for (long i = 888; i <892l ; i++) {
+//                Order order = new Order();
+//                order.setOrderNo(i);
+//                order.setUserId(k);
+//                order.setTime(time);
+//                orderMapper.insert(order);
+//                for (int j = 0; j < 2; j++) {
+//                    OrderDetail orderDetail = new OrderDetail();
+//                    orderDetail.setOrderNo(order.getOrderNo());
+//                    orderDetail.setUserId(k);
+//                    orderDetail.setTime(new Date());
+//                    orderDetailService.save(orderDetail);
+//                }
+//
+//            }
+//        }
+        OrderLog orderLog = new OrderLog();
+        orderLog.setOrderNo(666l);
+        orderLogService.save(orderLog);
+
+
+    }
+
 
     @Test
     public void addDocumentTest() throws IOException, InterruptedException {
@@ -75,10 +146,14 @@ class DemoApplicationTests {
     }
     @Test
     void search(){
-//        List<Order> list = orderService.lambdaQuery().eq(Order::getOrderNo, 1210525142804806472L).list();
-        //全库表
-        List<Order> list = orderService.lambdaQuery().list();
-        System.out.println(list);
+        LambdaQueryWrapper<Order> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(Order::getOrderNo,888);
+
+        IPage<Order> pa =  orderService.page(new Page<>(1,1), queryWrapper);
+
+        //分页会失效，虽然指定了第一页 每页一条， 但是还是会搜索出2条， 每个库的表都会去搜索一遍，  所以搜索要走elasticsearch
+        //{"current":1,"orders":[],"pages":0,"records":[{"id":2008,"orderNo":888,"time":1666591678000,"userId":2},{"id":2006,"orderNo":888,"time":1666591678000,"userId":3}],"searchCount":true,"size":1,"total":0}
+        System.out.println(JSONObject.toJSONString(pa));
     }
 
     @Test

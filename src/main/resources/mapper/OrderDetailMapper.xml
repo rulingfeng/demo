@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.OrderDetailMapper">
+
+    <resultMap id="query_result" type="com.example.demo.model.OrderDetail">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+
+    </resultMap>
+
+
+</mapper>

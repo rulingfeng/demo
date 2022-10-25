@@ -22,6 +22,73 @@ spring:
 
 
 
+#单库多表配置
+#库名:order_db
+#
+#表名：order_1，order_2，order_3，order_4，order_detail_1，order_detail_2，order_detail_3，order_detail_4
+#  CREATE TABLE `order_1` (
+#  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+#  `order_no` bigint(20) DEFAULT NULL,
+#  `user_id` bigint(20) DEFAULT NULL,
+#  `cstatus` varchar(20) DEFAULT NULL,
+#  `time` datetime DEFAULT NULL,
+#  PRIMARY KEY (`id`)
+#  ) ENGINE=InnoDB AUTO_INCREMENT=2006 DEFAULT CHARSET=utf8mb4;
+#
+#  CREATE TABLE `order_detail_1` (
+#  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+#  `order_no` bigint(20) DEFAULT NULL,
+#  `user_id` bigint(20) DEFAULT NULL,
+#  `cstatus` varchar(20) DEFAULT NULL,
+#  `time` datetime DEFAULT NULL,
+#  PRIMARY KEY (`id`)
+#  ) ENGINE=InnoDB AUTO_INCREMENT=2007 DEFAULT CHARSET=utf8mb4;
+
+#  main:
+#    allow-bean-definition-overriding: true
+#  shardingsphere:
+#    datasource:
+#      #和下面的m1对应
+#      m1:
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        password: shmliy
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        url: jdbc:mysql://121.43.183.45:3306/order_db?serverTimezone=GMT
+#        username: root
+#        #定义的库变量
+#      names: m1
+#    props:
+#      sql:
+#        show: true
+#    sharding:
+#      tables:
+#        #表名 重要！！！
+#        order:
+#          # 1..2 就是2张表  1..4就是  4张表
+#          actual-data-nodes: m1.order_$->{1..4}
+##            key-generator:
+##              column: cid
+##              type: SNOWFLAKE
+#          table-strategy:
+#            inline:
+#              algorithm-expression: order_$->{order_no % 4 + 1}
+#              sharding-column: order_no
+#        order_detail:
+#          # 1..2 就是2张表  1..4就是  4张表
+#          actual-data-nodes: m1.order_detail_$->{1..4}
+#          #            key-generator:
+#          #              column: cid
+#          #              type: SNOWFLAKE
+#          table-strategy:
+#            inline:
+#              algorithm-expression: order_detail_$->{order_no % 4 + 1}
+#              sharding-column: order_no
+
+#多库多表配置
+  #库名:order_db_1
+    #表名：order_1，order_2，order_3，order_4，order_detail_1，order_detail_2，order_detail_3，order_detail_4,order_log,order_error
+  #库名:order_db_2
+    #表名：order_1，order_2，order_3，order_4，order_detail_1，order_detail_2，order_detail_3，order_detail_4,order_log,order_error
 
   main:
     allow-bean-definition-overriding: true
@@ -32,10 +99,17 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
         password: shmliy
         type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:mysql://121.43.183.45:3306/order_db?serverTimezone=GMT
+        url: jdbc:mysql://121.43.183.45:3306/order_db_1?serverTimezone=GMT
         username: root
         #定义的库变量
-      names: m1
+      m2:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        password: shmliy
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://121.43.183.45:3306/order_db_2?serverTimezone=GMT
+        username: root
+        #定义的库变量
+      names: m1,m2
     props:
       sql:
         show: true
@@ -44,18 +118,46 @@ spring:
         #表名 重要！！！
         order:
           # 1..2 就是2张表  1..4就是  4张表
-          actual-data-nodes: m1.order_$->{1..4}
+          actual-data-nodes: m$->{1..2}.order_$->{1..4}
 #            key-generator:
 #              column: cid
 #              type: SNOWFLAKE
+          #表的路由策略
           table-strategy:
             inline:
               algorithm-expression: order_$->{order_no % 4 + 1}
               sharding-column: order_no
+          #库的路由策略
+          database-strategy:
+            inline:
+              sharding-column: user_id
+              algorithm-expression: m$->{user_id % 2 + 1}
+
+        order_detail:
+          # 1..2 就是2张表  1..4就是  4张表
+          actual-data-nodes: m$->{1..2}.order_detail_$->{1..4}
+          #            key-generator:
+          #              column: cid
+          #              type: SNOWFLAKE
+          #表的路由策略
+          table-strategy:
+            inline:
+              algorithm-expression: order_detail_$->{order_no % 4 + 1}
+              sharding-column: order_no
+          #库的路由策略
+          database-strategy:
+            inline:
+              sharding-column: user_id
+              algorithm-expression: m$->{user_id % 2 + 1}
+    ##指定公共表,每个库都有这个公共表,保存数据的话 会在每个库都保存一遍， 但是查询还是只会出来一条
+      broadcast-tables: order_log,order_error
 
 
 
 
+
+
+  #elasticsearch相关
   data:
     elasticsearch:
       cluster-name: 121.43.183.45:9200
