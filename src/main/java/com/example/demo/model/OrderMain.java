@@ -16,17 +16,20 @@ import java.util.Date;
  * @desc
  */
 @Data
-@TableName("order")
-public class Order extends Model<Order> implements Serializable {
+@TableName("order_main")
+public class OrderMain extends Model<OrderMain> implements Serializable {
     private static final long serialVersionUID = 5051049135474510059L;
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     @ApiModelProperty(value = "订单编号")
     private Long orderNo;
 
     private Long userId;
-    private Date time;
+    private String cstatus;
+    @ApiModelProperty(value = "根据月分表的规则,格林尼治 秒")
+    private Long dynamicTime;
+    private Date createTime;
 
 
 }

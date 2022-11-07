@@ -2,160 +2,71 @@ server:
   port: 8886
 
 spring:
-#  rabbitmq:
-#    host: 120.26.81.182
-#    port: 5672
-#    virtual-host: /mall
-#    username: mall
-#    password: mall
-#    publisher-confirms: true #如果对异步消息需要回调必须设置为true
-  # redis
+
   redis:
 #    host: 120.26.81.182
     host: 10.11.2.58
     port: 6379
-#  datasource:
-#    url: jdbc:mysql://120.26.81.182:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-#    username: root
-#    password: root
 
-
-
-
-#单库多表配置
-#库名:order_db
-#
-#表名：order_1，order_2，order_3，order_4，order_detail_1，order_detail_2，order_detail_3，order_detail_4
-#  CREATE TABLE `order_1` (
-#  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-#  `order_no` bigint(20) DEFAULT NULL,
-#  `user_id` bigint(20) DEFAULT NULL,
-#  `cstatus` varchar(20) DEFAULT NULL,
-#  `time` datetime DEFAULT NULL,
-#  PRIMARY KEY (`id`)
-#  ) ENGINE=InnoDB AUTO_INCREMENT=2006 DEFAULT CHARSET=utf8mb4;
-#
-#  CREATE TABLE `order_detail_1` (
-#  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-#  `order_no` bigint(20) DEFAULT NULL,
-#  `user_id` bigint(20) DEFAULT NULL,
-#  `cstatus` varchar(20) DEFAULT NULL,
-#  `time` datetime DEFAULT NULL,
-#  PRIMARY KEY (`id`)
-#  ) ENGINE=InnoDB AUTO_INCREMENT=2007 DEFAULT CHARSET=utf8mb4;
-
-#  main:
-#    allow-bean-definition-overriding: true
-#  shardingsphere:
-#    datasource:
-#      #和下面的m1对应
-#      m1:
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        password: shmliy
-#        type: com.alibaba.druid.pool.DruidDataSource
-#        url: jdbc:mysql://121.43.183.45:3306/order_db?serverTimezone=GMT
-#        username: root
-#        #定义的库变量
-#      names: m1
-#    props:
-#      sql:
-#        show: true
-#    sharding:
-#      tables:
-#        #表名 重要！！！
-#        order:
-#          # 1..2 就是2张表  1..4就是  4张表
-#          actual-data-nodes: m1.order_$->{1..4}
-##            key-generator:
-##              column: cid
-##              type: SNOWFLAKE
-#          table-strategy:
-#            inline:
-#              algorithm-expression: order_$->{order_no % 4 + 1}
-#              sharding-column: order_no
-#        order_detail:
-#          # 1..2 就是2张表  1..4就是  4张表
-#          actual-data-nodes: m1.order_detail_$->{1..4}
-#          #            key-generator:
-#          #              column: cid
-#          #              type: SNOWFLAKE
-#          table-strategy:
-#            inline:
-#              algorithm-expression: order_detail_$->{order_no % 4 + 1}
-#              sharding-column: order_no
-
-#多库多表配置
-  #库名:order_db_1
-    #表名：order_1，order_2，order_3，order_4，order_detail_1，order_detail_2，order_detail_3，order_detail_4,order_log,order_error
-  #库名:order_db_2
-    #表名：order_1，order_2，order_3，order_4，order_detail_1，order_detail_2，order_detail_3，order_detail_4,order_log,order_error
-
-  main:
-    allow-bean-definition-overriding: true
+#单库多表策略，根据时间分， 每月一张表
   shardingsphere:
-    datasource:
-      #和下面的m1对应
-      m1:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        password: shmliy
-        type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:mysql://121.43.183.45:3306/order_db_1?serverTimezone=GMT
-        username: root
-        #定义的库变量
-      m2:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        password: shmliy
-        type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:mysql://121.43.183.45:3306/order_db_2?serverTimezone=GMT
-        username: root
-        #定义的库变量
-      names: m1,m2
+    enabled: true
     props:
-      sql:
-        show: true
-    sharding:
-      tables:
-        #表名 重要！！！
-        order:
-          # 1..2 就是2张表  1..4就是  4张表
-          actual-data-nodes: m$->{1..2}.order_$->{1..4}
-#            key-generator:
-#              column: cid
-#              type: SNOWFLAKE
-          #表的路由策略
-          table-strategy:
-            inline:
-              algorithm-expression: order_$->{order_no % 4 + 1}
-              sharding-column: order_no
-          #库的路由策略
-          database-strategy:
-            inline:
-              sharding-column: user_id
-              algorithm-expression: m$->{user_id % 2 + 1}
+      sql-show: true
+    datasource:
+      #自定义m1数据库
+      names: m1
+      m1:
+        type: ${spring.datasource.type}
+        driver-class-name: ${spring.datasource.druid.driver-class-name}
+        url: ${spring.datasource.druid.url}
+        username: ${spring.datasource.druid.username}
+        password: ${spring.datasource.druid.password}
+    rules:
+      sharding:
+        tables:
+          #自定义分表的表名，应该支持多个
+          order_main: # 表名
+            actual-data-nodes: m1.order_main,m1.order_main_$->{2022..2035}$->{(1..12).collect(i->i.toString().padLeft(2,'0'))}
+            table-strategy: # ??????
+              standard: # ?????????????
+                sharding-column: dynamic_time # 分表的策略字段（根据时间戳按照月分）
+                sharding-algorithm-name: order-main-inline # 分表算法，表名+inline？
+        # ??????
+        sharding-algorithms:
+          order-main-inline: # 和上2行的名字对应，应该也可以多个
+            type: CLASS_BASED #?????
+            props:
+              strategy: standard
+              # ??+??
+              algorithmClassName: com.example.demo.config.shard.DateShardingAlgorithm
+              #type: INTERVAL  # ?????? ????????
+              #props:
+              #datetime-pattern: yyyy-MM-dd HH:mm:ss  #?????????
+              #datetime-lower: 2022-01-01 00:00:00 #????????
+              #datetime-upper: 2024-01-01 00:00:00 #???????
+              #sharding-suffix-pattern: yyyyMM #??????????????
+              #datetime-interval-amount: 1 #??????????????????????
+              #datetime-interval-unit: MONTHS #?????????
 
-        order_detail:
-          # 1..2 就是2张表  1..4就是  4张表
-          actual-data-nodes: m$->{1..2}.order_detail_$->{1..4}
-          #            key-generator:
-          #              column: cid
-          #              type: SNOWFLAKE
-          #表的路由策略
-          table-strategy:
-            inline:
-              algorithm-expression: order_detail_$->{order_no % 4 + 1}
-              sharding-column: order_no
-          #库的路由策略
-          database-strategy:
-            inline:
-              sharding-column: user_id
-              algorithm-expression: m$->{user_id % 2 + 1}
-    ##指定公共表,每个库都有这个公共表,保存数据的话 会在每个库都保存一遍， 但是查询还是只会出来一条
-      broadcast-tables: order_log,order_error
-
-
-
-
-
+        #要分表的表名 应该要和        tables配置下的表名要一致
+        binding-tables: order_main
+        # 默认id的生成策略
+        default-key-generate-strategy:
+          column: id # ?????
+          key-generator-name: id-key  # ?????????
+        key-generators:
+          id-key:
+            type: SNOWFLAKE # 雪花算法
+  autoconfigure: # ??druid ????
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://121.43.183.45:3306/order?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+      username: root
+      password: shmliy
 
   #elasticsearch相关
   data:

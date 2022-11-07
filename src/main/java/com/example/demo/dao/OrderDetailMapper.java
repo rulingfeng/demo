@@ -1,7 +1,6 @@
 package com.example.demo.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.demo.model.Order;
 import com.example.demo.model.OrderDetail;
 import org.apache.ibatis.annotations.Mapper;
 
