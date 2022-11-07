@@ -32,6 +32,12 @@ spring:
               standard: # ?????????????
                 sharding-column: dynamic_time # 分表的策略字段（根据时间戳按照月分）
                 sharding-algorithm-name: order-main-inline # 分表算法，表名+inline？
+          main_order_two: # 表名
+            actual-data-nodes: m1.main_order_two,m1.main_order_two_$->{2022..2035}$->{(1..12).collect(i->i.toString().padLeft(2,'0'))}
+            table-strategy: # ??????
+              standard: # ?????????????
+                sharding-column: dynamic_time # 分表的策略字段（根据时间戳按照月分）
+                sharding-algorithm-name: main-order-two-inline # 分表算法，表名+inline？
         # ??????
         sharding-algorithms:
           order-main-inline: # 和上2行的名字对应，应该也可以多个
@@ -48,9 +54,24 @@ spring:
               #sharding-suffix-pattern: yyyyMM #??????????????
               #datetime-interval-amount: 1 #??????????????????????
               #datetime-interval-unit: MONTHS #?????????
+          main-order-two-inline: # 和上2行的名字对应，应该也可以多个
+            type: CLASS_BASED #?????
+            props:
+              strategy: standard
+              # ??+??
+              algorithmClassName: com.example.demo.config.shard.DateShardingAlgorithmTwo
+              #type: INTERVAL  # ?????? ????????
+              #props:
+              #datetime-pattern: yyyy-MM-dd HH:mm:ss  #?????????
+              #datetime-lower: 2022-01-01 00:00:00 #????????
+              #datetime-upper: 2024-01-01 00:00:00 #???????
+              #sharding-suffix-pattern: yyyyMM #??????????????
+              #datetime-interval-amount: 1 #??????????????????????
+              #datetime-interval-unit: MONTHS #?????????
 
         #要分表的表名 应该要和        tables配置下的表名要一致
-        binding-tables: order_main
+        binding-tables:
+          - order_main,main_order_two
         # 默认id的生成策略
         default-key-generate-strategy:
           column: id # ?????

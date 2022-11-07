@@ -16,12 +16,13 @@ import java.util.Date;
  * @desc
  */
 @Data
-@TableName("order_main")
-public class OrderMain extends Model<OrderMain> implements Serializable {
+@TableName("main_order_two")
+public class MainOrderTwo extends Model<MainOrderTwo> implements Serializable {
     private static final long serialVersionUID = 5051049135474510059L;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    private Long orderId;
+    private Long mainId;
+
     @ApiModelProperty(value = "订单编号")
     private Long orderNo;
 

@@ -2,11 +2,14 @@ package com.example.demo.config.shard;
 
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Range;
+import org.apache.commons.io.IOUtils;
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.StandardShardingAlgorithm;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -15,6 +18,71 @@ import java.util.*;
 //按单月分表
 @Component
 public class DateShardingAlgorithm implements StandardShardingAlgorithm<Long> {
+    public static void main(String[] args) throws IOException {
+        //
+        //
+
+        char [] chars =  "0123456789ABCDEF" .toCharArray();
+        StringBuilder sba =  new  StringBuilder( "" );
+        byte [] bs = "0".getBytes();
+        int  bit;
+        for  ( int  i =  0 ; i < bs.length; i++) {
+            bit = (bs[i] &  0x0f0 ) >>  4 ;
+            sba.append(chars[bit]);
+            bit = bs[i] &  0x0f ;
+            sba.append(chars[bit]);
+            // sb.append(' ');
+        }
+        String trim = sba.toString().trim();
+        System.out.println(trim);
+        String faf = "0x000x010x310x410x590x300x300x31";
+        Socket socket = new Socket("61.175.215.43", 8);
+        BufferedWriter bw = null;
+        InputStream input = null;
+        try {
+            //发送请求
+            bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bw.write(faf);
+            bw.flush();
+            socket.shutdownOutput();
+            //接收返回信息
+            input = socket.getInputStream();
+            String info = null;
+            StringBuffer sb = new StringBuffer();
+            int count = input.available();
+
+            while (count==0) {
+                count = input.available();
+                //这里必须要判断返回值，不然不会跳出循环，直到对端关闭连接抛reset异常
+                if(count>0){
+                    break;
+                }
+            }
+            if(count>0){
+                StringBuffer readInstruction = null;
+                Integer address = 0;
+                int[] sb2 = new int[count];
+                if (count != 0) {
+                    readInstruction = new StringBuffer();
+                    int readCount = 0;
+                    while (readCount < count) {
+                        int readhex = input.read();
+                        sb2[readCount] = readhex;
+                        String hex = Integer.toHexString(readhex).toUpperCase();
+                        readCount++;
+                    }
+                }
+            }
+            String str = sb.substring(sb.indexOf("<"), sb.length());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //IOUtils.closeQuietly(br);
+            IOUtils.closeQuietly(bw);
+            IOUtils.closeQuietly(socket);
+        }
+
+    }
     // 查询使用
     @Override
     public Collection<String> doSharding(Collection<String> collection, RangeShardingValue<Long> rangeShardingValue) {

@@ -1,15 +1,12 @@
 package com.example.demo;
 
 
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.demo.model.OrderDetail;
 import com.example.demo.model.OrderMain;
-import com.example.demo.service.OrderDetailService;
-import com.example.demo.service.OrderErrorService;
-import com.example.demo.service.OrderLogService;
+import com.example.demo.model.MainOrderTwo;
+import com.example.demo.service.*;
 
-import com.example.demo.service.OrderMainService;
+import com.github.pagehelper.PageHelper;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 
@@ -48,20 +45,36 @@ class DemoApplicationTests {
     OrderErrorService orderErrorService;
     @Autowired
     OrderMainService orderMainService;
+    @Autowired
+    MainOrderTwoService orderMainTwoService;
 
     //单库多表
     @Test
-    public void addDocumentDetailTest() throws IOException, InterruptedException {
-
+    public void orderDetailSave() throws IOException, InterruptedException {
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrderNo(124125412L);
+        orderDetail.setUserId(124125412L);
+        orderDetail.setTime(new Date());
+        orderDetailService.save(orderDetail);
     }
 
 
+    @Test
+    public void orderDetailSearch() throws IOException, InterruptedException {
+        List<OrderDetail> list = orderDetailService.lambdaQuery().list();
+        for (OrderDetail entity : list) {
+            System.out.println(entity);
+        }
+        System.out.println(list.size() + "条数");
+    }
 
     @Test
     public void query(){
         /**
-         *  查询 一定要增加分表规则条件， 才能精确查询到那张表
+         *  查询 一定要增加分表规则条件， 才能精确查询到那张表，否则报错 必须有开始和结束时间 才能确定需要那个表
+         *  并且查询是通过每月的表名 union all 集合所有数据的  可以分页查询
          */
+        PageHelper.startPage(2,2);
         List<OrderMain> list = orderMainService.lambdaQuery()
                 .ge(OrderMain::getDynamicTime,System.currentTimeMillis()/1000 - 86400L)
                 .le(OrderMain::getDynamicTime,System.currentTimeMillis()/1000 + (86400L * 30)).list();
@@ -78,9 +91,40 @@ class DemoApplicationTests {
         entity.setOrderNo(7912591511251L);
         entity.setUserId(123456L);
         //分表策略字段，格林尼治 秒值
-        entity.setDynamicTime(System.currentTimeMillis() /1000 + (86400L * 60));
+        entity.setDynamicTime(System.currentTimeMillis() /1000 + (86400L * 30));
         entity.setCreateTime(new Date());
         orderMainService.save(entity);
+    }
+
+
+
+    @Test
+    public void queryTwo(){
+        /**
+         *  查询 一定要增加分表规则条件， 才能精确查询到那张表
+         */
+        List<MainOrderTwo> list = orderMainTwoService.lambdaQuery()
+                .ge(MainOrderTwo::getDynamicTime,System.currentTimeMillis()/1000 - 86400L)
+                .le(MainOrderTwo::getDynamicTime,System.currentTimeMillis()/1000 + (86400L * 60)).list();
+        //     .ge(OrderMain::getDynamicTime,System.currentTimeMillis()/1000 + (86400L * 24)).list();
+        for (MainOrderTwo entity : list) {
+            System.out.println(entity);
+        }
+        System.out.println(list.size() + "条数");
+    }
+
+
+
+    @Test
+    public void shardingSaveTwo() {
+        MainOrderTwo entity = new MainOrderTwo();
+        entity.setCstatus("11");
+        entity.setOrderNo(7912591511251L);
+        entity.setUserId(123456L);
+        //分表策略字段，格林尼治 秒值
+        entity.setDynamicTime(System.currentTimeMillis() /1000 + (86400L * 60));
+        entity.setCreateTime(new Date());
+        orderMainTwoService.save(entity);
     }
 
 }

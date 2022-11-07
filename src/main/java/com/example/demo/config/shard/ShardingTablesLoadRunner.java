@@ -15,5 +15,6 @@ public class ShardingTablesLoadRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         ShardingAlgorithmTool.tableNameCacheReload();
+        ShardingAlgorithmToolTwo.tableNameCacheReload();
     }
 }
