@@ -8,7 +8,43 @@ spring:
     host: 10.11.2.58
     port: 6379
 
+
+#  CREATE TABLE `order_main` (
+#  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+#  `order_id` bigint(11) DEFAULT NULL,
+#  `order_no` bigint(20) DEFAULT NULL,
+#  `user_id` bigint(20) DEFAULT NULL,
+#  `cstatus` varchar(20) DEFAULT NULL,
+#  `dynamic_time` bigint(11) DEFAULT NULL,
+#  `create_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+#  PRIMARY KEY (`id`)
+#  ) ENGINE=InnoDB AUTO_INCREMENT=2009 DEFAULT CHARSET=utf8mb4;
+#
+#  CREATE TABLE `main_order_two` (
+#  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+#  `main_id` bigint(11) DEFAULT NULL,
+#  `order_no` bigint(20) DEFAULT NULL,
+#  `user_id` bigint(20) DEFAULT NULL,
+#  `cstatus` varchar(20) DEFAULT NULL,
+#  `dynamic_time` bigint(11) DEFAULT NULL,
+#  `create_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+#  PRIMARY KEY (`id`)
+#  ) ENGINE=InnoDB AUTO_INCREMENT=2009 DEFAULT CHARSET=utf8mb4;
+#
+#  CREATE TABLE `order_detail` (
+#  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+#  `order_no` bigint(20) DEFAULT NULL,
+#  `user_id` bigint(20) DEFAULT NULL,
+#  `cstatus` varchar(20) DEFAULT NULL,
+#  `time` datetime DEFAULT NULL,
+#  PRIMARY KEY (`id`)
+#  ) ENGINE=InnoDB AUTO_INCREMENT=2010 DEFAULT CHARSET=utf8mb4;
+
 #单库多表策略，根据时间分， 每月一张表
+#order库 order_main、main_order_two、order_detail
+  #其中order_detail是普通的一张表，单库单表。
+  #order_main、main_order_two是单库多表的（按月分）
+    #上线时，必须有一张order_main、main_order_two的基础表 会根据基表去拼_yyyyMM的表名，没有该表则自动创建，有则直接使用
   shardingsphere:
     enabled: true
     props:
@@ -88,6 +124,14 @@ spring:
       url: jdbc:mysql://121.43.183.45:3306/order?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
       username: root
       password: shmliy
+
+
+
+
+
+
+
+
 
   #elasticsearch相关
   data:

@@ -7,6 +7,7 @@ import com.example.demo.model.MainOrderTwo;
 import com.example.demo.service.*;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 
@@ -74,15 +75,17 @@ class DemoApplicationTests {
          *  查询 一定要增加分表规则条件， 才能精确查询到那张表，否则报错 必须有开始和结束时间 才能确定需要那个表
          *  并且查询是通过每月的表名 union all 集合所有数据的  可以分页查询
          */
-        PageHelper.startPage(2,2);
+        PageHelper.startPage(1,10);
         List<OrderMain> list = orderMainService.lambdaQuery()
                 .ge(OrderMain::getDynamicTime,System.currentTimeMillis()/1000 - 86400L)
-                .le(OrderMain::getDynamicTime,System.currentTimeMillis()/1000 + (86400L * 30)).list();
+                .le(OrderMain::getDynamicTime,System.currentTimeMillis()/1000 + (86400L * 60)).list();
            //     .ge(OrderMain::getDynamicTime,System.currentTimeMillis()/1000 + (86400L * 24)).list();
-        for (OrderMain entity : list) {
-            System.out.println(entity);
-        }
-        System.out.println(list.size() + "条数");
+        PageInfo<OrderMain> objectPageInfo = new PageInfo<>(list);
+//        for (OrderMain entity : objectPageInfo.getList()) {
+//            System.out.println(entity);
+//        }
+        System.out.println(objectPageInfo);
+        System.out.println(objectPageInfo.getList().size() + "条数");
     }
     @Test
     public void shardingSave() {
