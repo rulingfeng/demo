@@ -19,23 +19,7 @@ import java.util.*;
 @Component
 public class DateShardingAlgorithm implements StandardShardingAlgorithm<Long> {
     public static void main(String[] args) throws IOException {
-        //
-        //
-
-        char [] chars =  "0123456789ABCDEF" .toCharArray();
-        StringBuilder sba =  new  StringBuilder( "" );
-        byte [] bs = "0".getBytes();
-        int  bit;
-        for  ( int  i =  0 ; i < bs.length; i++) {
-            bit = (bs[i] &  0x0f0 ) >>  4 ;
-            sba.append(chars[bit]);
-            bit = bs[i] &  0x0f ;
-            sba.append(chars[bit]);
-            // sb.append(' ');
-        }
-        String trim = sba.toString().trim();
-        System.out.println(trim);
-        String faf = "0x000x010x310x410x590x300x300x31";
+        String faf = "0x00 0x06 1AY001";
         Socket socket = new Socket("61.175.215.43", 8);
         BufferedWriter bw = null;
         InputStream input = null;
@@ -47,11 +31,8 @@ public class DateShardingAlgorithm implements StandardShardingAlgorithm<Long> {
             socket.shutdownOutput();
             //接收返回信息
             input = socket.getInputStream();
-            String info = null;
-            StringBuffer sb = new StringBuffer();
             int count = input.available();
-
-            while (count==0) {
+            while (count == 0) {
                 count = input.available();
                 //这里必须要判断返回值，不然不会跳出循环，直到对端关闭连接抛reset异常
                 if(count>0){
@@ -59,25 +40,14 @@ public class DateShardingAlgorithm implements StandardShardingAlgorithm<Long> {
                 }
             }
             if(count>0){
-                StringBuffer readInstruction = null;
-                Integer address = 0;
-                int[] sb2 = new int[count];
-                if (count != 0) {
-                    readInstruction = new StringBuffer();
-                    int readCount = 0;
-                    while (readCount < count) {
-                        int readhex = input.read();
-                        sb2[readCount] = readhex;
-                        String hex = Integer.toHexString(readhex).toUpperCase();
-                        readCount++;
-                    }
-                }
+                byte[] bytes = new byte[24];
+                int readhex = input.read(bytes);
+                System.out.println(new String(bytes,0,readhex));
             }
-            String str = sb.substring(sb.indexOf("<"), sb.length());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            //IOUtils.closeQuietly(br);
+            IOUtils.closeQuietly(input);
             IOUtils.closeQuietly(bw);
             IOUtils.closeQuietly(socket);
         }
