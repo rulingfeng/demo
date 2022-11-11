@@ -55,11 +55,10 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        //System.out.println("channelActive方法");
+        System.out.println("channelActive方法");
         ChannelId id = ctx.channel().id();
-
         System.out.println(id);
-        System.out.println(ctx);
+
         log.info("+++++++++++++++客户端与服务端连接开启：{}", ctx.channel().remoteAddress().toString());
     }
 
@@ -72,12 +71,12 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("channelInactive方法");
-        Attribute clientAttr = ctx.channel().attr(AttributeKey.valueOf("boxId"));
+        Attribute clientAttr = ctx.channel().attr(AttributeKey.valueOf("storeCode"));
         try {
             if (null != clientAttr && null != clientAttr.get()) {
-                String boxId = clientAttr.get().toString();
-                log.info("+++++++++++++++客户端与服务端连接关闭：{}", boxId);
-                clientChannels.remove(boxId, ctx.channel());
+                String storeCode = clientAttr.get().toString();
+                log.info("+++++++++++++++客户端与服务端连接关闭：{}", storeCode);
+                clientChannels.remove(storeCode, ctx.channel());
             }
         } catch (Exception e) {
             log.error("+++++++++++++++关闭不活跃客户端连接发生异常：{}");
@@ -140,12 +139,12 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
     private void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
         System.out.println("handlerWebSocketFrame方法");
         //获取设备id
-        Attribute attr = ctx.channel().attr(AttributeKey.valueOf("boxId"));
-        String boxId = (null != attr && null != attr.get()) ? attr.get().toString() : "";
+        Attribute attr = ctx.channel().attr(AttributeKey.valueOf("storeCode"));
+        String storeCode = (null != attr && null != attr.get()) ? attr.get().toString() : "";
 
         //关闭连接请求
         if (frame instanceof CloseWebSocketFrame) {
-            log.info("+++++++++++++++岗亭连接关闭,boxId：{}", boxId);
+            log.info("+++++++++++++++门店连接关闭,storeCode：{}", storeCode);
             ctx.channel().close();
             return;
         }
@@ -157,7 +156,7 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
         //文本消息
         if (frame instanceof TextWebSocketFrame) {
             String msg = ((TextWebSocketFrame) frame).text();
-            handlerMessage(ctx, msg, boxId);
+            handlerMessage(ctx, msg, storeCode);
         }
     }
 
@@ -176,8 +175,8 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
         String uri = req.getUri();
         uri = uri.replaceAll("/", "");
         String[] split = uri.split("=");
-        if (method == HttpMethod.GET && "boxId".equals(split[0])) {
-            ctx.channel().attr(AttributeKey.valueOf("boxId")).set(split[1]);
+        if (method == HttpMethod.GET && "storeCode".equals(split[0])) {
+            ctx.channel().attr(AttributeKey.valueOf("storeCode")).set(split[1]);
             clientChannels.put(split[1], ctx.channel());
         }
 
@@ -212,27 +211,28 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
 
 
 
-    private static void handlerMessage(ChannelHandlerContext channelHandlerContext, String msg, String boxId) {
-        //System.out.println("handlerMessage方法");
+    private static void handlerMessage(ChannelHandlerContext channelHandlerContext, String msg, String storeCode) {
+        System.out.println("handlerMessage方法");
         System.out.println(channelHandlerContext.channel());
         System.out.println(channelHandlerContext.channel().id());
         try {
+            //非心跳检测
             if (!(msg.indexOf("HEARTBEAT")> 0)){
-                log.info("+++++++++++++++处理岗亭发送过来的数据,msg：{}" , msg);
+                log.info("+++++++++++++++处理后台发送过来的数据,msg：{}" , msg);
             }
-            log.info("收到{}发来消息[{}]",boxId,msg);
+            log.info("收到{}发来消息[{}]",storeCode,msg);
         } catch (Exception e) {
-            log.error("+++++++++++++++岗亭id：{}，处理推送数据发生异常：{}" ,boxId);
+            log.error("+++++++++++++++门店id：{}，处理推送数据发生异常：{}" ,storeCode);
         }
     }
 
-    public static void sendMsg(String boxId) throws Exception {
+    public static void sendMsg(String storeCode) throws Exception {
         //System.out.println("sendMsg方法");
         try {
-            if (clientChannels.containsKey(boxId)){
-                log.info("+++++++++++++推送岗亭数据岗亭id：" + boxId + ",cannel id:" + clientChannels.get(boxId).id());
-                 TextWebSocketFrame send = new TextWebSocketFrame(boxId);
-                 clientChannels.get(boxId).writeAndFlush(send);
+            if (clientChannels.containsKey(storeCode)){
+                log.info("+++++++++++++推送门店id：" + storeCode + ",channel id:" + clientChannels.get(storeCode).id());
+                 TextWebSocketFrame send = new TextWebSocketFrame(storeCode);
+                 clientChannels.get(storeCode).writeAndFlush(send);
             }
         } catch (Exception e) {
             e.printStackTrace();

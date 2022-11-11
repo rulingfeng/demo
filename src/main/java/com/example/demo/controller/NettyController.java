@@ -19,12 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class NettyController {
 
-    @Autowired
-    private ClientNettyHandler clientNettyHandler;
 
     @GetMapping("/sendMsg")
-    public String sendMsg(String boxId) throws Exception {
-        ClientNettyHandler.sendMsg(boxId);
+    public String sendMsg(String storeCode) throws Exception {
+        ClientNettyHandler.sendMsg(storeCode);
         return "成功";
     }
 }
