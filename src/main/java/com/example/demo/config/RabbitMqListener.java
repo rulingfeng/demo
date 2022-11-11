@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqListener {
 
-    @RabbitListener(queues = "test.demo_aa")
+    //@RabbitListener(queues = "test.demo_aa")
     public void aaa(String message){
         System.out.println(message);
     }

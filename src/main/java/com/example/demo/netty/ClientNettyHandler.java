@@ -71,7 +71,7 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        //System.out.println("channelInactive方法");
+        System.out.println("channelInactive方法");
         Attribute clientAttr = ctx.channel().attr(AttributeKey.valueOf("boxId"));
         try {
             if (null != clientAttr && null != clientAttr.get()) {
@@ -95,7 +95,7 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object msg) throws Exception {
-        //System.out.println("channelRead0方法");
+        System.out.println("channelRead0方法");
         //初始握手
         if (msg instanceof FullHttpRequest) {
             handleHttpRequest(channelHandlerContext, (FullHttpRequest) msg);
@@ -116,7 +116,7 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        //System.out.println("channelReadComplete方法");
+        System.out.println("channelReadComplete方法");
         ctx.flush();
     }
 
@@ -129,7 +129,7 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        //System.out.println("exceptionCaught方法");
+        System.out.println("exceptionCaught方法");
         ctx.close();
         String e = cause.getLocalizedMessage();
         if(cause instanceof Exception){
@@ -138,7 +138,7 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     private void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
-        //System.out.println("handlerWebSocketFrame方法");
+        System.out.println("handlerWebSocketFrame方法");
         //获取设备id
         Attribute attr = ctx.channel().attr(AttributeKey.valueOf("boxId"));
         String boxId = (null != attr && null != attr.get()) ? attr.get().toString() : "";
@@ -165,7 +165,7 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
      * 处理 http 请求，WebSocket 初始握手 (opening handshake ) 都始于一个 HTTP 请求
      */
     private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) {
-        //System.out.println("handleHttpRequest方法");
+        System.out.println("handleHttpRequest方法");
         // 如果HTTP解码失败，返回HTTP异常
         if (!req.getDecoderResult().isSuccess() || (!"websocket".equals(req.headers().get("Upgrade")))) {
             sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
@@ -196,7 +196,7 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
      * 响应非 WebSocket 初始握手请求
      */
     private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, DefaultFullHttpResponse res) {
-        //System.out.println("sendHttpResponse方法");
+        System.out.println("sendHttpResponse方法");
         // 返回应答给客户端
         if (res.getStatus().code() != 200) {
             ByteBuf buf = Unpooled.copiedBuffer(res.getStatus().toString(), CharsetUtil.UTF_8);
@@ -229,11 +229,11 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
     public static void sendMsg(String boxId) throws Exception {
         //System.out.println("sendMsg方法");
         try {
-        if (clientChannels.containsKey(boxId)){
-            log.info("+++++++++++++推送岗亭数据岗亭id：" + boxId + ",cannel id:" + clientChannels.get(boxId).id());
-             TextWebSocketFrame send = new TextWebSocketFrame(boxId);
-             clientChannels.get(boxId).writeAndFlush(send);
-        }
+            if (clientChannels.containsKey(boxId)){
+                log.info("+++++++++++++推送岗亭数据岗亭id：" + boxId + ",cannel id:" + clientChannels.get(boxId).id());
+                 TextWebSocketFrame send = new TextWebSocketFrame(boxId);
+                 clientChannels.get(boxId).writeAndFlush(send);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

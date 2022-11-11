@@ -11,11 +11,15 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketFrameAggregator;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.reactive.socket.WebSocketHandler;
 
 /**
  * @Author: Administrator
@@ -24,30 +28,40 @@ import io.netty.handler.timeout.IdleStateHandler;
  */
 public class ClientChannelHandler  extends ChannelInitializer<SocketChannel> {
 
+        /**
+     * webSocket协议名
+     */
+    static final String WEBSOCKET_PROTOCOL = "WebSocket";
 
+    /**
+     * webSocket路径
+     */
+    @Value("${webSocket.netty.path:/webSocket}")
+    String webSocketPath;
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         socketChannel.pipeline()
                 .addLast(new IdleStateHandler(60,0,0))
-//                .addLast(new ClientHeartbeatHandler())
+               // .addLast(new ClientHeartbeatHandler())
                 .addLast("http-codec", new HttpServerCodec())
                 .addLast("aggregator", new HttpObjectAggregator(165536))
                 .addLast("http-chunked", new ChunkedWriteHandler())
-                .addLast(new ClientNettyHandler())
+                .addLast(new ClientNettyHandler());
 
-                .addLast(new LoggingHandler(LogLevel.TRACE))
-                // HttpRequestDecoder和HttpResponseEncoder的一个组合，针对http协议进行编解码
-                .addLast(new HttpServerCodec())
-                // 分块向客户端写数据，防止发送大文件时导致内存溢出， channel.write(new ChunkedFile(new File("bigFile.mkv")))
-                .addLast(new ChunkedWriteHandler())
-                // 将HttpMessage和HttpContents聚合到一个完成的 FullHttpRequest或FullHttpResponse中,具体是FullHttpRequest对象还是FullHttpResponse对象取决于是请求还是响应
-                // 需要放到HttpServerCodec这个处理器后面
-                .addLast(new HttpObjectAggregator(10240))
+//                .addLast(new LoggingHandler(LogLevel.TRACE))
+//                // HttpRequestDecoder和HttpResponseEncoder的一个组合，针对http协议进行编解码
+//                .addLast(new HttpServerCodec())
+//                // 分块向客户端写数据，防止发送大文件时导致内存溢出， channel.write(new ChunkedFile(new File("bigFile.mkv")))
+//                .addLast(new ChunkedWriteHandler())
+//                // 将HttpMessage和HttpContents聚合到一个完成的 FullHttpRequest或FullHttpResponse中,具体是FullHttpRequest对象还是FullHttpResponse对象取决于是请求还是响应
+//                // 需要放到HttpServerCodec这个处理器后面
+//                .addLast(new HttpObjectAggregator(10240))
 //                // 聚合 websocket 的数据帧，因为客户端可能分段向服务器端发送数据
 //                .addLast(new WebSocketFrameAggregator(10 * 1024 * 1024))
-                // 服务器端向外暴露的 web socket 端点
-                .addLast(new WebSocketServerProtocolHandler("/client"))
-        // 自定义处理器 - 处理 web socket 文本消息
-                .addLast(new ClientNettyHandler());
+//                // 服务器端向外暴露的 web socket 端点
+////                .addLast(new WebSocketServerProtocolHandler("/client"))
+//                .addLast(new WebSocketServerProtocolHandler(webSocketPath, WEBSOCKET_PROTOCOL, true, 65536 * 10))
+//        // 自定义处理器 - 处理 web socket 文本消息
+//                .addLast(new ClientNettyHandler());
     }
 }
