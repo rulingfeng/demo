@@ -26,6 +26,10 @@ import javax.annotation.PostConstruct;
 import java.util.concurrent.ConcurrentMap;
 
 /**
+ * netty的实例
+ * 连接：ws://127.0.0.1:1118/storeCode=9996
+ *                              9996可以模拟成门店id
+ *                              发送消息的时候，传9996就能给指定通道发消息
  * @Author: Administrator
  * @Date: 2020-02-05 14:11
  * @Version 1.0

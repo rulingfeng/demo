@@ -4,6 +4,7 @@ import com.example.demo.netty.ClientNettyHandler;
 import com.example.demo.socket.WebSocket;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,14 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/socket")
 @Slf4j
-public class SocketController {
+public class SocketController{
 
     @Autowired
     private WebSocket webSocket;
 
     @GetMapping("/sendMsg")
     public String sendMsg(String storeCode) throws Exception {
-        webSocket.sendMessage(storeCode,"服务端发送消息");
+       webSocket.sendMessage(storeCode,"服务端发送消息");
         return "成功socket";
     }
+
 }
