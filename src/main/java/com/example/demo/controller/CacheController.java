@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.cache.LocalCache;
+
+import com.example.demo.cache.LocalCaffeine;
+import com.example.demo.cache.LocalGuavaCache;
 import com.example.demo.es.OrderDelayQueue;
 import com.example.demo.es.OrderDelayedElement;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +25,13 @@ import java.util.concurrent.TimeUnit;
 public class CacheController {
 
     @Autowired
-    private LocalCache<Boolean> cache;
+    private LocalGuavaCache<Boolean> cache;
+    @Autowired
+    private LocalCaffeine<String,Boolean> caffeine;
 
 
-    @GetMapping("/test")
-    public String test() throws InterruptedException {
+    @GetMapping("/guava")
+    public String guava() throws InterruptedException {
         for (int i = 0; i < 30; i++) {
             cache.setLocalCache(String.valueOf(i),true);
             TimeUnit.MILLISECONDS.sleep(50);
@@ -38,4 +42,31 @@ public class CacheController {
 
         return "ok";
     }
+
+    @GetMapping("/caffeine")
+    public String caffeine() throws InterruptedException {
+        for (int i = 0; i < 30; i++) {
+            caffeine.setLocalCache(String.valueOf(i),true);
+            TimeUnit.MILLISECONDS.sleep(50);
+        }
+        for (int i = 0; i < 30; i++) {
+            System.out.println(""+i+caffeine.getCacheIfPresent(String.valueOf(i)));
+        }
+
+        return "ok";
+    }
+
+    @GetMapping("/caffeine1")
+    public String caffeine1() throws InterruptedException {
+        Object cache1 = caffeine.getCache("15");
+        System.out.println(cache1);//true
+      //  caffeine.setLocalCache(String.valueOf(i),true);
+
+
+        System.out.println(""+caffeine.getCacheIfPresent("15"));//true
+
+        System.out.println(""+caffeine.getCacheIfPresent("14"));//null
+        return "ok";
+    }
+
 }

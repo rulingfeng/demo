@@ -7,7 +7,7 @@ import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import lombok.Data;
 import lombok.SneakyThrows;
-import org.checkerframework.checker.units.qual.A;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;

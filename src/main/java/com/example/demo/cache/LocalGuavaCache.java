@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  **/
 @Slf4j
 @Component
-public class LocalCache<T> {
+public class LocalGuavaCache<T> {
     private Cache<String,T> localCache = null;
 
     @PostConstruct
@@ -23,6 +23,8 @@ public class LocalCache<T> {
                 .initialCapacity(10)
                 //设置本地缓存的最大容量
                 .maximumSize(20)
+                //设置多少时间未被访问后过期
+                .expireAfterAccess(10,TimeUnit.SECONDS)
                 //设置写缓存后多少秒过期
                 .expireAfterWrite(10, TimeUnit.SECONDS).build();
     }
