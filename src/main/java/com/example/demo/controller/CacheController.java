@@ -3,9 +3,11 @@ package com.example.demo.controller;
 
 import com.example.demo.cache.LocalCaffeine;
 import com.example.demo.cache.LocalGuavaCache;
+import com.example.demo.cache.RocksDBUtil;
 import com.example.demo.es.OrderDelayQueue;
 import com.example.demo.es.OrderDelayedElement;
 import lombok.extern.slf4j.Slf4j;
+import org.rocksdb.RocksDBException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,6 +68,19 @@ public class CacheController {
         System.out.println(""+caffeine.getCacheIfPresent("15"));//true
 
         System.out.println(""+caffeine.getCacheIfPresent("14"));//null
+        return "ok";
+    }
+
+    @GetMapping("/RocksbdPut")
+    public String RocksbdPut(String key) throws RocksDBException {
+        RocksDBUtil.put("miaoshaid",key,"1");
+        return "ok";
+    }
+
+    @GetMapping("/RocksbdGet")
+    public String RocksbdGet(String key) throws RocksDBException {
+        String s = RocksDBUtil.get("miaoshaid", key);
+        System.out.println(s);
         return "ok";
     }
 
