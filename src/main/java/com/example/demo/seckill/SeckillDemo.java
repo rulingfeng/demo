@@ -33,13 +33,23 @@ public class SeckillDemo {
     public static void init() throws InterruptedException {
         StopWatch sw = new Slf4JStopWatch();
         TimeUnit.SECONDS.sleep(1);
+        //有start，从start开始计时， 没有start，从new Slf4JStopWatch()开始计时
+        sw.start();
+        TimeUnit.SECONDS.sleep(1);
         sw.stop("updateSegmentFromDb", "renid");//输出:start[1669948543307] time[1005] tag[updateSegmentFromDb] message[renid]
 
-        refreshService.scheduleAtFixedRate(new RefreshIdListTask(orderIdList,orderItemIdList),
-                0, 500, TimeUnit.MILLISECONDS);
-        //取出索引0的元素
-        String orderIdStr = orderIdList.poll();
-        System.out.println(orderIdStr);
+
+        StopWatch stopWatch = new StopWatch();
+
+        TimeUnit.MILLISECONDS.sleep(1500);
+        System.out.println(stopWatch.stop("ceshi","re"));//输出:start[1669968355344] time[505] tag[ceshi] message[re]
+
+        //stopWatch.getElapsedTime()
+//        refreshService.scheduleAtFixedRate(new RefreshIdListTask(orderIdList,orderItemIdList),
+//                0, 500, TimeUnit.MILLISECONDS);
+//        //取出索引0的元素
+//        String orderIdStr = orderIdList.poll();
+//        System.out.println(orderIdStr);
 
     }
 }
