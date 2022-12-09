@@ -1,6 +1,11 @@
 package com.example.demo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.internal.Lists;
+import com.beust.jcommander.internal.Maps;
+import com.example.demo.common.HttpUtil;
+import com.example.demo.common.OkHttpUtil;
+import com.example.demo.common.RlfHttpUtils;
 import com.example.demo.controller.RedisListQueueController;
 import com.example.demo.email.SendEmailService;
 import com.example.demo.redis.bitmap.RedisBitMapDemo;
@@ -28,10 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -52,6 +54,25 @@ class DemoApplicationTests {
     private RedissonBlommFilterDemo redissonBlommFilterDemo;
 @Resource
     SendEmailService sendEmailService;
+
+
+    @Test
+    void sendEmail11(){
+        String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
+        Map<String, String> params = Maps.newHashMap();
+        params.put("activityName","奶卡七折购，错过等明年！");
+        params.put("activityDesc","奶吧全品箱装奶3箱7折");
+        params.put("activityTime","2022年12月01日 00:00");
+        params.put("activityDeadlineTime","2022年12月10日 24:00");
+        params.put("reminder","1年核销有效期，7折箱装奶想提就提！");
+        params.put("path","packageActivity/pages/couponGroup/coupon/coupon?aType=92&qd=317");
+        params.put("msgType","18");
+        params.put("userId","5429049");
+        String post = HttpUtil.doPostJsonString(url, JSONObject.toJSONString(params));
+        System.out.println(post);
+
+
+    }
 
     @Test
     void sendEmail(){
