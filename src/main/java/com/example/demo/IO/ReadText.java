@@ -1,11 +1,15 @@
 package com.example.demo.IO;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.beust.jcommander.internal.Maps;
+import com.example.demo.common.OkHttpUtil;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 茹凌丰
@@ -14,10 +18,34 @@ import java.util.List;
  */
 public class ReadText {
     public static void main(String[] args)throws Exception {
-        readLine();
+        //readLine();
         //System.out.println(longs.size());
         //readJson();
+        sendMsg();
 
+
+    }
+
+    public static void sendMsg() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
+        Map<String, String> params = Maps.newHashMap();
+        params.put("activityName","奶卡七折购，错过等明年！");
+        params.put("activityDesc","奶吧全品箱装奶3箱7折");
+        params.put("activityTime","2022年12月01日 00:00");
+        params.put("activityDeadlineTime","2022年12月10日 24:00");
+        params.put("reminder","1年核销有效期，7折箱装奶想提就提！");
+        params.put("path","packageActivity/pages/couponGroup/coupon/coupon?aType=92&qd=317");
+        params.put("msgType","18");
+
+        for (String userId : strings) {
+            params.put("userId",userId);
+            String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
+            System.out.println(userId);
+        }
     }
 
     public static void readLine() throws IOException {
