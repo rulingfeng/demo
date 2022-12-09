@@ -68,7 +68,8 @@ class DemoApplicationTests {
         params.put("path","packageActivity/pages/couponGroup/coupon/coupon?aType=92&qd=317");
         params.put("msgType","18");
         params.put("userId","5429049");
-        String post = HttpUtil.doPostJsonString(url, JSONObject.toJSONString(params));
+//        String post = HttpUtil.doPostJsonString(url, JSONObject.toJSONString(params));
+        String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
         System.out.println(post);
 
 
