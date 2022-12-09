@@ -31,6 +31,7 @@ public class ReadText {
         if(CollectionUtil.isEmpty(strings)){
             return;
         }
+        System.out.println(strings.size());
         String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
         params.put("activityName","奶卡七折购，错过等明年！");
@@ -43,7 +44,7 @@ public class ReadText {
 
         for (String userId : strings) {
             params.put("userId",userId);
-            String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
+            //String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
             System.out.println(userId);
         }
     }
