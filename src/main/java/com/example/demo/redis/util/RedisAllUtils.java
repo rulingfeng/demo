@@ -338,6 +338,17 @@ public class RedisAllUtils {
 
     // -------------------hash 相关操作-------------------------
 
+
+    /**
+     * 根据key获取hash的操作
+     * BoundHashOperations<String, String, String> 这个对象 get()获取某个key的值, put()塞一个key和value, values()把所有value都找出来
+     */
+    public BoundHashOperations<String, String, String> getHashOps(String key) {
+        return redisTemplate.boundHashOps(key);
+    }
+
+
+
     /**
      * 获取存储在哈希表中指定字段的值
      *
