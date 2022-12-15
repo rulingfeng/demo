@@ -54,6 +54,12 @@ public class MybatisPlusConfigurer {
         return DataSourceBuilder.create().build();
     }
 
+    @Bean(name = "db3")
+    @ConfigurationProperties(prefix = "spring.datasource.druid.db3")
+    public javax.sql.DataSource db3() {
+        return DataSourceBuilder.create().build();
+    }
+
     /**
      * 动态数据源配置
      *
@@ -61,11 +67,12 @@ public class MybatisPlusConfigurer {
      */
     @Bean
     @Primary
-    public javax.sql.DataSource multipleDataSource(@Qualifier("db1") javax.sql.DataSource db1, @Qualifier("db2") DataSource db2) {
+    public javax.sql.DataSource multipleDataSource(@Qualifier("db1") javax.sql.DataSource db1, @Qualifier("db2") DataSource db2,@Qualifier("db3") DataSource db3) {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put(DataSourceType.db1.getValue(), db1);
         targetDataSources.put(DataSourceType.db2.getValue(), db2);
+        targetDataSources.put(DataSourceType.db3.getValue(), db3);
         //添加数据源
         dynamicDataSource.setTargetDataSources(targetDataSources);
         //设置默认数据源db1
@@ -82,7 +89,7 @@ public class MybatisPlusConfigurer {
     @Bean("sqlSessionFactory")
     public MybatisSqlSessionFactoryBean sqlSessionFactory() throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
-        sqlSessionFactory.setDataSource(multipleDataSource(db1(), db2()));
+        sqlSessionFactory.setDataSource(multipleDataSource(db1(), db2(),db3()));
 
         //application.yml文件中已经配置，无需再配置
         sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/mapper/*Mapper.xml"));

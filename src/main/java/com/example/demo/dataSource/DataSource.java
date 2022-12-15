@@ -9,6 +9,9 @@ import java.lang.annotation.*;
  * @description:
  * @author: 栗翱
  * @create: 2020-04-08 14:06
+ *
+ *
+ * //需要配合Override使用
  **/
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

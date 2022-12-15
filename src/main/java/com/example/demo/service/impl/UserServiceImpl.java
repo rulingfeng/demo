@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.demo.common.CacheKey;
 import com.example.demo.common.RlfHttpUtils;
 import com.example.demo.dao.UserMapper;
+import com.example.demo.dataSource.DataSource;
+import com.example.demo.dataSource.DataSourceType;
 import com.example.demo.event.NoticeEventObj;
 import com.example.demo.model.Stock;
 import com.example.demo.model.User;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -41,6 +44,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     private StockService stockService;
     @Autowired
     ApplicationContext applicationContext;
+
+
+    @Override
+    @DataSource(DataSourceType.db1)
+    public void asd(){
+        List<User> list = this.lambdaQuery().list();
+        System.out.println(1);
+        System.out.println(list);
+    }
+
+    @Override
+    @DataSource(DataSourceType.db2)
+    public void asd2(){
+        List<User> list = this.lambdaQuery().list();
+        System.out.println(2);
+        System.out.println(list);
+    }
+
+    @Override
+    @DataSource(DataSourceType.db3)//需要配合Override使用
+    public void asd3(){
+        List<User> list = this.lambdaQuery().list();
+        System.out.println(3);
+        System.out.println(list);
+    }
+
 
     @Override
     public void testTransational() throws InterruptedException {

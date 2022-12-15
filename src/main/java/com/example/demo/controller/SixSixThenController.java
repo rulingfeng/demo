@@ -6,6 +6,8 @@ import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.aspect.OrderRateLimit;
+import com.example.demo.dataSource.DataSource;
+import com.example.demo.dataSource.DataSourceType;
 import com.example.demo.model.ExportOrderDto;
 import com.example.demo.model.ImportDataListener;
 import com.example.demo.model.User;
@@ -56,6 +58,32 @@ public class SixSixThenController {
 
     @Autowired
     UserService  userService;
+
+    @GetMapping("/tranaa")
+    public String tranaa() throws InterruptedException {
+        userService.asd();
+        userService.asd2();
+        userService.asd3();
+        return "成功";
+    }
+
+    @GetMapping("/tranaa1")
+    public String tranaa1() throws InterruptedException {
+        userService.asd();
+        return "成功";
+    }
+    @GetMapping("/tranaa2")
+    public String tranaa2() throws InterruptedException {
+        userService.asd2();
+        return "成功";
+    }
+    @GetMapping("/tranaa3")
+    public String tranaa3() throws InterruptedException {
+        userService.asd3();
+        return "成功";
+    }
+
+
 
 
 

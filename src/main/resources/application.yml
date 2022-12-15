@@ -37,7 +37,15 @@ spring:
         minIdle: 5
         maxActive: 20
       db2:
-        jdbc-url: jdbc:mysql://121.43.183.45:3306/order?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+        jdbc-url: jdbc:mysql://121.43.183.45:3306/order_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+        username: root
+        password: shmliy
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        initialSize: 5
+        minIdle: 5
+        maxActive: 20
+      db3:
+        jdbc-url: jdbc:mysql://121.43.183.45:3306/order_db_1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
         username: root
         password: shmliy
         driver-class-name: com.mysql.cj.jdbc.Driver

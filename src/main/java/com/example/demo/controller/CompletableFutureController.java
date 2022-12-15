@@ -52,18 +52,18 @@ public class CompletableFutureController {
     @GetMapping("/bb")
     @Transactional(rollbackFor = Exception.class)
     public String bb(){
-        Integer num = 1;
+        Integer num = 2;
         User user = new User();
         user.setId(num);
         user.setUserName(num+"");
         user.setAge(num+"");
         userService.save(user);
 
-        UserCar userCar = new UserCar();
-        userCar.setId(num);
-        userCar.setCar(num+"");
-        userCar.setUserId(num);
-        userCarService.save(userCar);
+//        UserCar userCar = new UserCar();
+//        userCar.setId(num);
+//        userCar.setCar(num+"");
+//        userCar.setUserId(num);
+//        userCarService.save(userCar);
         return "bb";
     }
 

@@ -53,9 +53,9 @@ public class User extends Model<User> implements Serializable {
     @TableField(exist = false)
     protected String brithday;
 
-    @Valid
-    @NotEmpty(message = "list不能为空的")
-    protected List<UserCar> list;
+//    @Valid
+//    @NotEmpty(message = "list不能为空的")
+//    protected List<UserCar> list;
 
 
     public static void main(String[] args) throws IOException, DocumentException {
