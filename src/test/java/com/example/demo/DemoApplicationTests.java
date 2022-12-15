@@ -20,6 +20,8 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.redisson.api.RSemaphore;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Distance;
@@ -52,8 +54,16 @@ class DemoApplicationTests {
     RedisListQueueController redisListQueueController;
     @Resource
     private RedissonBlommFilterDemo redissonBlommFilterDemo;
-@Resource
+    @Resource
     SendEmailService sendEmailService;
+
+    @Resource
+    RedissonClient redissonClient;
+    @Test
+    void safa(){
+
+
+    }
 
 
     @Test
