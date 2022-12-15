@@ -62,9 +62,36 @@ class DemoApplicationTests {
     @Test
     void safa(){
 
+        /**
+         * 模拟并发秒杀
+         */
+        for (int i = 0; i < 10; i++) {
+            new Thread(()->{
+                RSemaphore semaphore2 = redissonClient.getSemaphore("semaphoreKey");
+                // 5ms内扣减库存
+                try {
+                    //每次抢3个，5ms的获取信号量的时间，抢成功返回true，失败返回false
+                    boolean b = semaphore2.tryAcquire(3, 5, TimeUnit.MILLISECONDS);
+                    if(b){
+
+                    }else{
+                        System.out.println(b);
+                    }
+                }catch (Exception e){
+                    System.out.println("报错"+e.getMessage());
+                }
+            }).start();
+        }
 
     }
-
+    static Integer a = 1;
+    public static synchronized boolean asf(){
+        if(a == 1){
+            a--;
+            return true;
+        }
+        return false;
+    }
 
     @Test
     void sendEmail11(){
