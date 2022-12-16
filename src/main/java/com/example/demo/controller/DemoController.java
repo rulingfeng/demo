@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.example.demo.config.PaymentPropertiesConfig;
 import com.example.demo.es.OrderDelayQueue;
 import com.example.demo.es.OrderDelayedElement;
@@ -30,12 +32,16 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
@@ -67,6 +73,31 @@ public class DemoController {
     private PaymentPropertiesConfig paymentPropertiesConfig;
     @Autowired
     private ApplicationContext applicationContext;
+
+
+
+    @GetMapping("/nnn11")
+    public String nnn11(){
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        System.out.println(requestAttributes.getRequest().getHeader("token"));
+
+
+        CompletableFuture<Void> orderItemsTask = CompletableFuture.runAsync(() -> {
+            // 赋值到新线程绑定的request
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            // TODO 1.异步查询购物车
+            ServletRequestAttributes requestAttributes1 =(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            System.out.println(requestAttributes1.getRequest().getHeader("token"));
+        });
+        try {
+            CompletableFuture.allOf(orderItemsTask).get();
+        } catch (Exception e) {
+            log.error("异步编排获取确认订单页面数据失败：{}", e);
+
+        }
+        return "l";
+    }
+
 
     @GetMapping("/nnn")
     public String nnn(@RequestParam String name)throws Exception{
