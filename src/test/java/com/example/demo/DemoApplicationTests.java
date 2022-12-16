@@ -34,6 +34,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
@@ -41,6 +42,8 @@ import org.elasticsearch.search.aggregations.bucket.nested.ParsedNested;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedLongTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.AvgAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.ParsedAvg;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
@@ -129,6 +132,10 @@ class DemoApplicationTests {
         nestedAggregationBuilder.subAggregation(attrIdAgg);
         builder.aggregation(nestedAggregationBuilder);
 
+        // 6.4 平均价格
+        AvgAggregationBuilder skuPriceAVG = AggregationBuilders.avg("skuPriceAVG").field("skuPrice");
+        builder.aggregation(skuPriceAVG);
+
         System.out.println("搜索参数构建的DSL语句：" + builder);
 
         // 把资源放入 request
@@ -155,6 +162,11 @@ class DemoApplicationTests {
          * 聚合结果--分类
          */
         Aggregations aggregations = response.getAggregations();
+
+        Aggregation skuPriceAVG1 = aggregations.get("skuPriceAVG");
+        double value = ((ParsedAvg) skuPriceAVG1).getValue();
+        System.out.println("平均价格"+ value);
+
         // debug模式下确定这个返回的具体类型
         ParsedLongTerms catelogAggAgg = aggregations.get("catelogAgg");
         // 每一个bucket是一种分类，有几个bucket就会有几个分类
