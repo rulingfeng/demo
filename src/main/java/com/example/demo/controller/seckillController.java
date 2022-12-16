@@ -45,6 +45,7 @@ public class seckillController {
                 // 5ms内扣减库存
                 try {
                     //每次抢3个，5ms的获取信号量的时间，抢成功返回true，失败返回false
+                    // 如果抢成功后，后面的代码执行失败，需要把库存回滚，可以用semaphore2.addPermits();
                     boolean b = semaphore2.tryAcquire(3, 5, TimeUnit.MILLISECONDS);
 
                     System.out.println(b);

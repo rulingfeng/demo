@@ -32,6 +32,13 @@ import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+
+//CREATE TABLE `user` (
+//        `id` int(11) NOT NULL,
+//        `user_name` varchar(255) DEFAULT NULL,
+//        `age` varchar(255) DEFAULT NULL,
+//        PRIMARY KEY (`id`)
+//        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 @Data
 @TableName("user")
 public class User extends Model<User> implements Serializable {

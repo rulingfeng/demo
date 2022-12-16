@@ -73,7 +73,12 @@ class DemoApplicationTests {
                     //每次抢3个，5ms的获取信号量的时间，抢成功返回true，失败返回false
                     boolean b = semaphore2.tryAcquire(3, 5, TimeUnit.MILLISECONDS);
                     if(b){
-
+                        if(asf()){
+                            System.out.println("需要放弃");
+                            semaphore2.addPermits(3);
+                        }else {
+                            System.out.println(b);
+                        }
                     }else{
                         System.out.println(b);
                     }
