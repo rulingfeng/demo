@@ -4,7 +4,7 @@ package com.example.demo.model;
  * @author rulingfeng
  * @time 2023/1/4 14:19
  * @desc 通过一串json传可以生成javaBean 插件名GsonFormatPlus
- * 先创建一个类， 然后按 Default Option + s(Mac), Alt + s (win)  把json串丢到里面生成
+ * 先创建一个类， 然后按 Option + s(Mac), Alt + s (win)  把json串丢到里面生成
  *
  */
 public class JsonToJavaBean {
