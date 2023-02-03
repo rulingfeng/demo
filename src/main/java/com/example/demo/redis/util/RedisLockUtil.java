@@ -11,6 +11,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 用法
+ *  String openIdKey = REGISTERKEY + registerBo.getVxOpenId() + registerBo.getZfbOpenId();
+ *             try (RedisLockUtil redisLockUtil = new RedisLockUtil(redisTemplate, openIdKey, 5)) {
+ *                 if(!redisLockUtil.getLock()){
+ *                     throw new BizException("注册中,请稍等!");
+ *                 }else{
+ *                     return registerHandle(registerBo);
+ *                 }
+ *             }catch (Exception e){
+ *                 log.error("register lock error",e);
+ *                 throw new BizException(e.getMessage());
+ *             }
+ */
 @Slf4j
 public class RedisLockUtil implements AutoCloseable{
 
