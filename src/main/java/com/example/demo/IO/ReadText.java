@@ -34,17 +34,17 @@ public class ReadText {
         System.out.println(strings.size());
         String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
-        params.put("activityName","奶卡七折购，错过等明年！");
-        params.put("activityDesc","奶吧全品箱装奶3箱7折");
-        params.put("activityTime","2022年12月01日 00:00");
-        params.put("activityDeadlineTime","2022年12月10日 24:00");
-        params.put("reminder","1年核销有效期，7折箱装奶想提就提！");
-        params.put("path","packageActivity/pages/couponGroup/coupon/coupon?aType=92&qd=317");
+        params.put("activityName","开学季充值送火热进行中！");
+        params.put("activityDesc","一鸣开学季新礼品、产品、代金券来啦！");
+        params.put("activityTime","2023年2月6日 00:00");
+        params.put("activityDeadlineTime","2023年2月13日 24:00");
+        params.put("reminder","点击查看，若已充值，请忽略。");
+        params.put("path","packageMy/pages/my-rechargePage/my-rechargePage");
         params.put("msgType","18");
 
         for (String userId : strings) {
             params.put("userId",userId);
-            //String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
+            String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
             System.out.println(userId);
         }
     }
