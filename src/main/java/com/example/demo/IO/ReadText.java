@@ -34,12 +34,12 @@ public class ReadText {
         System.out.println(strings.size());
         String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
-        params.put("activityName","开学季充值送火热进行中！");
-        params.put("activityDesc","一鸣开学季新礼品、产品、代金券来啦！");
-        params.put("activityTime","2023年2月6日 00:00");
-        params.put("activityDeadlineTime","2023年2月13日 24:00");
-        params.put("reminder","点击查看，若已充值，请忽略。");
-        params.put("path","packageMy/pages/my-rechargePage/my-rechargePage");
+        params.put("activityName","营养早餐超值券包");
+        params.put("activityDesc","领会员专属超值福利：3.9元抵14元");
+        params.put("activityTime","2023年2月16日 00:00");
+        params.put("activityDeadlineTime","2023年2月26日 24:00");
+        params.put("reminder","限量购买3份");
+        params.put("path","packageActivity/pages/couponGroup/detail/detail?aType=1&qd=406");
         params.put("msgType","18");
 
         for (String userId : strings) {
