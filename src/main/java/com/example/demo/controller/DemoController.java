@@ -36,6 +36,8 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +45,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
@@ -73,7 +76,32 @@ public class DemoController {
     private PaymentPropertiesConfig paymentPropertiesConfig;
     @Autowired
     private ApplicationContext applicationContext;
+    @Resource
+    private HttpServletRequest request;
 
+
+    @GetMapping("/go")
+    public Object go() throws ExecutionException, InterruptedException {
+        String token = request.getHeader("token");
+        System.out.println(token);
+        HashMap<Object, Object> map = Maps.newHashMap();
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+
+        CompletableFuture<Void> voidCompletableFuture = CompletableFuture.runAsync(() -> {
+            map.put(1, token);
+        });
+        CompletableFuture<Void> token1 = CompletableFuture.runAsync(() -> {
+            //异步执行，请求头会丢失
+            //因为在这个线程中，也需要用到请求头的信息， 需要设置， 如果不设置会报错，
+            // 包括feign调用（如果被调用方也需要用到请求头）
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            String token2 = request.getHeader("token")+"123";
+            map.put(2, token2);
+        });
+        CompletableFuture.allOf(voidCompletableFuture,token1).get();
+
+        return map;
+    }
 
 
     @GetMapping("/nnn11")
