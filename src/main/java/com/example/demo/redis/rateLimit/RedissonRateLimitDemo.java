@@ -39,14 +39,20 @@ public class RedissonRateLimitDemo {
     }
 
     public static void main(String[] args) {
-        String post = OkHttpUtil.postJsonParamsForAuthUserNameAndPassword("http://piprd.inm.cc:57000/RESTAdapter/ZMALL001/", "{\n" +
-                "    \"ET_IN\": {\n" +
-                "        \"item\": [\n" +
-                "            {\n" +
-                "                \"ZSCDDH\": \"mm831518054906068993\"}\n" +
-                "        ]\n" +
-                "    }\n" +
-                "}","PIDCON_FORWEB","abc12345");
+//        String post = OkHttpUtil.postJsonParamsForAuthUserNameAndPassword("http://piprd.inm.cc:57000/RESTAdapter/ZMALL001/", "{\n" +
+//                "    \"ET_IN\": {\n" +
+//                "        \"item\": [\n" +
+//                "            {\n" +
+//                "                \"ZSCDDH\": \"mm831518054906068993\"}\n" +
+//                "        ]\n" +
+//                "    }\n" +
+//                "}","PIDCON_FORWEB","abc12345");
+//        System.out.println(post);
+        String a = "{\n" +
+                "    \"REQ_DATA\":\"[{\\\"HEAD\\\":{\\\"KUNNR\\\":\\\""+"9996"+"\\\",\\\"ZFLAG\\\":\\\""+"D01"+"\\\",\\\"ZDPBM\\\":\\\""+"MALL10001"+"\\\",\\\"GWADAT\\\":\\\""+"20230223"+"\\\",\\\"ZZTXSZDDH\\\":\\\""+"BS322100000037"+"\\\",\\\"ZZTXSDDH\\\":\\\""+"mm834843297078837249"+"\\\"},\\\"ITEMS\\\":[{\\\"POSNR\\\":"+"834843749598310401"+",\\\"MENGE\\\":"+1+",\\\"MATNR\\\":\\\""+400727+"\\\"}]}]\"\n" +
+                "}";
+
+        String post = OkHttpUtil.postJsonParamsForAuthUserNameAndPassword("http://10.11.1.112:55000/RESTAdapter/ZTXSDDService/", a,"PIDCON_FORWEB","abc12345");
         System.out.println(post);
     }
 }
