@@ -244,11 +244,11 @@ public class OkHttpUtil {
      * 参数二：请求的JSON
      * 参数三：请求回调
      */
-    public static String postJsonParamsForAuthUserNameAndPassword(String url, String jsonParams) {
+    public static String postJsonParamsForAuthUserNameAndPassword(String url, String jsonParams,String userName,String passWord) {
         String responseBody = "";
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams);
         Request request = new Request.Builder()
-                .addHeader("Authorization", "Basic " + Base64.getUrlEncoder().encodeToString(("PIDCON_FORWEB" + ":" + "abc12345").getBytes()))
+                .addHeader("Authorization", "Basic " + Base64.getUrlEncoder().encodeToString((userName + ":" + passWord).getBytes()))
                 .url(url)
                 .post(requestBody)
                 .build();
