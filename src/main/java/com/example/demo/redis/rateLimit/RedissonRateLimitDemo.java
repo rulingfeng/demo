@@ -1,5 +1,7 @@
 package com.example.demo.redis.rateLimit;
 
+import com.alibaba.fastjson.JSONObject;
+import com.example.demo.common.OkHttpUtil;
 import org.redisson.api.*;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +36,17 @@ public class RedissonRateLimitDemo {
         //拿指定令牌数量 尝试拿一次
         rateLimiter.tryAcquire(3);
 
+    }
+
+    public static void main(String[] args) {
+        String post = OkHttpUtil.postJsonParamsForAuthUserNameAndPassword("http://piprd.inm.cc:57000/RESTAdapter/ZMALL001/", "{\n" +
+                "    \"ET_IN\": {\n" +
+                "        \"item\": [\n" +
+                "            {\n" +
+                "                \"ZSCDDH\": \"mm831518054906068993\"}\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}");
+        System.out.println(post);
     }
 }

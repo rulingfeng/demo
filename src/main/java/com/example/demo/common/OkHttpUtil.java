@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -236,6 +237,40 @@ public class OkHttpUtil {
         }
         return responseBody;
     }
+
+    /**
+     * Post请求发送JSON数据....{"name":"zhangsan","pwd":"123456"}
+     * 参数一：请求Url
+     * 参数二：请求的JSON
+     * 参数三：请求回调
+     */
+    public static String postJsonParamsForAuthUserNameAndPassword(String url, String jsonParams) {
+        String responseBody = "";
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams);
+        Request request = new Request.Builder()
+                .addHeader("Authorization", "Basic " + Base64.getUrlEncoder().encodeToString(("PIDCON_FORWEB" + ":" + "abc12345").getBytes()))
+                .url(url)
+                .post(requestBody)
+                .build();
+        Response response = null;
+        try {
+            OkHttpClient okHttpClient = new OkHttpClient();
+            response = okHttpClient.newCall(request).execute();
+            int status = response.code();
+            if (response.isSuccessful()) {
+                return response.body().string();
+            }
+        } catch (Exception e) {
+            log.error("okhttp3 post error >> ex = {}", e);
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
+        return responseBody;
+    }
+
+
     /**
      * POST发送JSON数据
      *
