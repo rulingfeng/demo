@@ -78,6 +78,11 @@ import java.net.InetAddress;
  *  多集群netty 用户长链接，
  *  如果服务端需要发送消息， 需要把客户端连上的机器的ip给保存下来，只能通过这个ip给客户端发消息（因为通道只保存在这个ip的服务里面）
  *
+ *              //获取当前机器ip加端口  端口从yaml的server.port拿
+ *             //String localIp = InetAddress.getLocalHost().getHostAddress().concat(":").concat(port);
+ *
+ *             //请求接口地址   ip+端口 后面直接跟接口名 （不用在加服务名了）
+ *             //String url2 = String.format("http://%s/%s?token=%s", ip, "user/ws/payResultMessage", token);
  *
  *
  *
