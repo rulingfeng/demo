@@ -8,6 +8,8 @@
 package com.example.demo.netty;
 
 
+import com.alibaba.nacos.api.naming.NamingFactory;
+import com.alibaba.nacos.api.naming.NamingService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -18,15 +20,69 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.ResourceLeakDetector;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.net.InetAddress;
 
 /**
  * @Author: Administrator
  * @Date: 2020-02-05 13:40
  * @Version 1.0
+ *
+ *
+ * SpringCloud Nacos Gateway 负载均衡 Netty的Websocket
+ *  网址：https://blog.csdn.net/qq_50909707/article/details/129010931
+ *
+ *  一、Gateway的WS协议配置
+ *   - id: inm-msgpush-netty
+ *       uri: lb:ws://inm-msgpush-netty
+ *       predicates:
+ *          - Path=/msgpushwss/**
+ *       filters:
+ *          - StripPrefix=1
+ *
+ *  二、yaml配置
+ *   netty:
+ *   port: 1117
+ *   application:
+ *     name: inm-msgpush-netty
+ *
+ *  三 加代码
+ *   该类run方法，开启需要监听 的端口后
+ *
+ *     @Value("${netty.port}")
+ *     private Integer port;
+ *
+ *     @Value("${netty.application.name}")
+ *     private String serverName;
+ *
+ *     @Autowired
+ *     private NacosDiscoveryProperties nacosDiscoveryProperties;
+ *
+ *     try {
+ *             NamingService namingService = NamingFactory.createNamingService(nacosDiscoveryProperties.getServerAddr());
+ *             InetAddress address = InetAddress.getLocalHost();
+ *             namingService.registerInstance(serverName, address.getHostAddress(), port);
+ *         } catch (Exception e) {
+ *             throw new RuntimeException(e);
+ *         }
+ *
+ *  四 链接方式
+ *      wss://nainmdev.inm.cc/msgpushwss/storeCode=8883,33333
+ *      tip：msgpushwss是根据gateway配置的Path后面的路径
+ *
+ *
+ *  多集群netty 用户长链接，
+ *  如果服务端需要发送消息， 需要把客户端连上的机器的ip给保存下来，只能通过这个ip给客户端发消息（因为通道只保存在这个ip的服务里面）
+ *
+ *
+ *
+ *
+ *
+ *
  */
 @Slf4j
 @Component
@@ -38,6 +94,9 @@ public class NettyServer implements CommandLineRunner {
      * 正式端口
      */
     private Integer clientPort = 1118;
+
+//    @Autowired
+//      private com.alibaba.cloud.nacos.NacosDiscoveryProperties nacosDiscoveryProperties;
     /**
      * 测试端口
      */
@@ -67,6 +126,18 @@ public class NettyServer implements CommandLineRunner {
 
         //开启需要监听 的端口
         ChannelFuture clientFuture = client.bind(clientPort).sync();
+
+
+//        try {
+//              NamingService namingService = NamingFactory.createNamingService(nacosDiscoveryProperties.getServerAddr());
+//              InetAddress address = InetAddress.getLocalHost();
+//              namingService.registerInstance(serverName, address.getHostAddress(), port);
+//        } catch (Exception e) {
+//              throw new RuntimeException(e);
+//        }
+
+
+
         if (clientFuture.isSuccess()) {
             log.info("启动客户端Netty成功端口:"+ clientPort);
         }
