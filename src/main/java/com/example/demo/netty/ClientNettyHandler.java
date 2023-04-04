@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.net.InetAddress;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -182,6 +183,14 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
         if (method == HttpMethod.GET && "storeCode".equals(split[0])) {
             ctx.channel().attr(AttributeKey.valueOf("storeCode")).set(split[1]);
             clientChannels.put(split[1], ctx.channel());
+
+            //获取当前机器ip加端口  端口从yaml的server.port拿
+            //String localIp = InetAddress.getLocalHost().getHostAddress().concat(":").concat(port);
+
+            //请求接口地址   ip+端口 后面直接跟接口名 （不用在加服务名了）
+            //String url2 = String.format("http://%s/%s?token=%s", ip, "user/ws/payResultMessage", token);
+
+
         }
 
         // 构造握手响应返回，本机测试
