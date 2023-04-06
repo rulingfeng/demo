@@ -1,0 +1,3005 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+    xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:w="urn:schemas-microsoft-com:office:word"
+    xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta http-equiv=Content-Type content="text/html; charset=utf-8">
+    <style type="text/css">
+        table  
+        {  
+            border-collapse: collapse;
+            border: none;  
+            width: 100%;  
+        }  
+        td,tr  
+        {  
+            border: solid #CCC 1px;
+            padding:3px;
+            font-size:9pt;
+        } 
+        .codestyle{
+            word-break: break-all;
+            mso-highlight:rgb(252, 252, 252);
+            padding-left: 5px; background-color: rgb(252, 252, 252); border: 1px solid rgb(225, 225, 232);
+        }
+        img {
+            width:100;
+        }
+    </style>
+    <meta name=ProgId content=Word.Document>
+    <meta name=Generator content="Microsoft Word 11">
+    <meta name=Originator content="Microsoft Word 11">
+    <xml><w:WordDocument><w:View>Print</w:View></xml></head>
+    <body><h1>1、JAVA日志</h1><div style="margin-left:0px;"><h2>1.1、MAC配置</h2><div style="margin-left:0px;"><h3>1.1.1、命令</h3><div style="margin-left:30px;"><p>1.查看日志常用命令
+tail:
+-n 是显示行号；相当于nl命令；例子如下：
+tail -100f test.log 实时监控100行日志</p>
+<table width='100%' class='codestyle'><pre><code>    tail  -n  10  test.log   查询日志尾部最后10行的日志;
+
+    tail -n +10 test.log    查询10行之后的所有日志;</code></pre></table>
+<p>head:  </p>
+<table width='100%' class='codestyle'><pre><code>跟tail是相反的，tail是看后多少行日志；例子如下：
+
+    head -n 10  test.log   查询日志文件中的头10行日志;
+
+    head -n -10  test.log   查询日志文件除了最后10行的其他所有日志;</code></pre></table>
+<p>cat： </p>
+<table width='100%' class='codestyle'><pre><code>tac是倒序查看，是cat单词反写；例子如下：
+
+    cat -n test.log |grep "debug"   查询关键字的日志</code></pre></table>
+<p>应用场景一：按行号查看—过滤出关键字附近的日志</p>
+<p>1）cat -n test.log |grep “debug” 得到关键日志的行号</p>
+<p>2）cat -n test.log |tail -n +92|head -n 20 选择关键字所在的中间一行. 然后查看这个关键字前10行和后10行的日志:</p>
+<table width='100%' class='codestyle'><pre><code> tail -n +92表示查询92行之后的日志
+
+ head -n 20 则表示在前面的查询结果里再查前20条记录</code></pre></table>
+<p>1
+2
+3
+应用场景二：根据日期查询日志</p>
+<p>sed -n ‘/2014-12-17 16:17:20/,/2014-12-17 16:17:36/p’ test.log</p>
+<p>特别说明:上面的两个日期必须是日志中打印出来的日志,否则无效；</p>
+<table width='100%' class='codestyle'><pre><code>           先 grep '2014-12-17 16:17:20' test.log 来确定日志中是否有该 时间点</code></pre></table>
+<p>1
+4.应用场景三：日志内容特别多，打印在屏幕上不方便查看</p>
+<p>(1)使用more和less命令,</p>
+<table width='100%' class='codestyle'><pre><code>   如： cat -n test.log |grep "debug" |more     这样就分页打印了,通过点击空格键翻页</code></pre></table>
+<p>(2)使用 >xxx.txt 将其保存到文件中,到时可以拉下这个文件分析</p>
+<table width='100%' class='codestyle'><pre><code>    如：cat -n test.log |grep "debug"  >debug.txt</code></pre></table>
+<p>1
+2
+3
+4
+5
+6
+7
+日志文件
+日 志 文 件 说 明
+/var/log/message    系统启动后的信息和错误日志，是Red Hat Linux中最常用的日志之一
+/var/log/secure 与安全相关的日志信息
+/var/log/maillog    与邮件相关的日志信息
+/var/log/cron   与定时任务相关的日志信息
+/var/log/spooler    与UUCP和news设备相关的日志信息
+/var/log/boot.log   守护进程启动和停止相关的日志消息
+系统
+命令  说明
+uname -a    查看内核/操作系统/CPU信息
+cat /etc/issue  登陆信息显示数据
+cat /etc/redhat-release 查看操作系统版本
+cat /proc/cpuinfo   查看CPU信息
+hostname    查看计算机名
+lspci -tv   列出所有PCI设备
+lsusb -tv   列出所有USB设备
+lsmod   列出加载的内核模块
+env 查看环境变量
+资源
+命令  说明
+free -m 查看内存使用量和交换区使用量
+df -h   查看各分区使用情况
+du -sh <目录名>    查看指定目录的大小
+grep MemTotal /proc/meminfo 查看内存总量
+grep MemFree /proc/meminfo  查看空闲内存量
+uptime  查看系统运行时间、用户数、负载
+cat /proc/loadavg   查看系统负载
+磁盘和分区
+命令  说明
+mount   column -t # 查看挂接的分区状态
+fdisk -l # 查看所有分区<br />
+swapon -s # 查看所有交换分区<br />
+hdparm -i /dev/hda # 查看磁盘参数(仅适用于IDE设备)<br />
+dmesg   grep IDE # 查看启动时IDE设备检测状况
+网络
+命令  说明
+ifconfig    查看所有网络接口的属性
+iptables -L 查看防火墙设置
+route -n    查看路由表
+netstat -lntp   查看所有监听端口
+netstat -antp   查看所有已经建立的连接
+netstat -s  查看网络统计信息
+进程：
+命令  说明
+ps -ef  查看所有进程
+top 实时显示进程状态（另一篇文章里面有详细的介绍）
+用户：
+命令  说明
+w   查看活动用户
+id <用户名>    查看指定用户信息
+last    查看用户登录日志
+cut -d: -f1 /etc/passwd 查看系统所有用户
+cut -d: -f1 /etc/group  查看系统所有组
+crontab -l  查看当前用户的计划任务
+服务：
+命令  说明</p>
+<h1>chkconfig –list   列出所有系统服务</h1>
+<p><code># chkconfig –list  grep on</code>
+程序：
+命令  说明</p>
+<h1>rpm -qa   查看所有安装的软件包</h1>
+<p>————————————————
+版权声明：本文为CSDN博主「小别墅是毛坯」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：<a href="https://blog.csdn.net/weixin_42595331/article/details/90264438">https://blog.csdn.net/weixin_42595331/article/details/90264438</a></p></div></div><h2>1.2、redis</h2><div style="margin-left:0px;"><h2>1.2.1、基本操作</h2><div style="margin-left:0px;"><h3>1.2.1.1、数据类型</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<p>下面我以此介绍一下这几种数据结构</p>
+<h3>strings（字符串）</h3>
+<p>字符串类型设计redis最基础的数据类型，其他几种类型都是建立在它之上，简而言之，字符串类型的值故名思意是字符串的，我们可以存简单，复杂类型的字符串（json，xml），数字，二进制文件（图片，音频等）。但是不能超过512M。</p>
+<h4>常用命令</h4>
+<h5>设置值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">set key value [ex] [px] [nx|xx]
+redis>set hello world
+redis>ok</code></pre></table>
+<p>ex：可以为键设置秒级的过期时间
+px：为键设置毫秒级的过去时间
+nx：键不存在，才可以设置成功，用于添加
+xx：键必须存在，才可以设置成功，用于添加</p>
+<p>redis 还给我们提供共了setnx</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">setnx key value</code></pre></table>
+<h6>set，setnx区别</h6>
+<p>当键不存在：返回0</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>exists hello
+redis>0</code></pre></table>
+<p>设置键为hello，值为world</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>set hello world
+redis>ok</code></pre></table>
+<p>因为键hello存在，所以setnx时，返回0</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>setnx hello world
+redis>0</code></pre></table>
+<p>setnx还可以作为分布式锁来用，利用redis+lua脚本来实现，由于redis单线程命令处理机制，如果多个用户同时购买商品或者客户端同时执行setnx key value，而setnx只能有一个设置成功。</p>
+<h5>获取值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">get key</code></pre></table>
+<p>获取值</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>get hello
+redis>"world"</code></pre></table>
+<p>如果之不存在，则返回nil</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>get helloo
+redis>nil</code></pre></table>
+<h5>批量设置值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">mset key value [key value...]</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>mset a 1 b 2 c 3
+redis>ok</code></pre></table>
+<h5>批量获取值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">mset key [key...]</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>mget a b c
+redis>"1"
+redis>"2"
+redis>"3"</code></pre></table>
+<p>如果获取的有的值不存在则会返回nil</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>mget a c b d
+redis>"1"
+redis>"2"
+redis>"3"
+redis>nil</code></pre></table>
+<p>批量操作命令可以有效的提高开发的效率，如果没有mget和mset，操做数据就要执行n次get获取set命令。想想一下如果有1万或者更大的数据在set，get需要消耗的时间。</p>
+<p>虽然redis可以每秒支撑万次的读写操作，但是这是指redis服务端的处理能力，对于客户端来说时需要消耗命令时间和网络时间的。</p>
+<p><code>这里要注意批量操作命令可能会造成redis堵塞。</code></p>
+<h5>计数</h5>
+<p>incr key</p>
+<p>incr命令用于对值做自增的操作。
+注意：
+值不是整数，返回错误。
+值是整数，返回自增的结果。
+值为0，自增就是1.</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>exists key
+redis>0
+##############################
+redis>incr key
+redis>1</code></pre></table>
+<p>还有incrby（自增指定的数字），decr（自减），decrby（自减指定的数）</p>
+<h4>使用场景</h4>
+<h6>缓存功能</h6>
+<p>最多的的使用场景就是用来做缓存，redis用来做数据缓存层，mysql作为数据存储层，由于redis支持高并发的特性，所以在秒杀等场景用缓存，可以降低对mysql的压力。</p>
+<h6>计数功能</h6>
+<p>通常同在点赞 阅读量，点一次自增1，</p>
+<h3>hashes（哈希）</h3>
+<p>哈希在redis中也是一个键值对的数据结构。
+这里需要注意字符串的key-value和这里的hash不是一样的
+<img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/5aedef18d93953351d0f9161fe3ae054" alt="" /></p>
+<h4>常用命令</h4>
+<h5>设置值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">hset key field value</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>hset key:1 name mukenan
+redis>1</code></pre></table>
+<p>如果设置成功就返回1，否则就返回0，redis还提供了hsetnx他们之间的关系就和set、setnx一样</p>
+<h5>获取值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">hget key field</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>hget key:1 name
+redis>mukenan</code></pre></table>
+<p>如果field不存在就返回nil</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>key:2 name
+redis>nil
+##############
+redis>key:1 age
+redis>nil</code></pre></table>
+<h5>删除值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">hdel key field [field...]</code></pre></table>
+<p>删除一个或者多个，删除成功会返回field的个数</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>hdel key:1 name
+redis>1</code></pre></table>
+<h5>计算值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">hlen key</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>hlen key:1
+redis>1</code></pre></table>
+<h5>批量设置或获取</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">hmset key field value [field value...]
+hmget key field [field...]</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>hmset key:1 name mukenan age 18
+redis>ok
+###################
+redis>hmget key:1 name age
+redis>"mikenan"
+redis>"18"</code></pre></table>
+<h5>判断field是否存在</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">hexists key field</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>hexists key:1 name
+redis>1
+############
+redis>hexists key:1 sex
+redis>0</code></pre></table>
+<p>如果存在就返回1，否则就返回0</p>
+<h5>指定设置值</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">hincrby key field 1</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis> hincrby key:1 age 10
+redis>20</code></pre></table>
+<p>为值设置指定的值，并返回</p>
+<p><code>使用场景目前还没有遇到，所以不知道怎么写</code></p>
+<h3>lists（列表）</h3>
+<p>列表类型是用来存储多个有序的字符串
+列表类型有两个特点：
+第一：列表中的元素是有序的，也就是可以通过索引下标来获取某一个值。
+第二：列表中的元素可以重复。</p>
+<h4>常用命令</h4>
+<h5>添加操作</h5>
+<h6>从右插入元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">rpush key value [value...]</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>rpush key c b a
+redis>3</code></pre></table>
+<h6>获取值</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">lrange key 0 -1</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>lrange key 0 -1
+redis>"c"
+redis>"b"
+redis>"a"</code></pre></table>
+<p>LRANGE需要两个索引，即要返回的范围的第一个和最后一个元素。两个索引都可以是负数，告诉 Redis 从末尾开始计数：所以 -1 是最后一个元素，-2 是列表的倒数第二个元素，依此类推。</p>
+<h6>从左插入元素</h6>
+<p>以上面的方法一样的用法</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">lpush key value [value...]</code></pre></table>
+<h6>向某个元素前或后插入元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">linsert key before|after pivot value</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>linsert key before b mukenan
+redis>4</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>lrange key 0 -1
+redis>"c"
+redis>"mukenan"
+redis>"b"
+redis>"a"</code></pre></table>
+<h6>获取列表指定索引下标的元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">lindex key index</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>lindex key 0
+redis>"c"</code></pre></table>
+<p>lindex需要一个索引，告诉 Redis 从末尾开始计数：所以 -1 是最后一个元素，-2 是列表的倒数第二个元素，依此类推。</p>
+<h6>获取列表的长度</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">llen key</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>llen key
+redis>4</code></pre></table>
+<h6>从列表左侧弹出元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">lpop key</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>lpop key
+redis>"c"
+###########
+redis>lrange key 0 -1
+redis>"mukenan"
+redis>"b"
+redis>"a"</code></pre></table>
+<p>弹出元素就相当于删除元素，所以我们在查询的时候只会出来3个元素</p>
+<h6>从列表右侧弹出元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">rpop key</code></pre></table>
+<p>和上面的一样</p>
+<h6>按照索引删除元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">ltrim key start end</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>lpush key c
+redis>lrange key 0 -1
+redis>"c"
+redis>"mukenan"
+redis>"b"
+redis>"a"
+##############
+redis>ltrim  key 0 2
+redis>"c"
+redis>"mukenan"
+redis>"b"</code></pre></table>
+<p>只获取从索引 0 到 2 的列表元素，其他所有元素都将被丢弃。</p>
+<h6>删除指定元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">lrem key count value</code></pre></table>
+<p>count分为三种情况：
+count>0，从左到右，删除最多count元素
+count < 0，从右到左，删除最多count绝对值个元素所有>
+count=0，删除</p>
+<h4>阻塞操作</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">blpop key [key...] timeout
+brpop key [key...] timeout</code></pre></table>
+<p>blpop、brpop和lpop、rpop基本是一样，timeout：阻塞的时间，但timeout=0，时就会一直阻塞等到有数据就返回</p>
+<h5>使用场景使用场景</h5>
+<p>可以用作消息队列，后面会在做介绍</p>
+<h3>sets（集合）</h3>
+<p>集合也是用来保存多个字符串元素，但是和列表不一样的是，集合中不允许有重复的值，且集合中的元素是无序，不可以通过索引下标获取元素。</p>
+<h4>常用命令</h4>
+<h5>集合内操作</h5>
+<h6>添加元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">sadd key element [element...]</code></pre></table>
+<p>返回结果为添加成功的元素的个数</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>sadd mykey a b c d e
+redis>4</code></pre></table>
+<h6>删除元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">srem key element [element...]</code></pre></table>
+<p>返回结果为删除成功的元素的个数</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>srem mykey a b
+redis>2</code></pre></table>
+<h6>计算元素的个数</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">scard key</code></pre></table>
+<p>scard的时间复杂度为O(1),他不会遍历集合所有的元素，而是直接用redis内部的变量。</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>scard mykey
+redis>2</code></pre></table>
+<h6>判断元素是否在集合中</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">sismember key element</code></pre></table>
+<p>如果给定的元素存在集合中就返回1，否则返回0</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>sismember mykey c
+redis>1</code></pre></table>
+<p>随机从集合返回指定个数的元素</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">srandmember key [count]</code></pre></table>
+<p>[count] 默认为1</p>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>srandmember myket 2
+redis>"c"
+redis>"d"</code></pre></table>
+<h6>随机弹出元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">spop key</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>spop mykey
+redis>"e"</code></pre></table>
+<p>注意：spop弹出的元素会被删除</p>
+<h6>获取所有元素</h6>
+<table width='100%' class='codestyle'><pre><code class="language-shell">smembers key</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>smemebers mykey
+redis>"d"
+redis>"c"
+redis>"e"</code></pre></table>
+<p>注意：返回的元素是无序的</p>
+<h3>orted sets （排序集合）</h3>
+<p>有序集合，他有着集合的特性，但不同是这个集合里面的元素是可以排序的，还有一点他不同与列表可以使用索引下标获取元素，而是会给每一个元素一个分数。</p>
+<h4>常用命令</h4>
+<h5>设置元素</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">zadd key score member [score member...]</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>zadd key:king 123 mukenan
+redis>1</code></pre></table>
+<p>返回的结果代表成功添加元素的个数
+redis还为zadd 命令添加了 nx、xx、ch、incr</p>
+<ul>
+<li>nx：member必须不存在，才可以设置成功，用于添加</li>
+<li>xx：member必须存在，才可以设置成功，用于更新</li>
+<li>ch：返回此次操作后，有序集合元素和分数发生变化的个数</li>
+<li>incr：对score做增加
+需要注意：有序集合比集合提供了排序的字段，但是也产生了相应的代价，zadd的时间复杂度为O(log(n))，sadd的时间复杂度O(1)
+<h5>计算成员个数</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">zcard key</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>zcard key:king
+redis>1</code></pre></table>
+<h5>计算某个成员的分数</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">zcard key member</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>zcard key:king mukenan
+redis>"123"</code></pre></table>
+<h5>计算成员的排名</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">zrank key member
+zrevrank key member</code></pre></table>
+<p>zrank是从分数从低到高返回排名，zrevran反之</p>
+<h5>删除成员</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">zrem key member</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>zrem key:king mukenan
+redis>1</code></pre></table>
+<p>返回结果为成功删除的个数</p>
+<h5>增加成员的分数</h5>
+<table width='100%' class='codestyle'><pre><code class="language-shell">zincrby key increment member</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>zincrby key:king 10 mikenan
+redis>"133"</code></pre></table></li>
+</ul>
+<table width='100%' class='codestyle'><pre><code class="language-shell">redis>zrevrange key:king  0 19   前 20命
+</code></pre></table>
+<h4>使用场景</h4>
+<p>适合做排行榜系统</p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=8507bcbb02d1f79e85a915a6a898c652" alt="" /></p></div><h3>1.2.1.2、全局命令</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<h3>常用命令</h3>
+<h4>查看所有键</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">keys *</code></pre></table>
+<h4>键的总数</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">dbsize</code></pre></table>
+<p>dbsize在计算键的总数时不会遍历所有键，而是直接获取redis内置的键总数变量，所以dbsize的时间复杂度时O(1)，而keys命令会遍历所有键，所以它的时间复杂度为O(n)</p>
+<h4>检查键是否存在</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">exists</code></pre></table>
+<p>键存在返回1，不存在返回0</p>
+<h4>删除键</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">del key [key ...]</code></pre></table>
+<h4>键过期</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">expire key seconds</code></pre></table>
+<p>redis支持对键添加一个过期时间，当超过过期时间后，键会自动删除。
+ttl命令返回键的剩余时间，一共有三种返回值：</p>
+<ul>
+<li>大于等于0的整数：键剩余的过期时间。</li>
+<li>-1：键没有设置过期时间。</li>
+<li>-2：该键不存在。</li>
+</ul>
+<h4>键的数据结构类型</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">type key</code></pre></table>
+<p>该命令返回的结果就是键的数据类型</p>
+<h4>键重命名</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">rename key newkey</code></pre></table>
+<h4>随机返回一个键</h4>
+<table width='100%' class='codestyle'><pre><code class="language-shell">randomkey</code></pre></table></div><h3>1.2.1.3、持久化</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<h3>RDB</h3>
+<p>RDB持久化是把当前进程数据生成快照存到硬盘的过程，触发rdb持久化分为手动触发和自动触发</p>
+<h4>触发机制</h4>
+<h5>手动触发对应的命令save和bgsave</h5>
+<ul>
+<li>
+<p>save：阻塞当前redis服务，知道rdb的过程完成为止，对于内存比较大的数据或者实例会造成上时间的堵塞</p>
+</li>
+<li>bgsave：redis进程会fork一个子进程，rdb持久化过程由子进程负责，完成后自动结束。阻塞只会发生在fork阶段，时间一般都很短
+<h5>自动触发</h5></li>
+<li>
+<p>使用save的相关配置，如"save m n" 表示在m秒内数据存在n次修改时，会自动触发bgsave</p>
+</li>
+<li>
+<p>如果从节点执行完全复制操作，主节点自动执行bgsave生成rdb文件并发送给从节点</p>
+</li>
+<li>
+<p>执行debug reloade 命令重新加载redis时，也会自动触发save操作</p>
+</li>
+<li>默认情况下执行shutdown 命令时，如果没有开启aof持久化时，则自动执行bfsave。</li>
+</ul>
+<h4>rdb流程</h4>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/bede2bc885dccb60935b45300c91cafe" alt="" /></p>
+<ol>
+<li>
+<p>执行bgsave命令，redis父进程会判断当前是否有正在执行的子进程，如果有就直接返回</p>
+</li>
+<li>
+<p>父进程执行fork一个子进程，在fork过程中父进程会阻塞，可以通过 info stats命令，查看_fork_usec，可以获取最近一个fork的耗时记录</p>
+</li>
+<li>
+<p>父进程fork完成后，bgsave会返回一个信息，父进程可以继续响应其他的命令</p>
+</li>
+<li>
+<p>子进程创建rdb文件，根据父进程内存生成临时的快照文件，完成后会对原文件进行原子替换</p>
+</li>
+<li>子进程发送信号给父进程表示完成</li>
+</ol>
+<h4>优缺点</h4>
+<h5>rdb优点</h5>
+<ul>
+<li>
+<p>rdb是一个紧凑的二进制文件，代表redis在某个时间点上的数据快照，适合做数据备份，全量复制等场景</p>
+</li>
+<li>redis在加载rdb恢复数据远远快于aof的方式。
+<h5>rdb缺点</h5></li>
+<li>rdb没有办法对数据做到实时或者秒级持久化，每次都要fork操作创建子进程，属于重量级操作</li>
+</ul>
+<h3>AOF</h3>
+<p>aof以独立日志的方式记录每次写命令（不是数据，而是命令），重启时再重新执行aof文件中的命令用于恢复数据的目的。aof也解决了rdb无法实时或者秒级操作的处理。</p>
+<h4>aof使用</h4>
+<p>开启aof需要在配置文件中配置：appendonly yes，默认是关闭的状态。aof文件名appendfilename配置，默认是的是appendonly.aof</p>
+<p>aof的工作流程：<strong>命令写入（append）</strong>，<strong>文件同步（sync）</strong>，<strong>文件重写（rewrite）</strong>，<strong>重启加载（load）</strong>。</p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/b4afe2be5860d67f7e01fc7c38d54a69" alt="" /></p>
+<ol>
+<li>
+<p>所有的写入命令会追加到aof_buf中</p>
+</li>
+<li>
+<p>aof_buf 根据对应的策略向硬盘做同步操作</p>
+</li>
+<li>
+<p>随着aof文件越来越大，需要定期的对aof文件重写，压缩文件</p>
+</li>
+<li>当redis服务器重启时，可以加载aof文件进行数据恢复</li>
+</ol>
+<h4>命令写入（append）</h4>
+<p>aof命令写入的内容是以文本协议格式</p>
+<p>aof为什么使用文本协议格式</p>
+<ul>
+<li>
+<p>文本协议具有很好的兼容性</p>
+</li>
+<li>
+<p>所有的写入命令包括追加操作，用文本协议格式，避免了二次处理开销</p>
+</li>
+<li>文本协议具有可读性，方便修改和处理</li>
+</ul>
+<p>aof为什么要把命令追加到aof_buf中</p>
+<ul>
+<li>redis使用单线程方式处理命令，如果每次写aof文件命令都会直接追加到硬盘，性能完全取决于当前硬盘的负载</li>
+</ul>
+<h4>文件同步</h4>
+<p>redis提供了多种奥法缓冲区同步文件策略，由appendfsync参数控制</p>
+<ol>
+<li>
+<p>everysec：命令写入aof_buf后调用系统write操作，write完成后线程返回。fsync同步操作，由专门线程每秒调用一次</p>
+</li>
+<li>
+<p>always：命令写入aof_buf后调用系统fsync操作，同步到aof文件，fsync完成后线程返回</p>
+</li>
+<li>no：命令写入aof_buf后调用系统write操作，不对aof文件做同步操作，同步硬盘操作由操作系统负责，同步周期最长为30秒</li>
+</ol>
+<ul>
+<li>
+<p>配置为everysec，是默认配置，也是最优的同步策略，但是在系统宕机的情况下理论理论情况下会丢失1秒的数据，实际上最多丢失2秒</p>
+</li>
+<li>
+<p>配置为always，每次写入都要同步aof文件，会降低redis高性能特性，不建议配置</p>
+</li>
+<li>配置为no，由于每次同步aof文件的时间是不确定的，而且会加大每次同步硬盘的数据量，但是数据不发保证安全性</li>
+</ul>
+<h4>重写机制</h4>
+<p>随着命令的不断写入到aof中，文件会越来越大，为了解决这个问题，redis对aof引入了重写机制压缩文件的大小。aof重写是把redis进程内的数据转换为写命令同步到新的aof文件的过程</p>
+<h5>aof重写后文件变小的原因大概有三点</h5>
+<ol>
+<li>
+<p>进程内已经超时的数据不写入文件</p>
+</li>
+<li>
+<p>旧的aof文件中，包含无效了命令，如del hdel等，重写使用进程内数据直接生成，aof文件只保留最终写入数据的命令</p>
+</li>
+<li>多条命令可以合成一个命令</li>
+</ol>
+<h5>aof重写的过程可以手动和自动触发</h5>
+<p>手动触发：直接调用bgrewriteaof命令</p>
+<p>自动触发：根据auto-aof-rewrite-min-size和auto-aof-rewrite-percentage参数确定自动触发时机</p>
+<p>auto-aof-rewrite-min-size：表示aof重写时文件文件最小体积，默认为64mb</p>
+<p>auto-aof-rewrite-percentage：代表当前aof文件空间和上一次重写后的aof文件空间的比值</p>
+<p>自动触发时机 = aof_current_size > auto-aof-rewrite-min-size && (aof_current_size-aof_base_size) / aof_base_size >= auto-aof-rewrite-percentage</p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/38851b7e2d7a507fec9264d0a7c78f10" alt="" /></p>
+<h6>流程说明：</h6>
+<ol>
+<li>
+<p>执行aof重写</p>
+</li>
+<li>
+<p>父进程执行fork创建子进程</p>
+</li>
+<li>
+<p>主进程fork子进程后，继续响应其他的命令，所有的又该命令依旧写入aof缓冲区中，并根据appendfsync策略同步到硬盘中，保证原有aof机制的正确性</p>
+</li>
+<li>
+<p>由于fork操作运用写时复制技术，子进程只能共享fork操作时的内存数据，由于父进程依旧响应命令，所以redis会保存这部分命令，防止新的aof文件生成期间丢失这部分的命令</p>
+</li>
+<li>
+<p>子进程根据内存快照，按照命令合并规则写入到新的aof文件，每次批量写入硬盘数据量由配置 aof-rewrite-incremental-fsync控制，防止单次刷盘数据过多造成硬盘阻塞</p>
+</li>
+<li>
+<p>新aof文件写入完成后，子进程发送信号给父进程</p>
+</li>
+<li>
+<p>父进程再把aof重写缓冲区的数据写入到新的aof文件中</p>
+</li>
+<li>使用新的aof文件替换老文件，就完成aof重写</li>
+</ol>
+<h4>重启加载</h4>
+<p>aof和rdb都是用于服务器重启时恢复数据
+<img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/5adf34a2fed6ccf1ed94eb70bcfa57c9" alt="" /></p>
+<h5>流程说明</h5>
+<ol>
+<li>
+<p>aof持久化开启并存在aof文件时，优先加载aof文件，日志：append only</p>
+</li>
+<li>
+<p>aof没有开启时且存在rdb文件，就加载rdb文件，日志：disk</p>
+</li>
+<li>加载文件成功后，redis启动，加载失败，则启动失败</li>
+</ol>
+<h4>AOF追加阻塞</h4>
+<p>开启aof持久化时，默认的同步策略everysec，当系统资源资源繁忙时，会造成reids主线程阻塞
+<img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/370100dd90ce0133e3a5386f0c7fdb57" alt="" /></p>
+<p>阻塞流程</p>
+<ol>
+<li>
+<p>主线程负责写入aof缓冲区</p>
+</li>
+<li>
+<p>aof线程负责每秒执行一次同步磁盘操作，并记录最近一次同步时间</p>
+</li>
+<li>主线程负责对比上一次aof同步时间
+<ul>
+<li>如果距上次同步成功时间在2秒内，主线程直接返回</li>
+</ul></li>
+</ol>
+<ul>
+<li>如果距上次同步成功时间超过2秒，主线程将会阻塞，直到同步操作完成</li>
+</ul></div><h3>1.2.1.4、复制</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<h3>原理</h3>
+<h4>复制过程</h4>
+<ul>
+<li>保存主节点（master）信息。</li>
+<li>从节点通过定时任务发现主节点信息，会尝试和主节点建立socket链接。（定时任务是每秒运行的）</li>
+<li>从节点发送ping信号</li>
+<li>验证权限</li>
+<li>数据同步</li>
+<li>命令持续复制
+<h4>数据同步</h4>
+<h5>复制偏移量</h5>
+<h5>复制积压缓冲区</h5>
+<h4>全量复制</h4>
+<h4>部门复制</h4></li>
+</ul>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=25982feae029463a34189abd94a00263" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=ee4b3e2e052bdb93fc195d4f751b42ec" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=ce9ee4be4825eac6078f778941400f65" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=6c9c3b5810d97f4c20f708fd396f79c0" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=7fb86961850d6c79cee5a3e58a59787d" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=b8f96ce4dda7f77df7ecb1c875d3a871" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=911aad88d19a89e9df247acf103a84f4" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=7b37d3d192bf2d3b2499543557a18531" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=3b33917176281830a3787ad6e61723fb" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=9f1fac5a4c70904a421b594c57480e00" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=638a397e59b410586bafbdfd44116e83" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=68c08bbd1e70fd52e71be6de532105a0" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=2a273105299ff13880f55339ed729782" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=74a8939e9592f9da7a37b438de4e146e" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=e13842f6f816e573b8e77b9990a6e29a" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=5523d4e67d92ede185473738bcc10fd9" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=1767b7ce2362f6e1fe25449724075239" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=3bd0d02166308c0a483d347ebc3026bf" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=735c7c7f2e401ff720df7930eb5c7589" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=3c0ea87d3decb75a81bcd22f44a418af" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=f73239a6595c5faf6b8066b59a6911b6" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=8a52923a852480a90c32b13e09c9033b" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=20d00dec66ddedd0abac47cf4b928456" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=7d01cf973bfd074b3912abaf5567f3ea" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=ee87d207ad0c20d792a7279a15503fc2" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=2ef8b0075195bbf286b23ebb7cfc80a4" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=60093db40066c0a496dade574b247b62" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=04c72b2584c0a398785aa66bd3d9d4e6" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=968771b0671bedd019550da5b6831cd0" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=a03c1d7aa65fef23d4e216a4f388dde3" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=8c88b99b3aff454f54a29c0360deddb5" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=2b023fe1bd56a23316ff716b1a95befb" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=bb203fc394ca7442d311519521f2b85c" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=43cbe5cc2b39dfd793ca0ab4a4e93720" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=9d7b37879f38f88e16cf4cd610a71a79" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=1d2ec8a3626d1871593d63457bece798" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=a49d9b4c48efa9d33c29b7da9d1c28e2" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=f98d9d639643b406ccf1677a1a3d17ea" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=ed5e605f6dcdcd4c6582d1e7dfcdfac2" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=efff760f4dca701379657cf09fb21857" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=f7c09933ea984a964f45d9f43a5c69a4" alt="" /></p>
+<p>=======================================================</p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=f6e10706aaa43f909a1fce429ee0b27c" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=1f7a366c6dfb0d8f9c88573ce6112df7" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=398dc2c555ca25829c5d038448f9fd5b" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=ce6f2a4b96feb73626146a04e9fd934b" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=7db16f87bc5b020b219eaba542f9f238" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=4a16cdd0333cd3e9999b60e3e3d72be1" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=e5829e8e485808db4907a6f1cf387771" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=b097d7a9fb589eaaf9d1a2e21c1cf795" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=7daf165a992fdc9ad7608332674854c3" alt="" /></p>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitFile?sign=3df02f20b2594d71230dc3d020a3c522" alt="" /></p></div></div><h2>1.2.2、分布式运用</h2><div style="margin-left:0px;"><h3>1.2.2.1、redis限流</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code class="language-lua">local key = KEYS[1]
+
+local limit = tonumber(ARGV[1])
+
+local count = tonumber(redis.call('get', key) or '0')
+
+if count + 1 > limit then
+    return false
+else
+    redis.call('INCRBY',key,1)
+    redis.call('EXPIRE',key,30)
+    return true
+end</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">@Configuration
+public class RedisConfiguration {
+
+    @Bean
+    public RedisTemplate<String,String> redisTemplate(RedisConnectionFactory factory){
+        return new StringRedisTemplate(factory);
+    }
+    @Bean
+    public DefaultRedisScript redisScript(){
+        DefaultRedisScript redisScript = new DefaultRedisScript();
+        redisScript.setLocation(new ClassPathResource("redislimiter.lua"));
+        redisScript.setResultType(Boolean.class);
+        return redisScript;
+    }</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface AccessLimiter {
+
+    int limit();
+
+    String key() default "";
+
+}</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">@Aspect
+@Component
+public class AccessLimiterAspect {
+
+   static final Logger logger = LoggerFactory.getLogger(AccessLimiterAspect.class);
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedisScript<Boolean> redisLimitLua;
+
+    @Pointcut("@annotation(com.shopping.mall.aspect.annotation.AccessLimiter)")
+    public void cut() {
+        logger.info("cut");
+    }
+
+    @Before("cut()")
+    public void before(JoinPoint joinPoint) {
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        AccessLimiter annotation = method.getAnnotation(AccessLimiter.class);
+        if (annotation == null) {
+            return;
+        }
+        String key = annotation.key();
+        Integer limit = annotation.limit();
+        if (StringUtils.isEmpty(key)) {
+            Class[] type = method.getParameterTypes();
+            key = method.getClass() + method.getName();
+
+            if (type != null) {
+                String paramTypes = Arrays.stream(type)
+                        .map(Class::getName)
+                        .collect(Collectors.joining(","));
+                logger.info("param types: " + paramTypes);
+                key += "#" + paramTypes;
+            }
+        }
+        boolean acquired = stringRedisTemplate.execute(redisLimitLua, Lists.newArrayList(key), CharacterSetUtils.getString(limit));
+        if (!acquired) {
+            logger.error("您的访问被阻止, key={}", key);
+            throw new RuntimeException("您的访问被阻止");
+        }
+    }
+
+}</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">@Service
+public class AccessLimiterUtil {
+
+    static final Logger logger = LoggerFactory.getLogger(AccessLimiterUtil.class);
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedisScript<Boolean> rateLimitLua;
+
+    public void limitAccess(String key, Integer limit) {
+        Boolean acquired = stringRedisTemplate.execute(rateLimitLua, Lists.newArrayList(key), CharacterSetUtils.getString(limit));
+        if (!acquired) {
+            logger.error("您的访问被阻止, key={}", key);
+            throw new RuntimeException("您的访问被阻止");
+        }
+    }
+}</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">@Component
+@Aspect
+public class ServiceLogAspect {
+
+    public static final Logger log =
+            LoggerFactory.getLogger(ServiceLogAspect.class);
+
+    /**
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around("execution(* com.shopping.mall.service.impl..*.*(..))")
+    public Object recordTimeLog(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        log.info("====== 开始执行 {}.{} ======", joinPoint.getTarget().getClass(), joinPoint.getSignature().getName());
+        long begin = System.currentTimeMillis();
+        Object result = joinPoint.proceed();
+        long end = System.currentTimeMillis();
+        long takeTime = end - begin;
+        if (takeTime > 3000) {
+            log.error("====== 执行结束，耗时：{} 毫秒 ======", takeTime);
+        } else if (takeTime > 2000) {
+            log.warn("====== 执行结束，耗时：{} 毫秒 ======", takeTime);
+        } else {
+            log.info("====== 执行结束，耗时：{} 毫秒 ======", takeTime);
+        }
+        return result;
+    }
+
+}</code></pre></table></div><h3>1.2.2.2、redis分布式锁</h3><div style="margin-left:30px;"><p>方法一：</p>
+<p>加锁</p>
+<table width='100%' class='codestyle'><pre><code class="language-lua">local key = KEYS[1];--redis的key
+local threadId = ARGV[1];--线程的唯一标识
+local releaseTime = ARGV[2]; -- 锁的自动释放时间
+
+if(redis.call('exists', key) == 0) then -- 判断锁是否与存在
+    redis.call('hset', key, threadId, '1'); -- 不存在，获取锁
+    redis.call('expire', key, releaseTime); -- 设置有效期
+    return 1; -- 返回结果
+end;
+
+if(redis.call('hexists', key, threadId) == 1) then --锁已经存在  判断线程爱是是都是自己的
+    redis.call('hincrby', key, threadId, '1'); -- 如果是自己的，则重入次数+1
+    redis.call('expire', key, releaseTime); -- 设置有效期
+    return 1; -- 返回结果
+end;
+return 0; -- 说明锁不是自己的，获取失败</code></pre></table>
+<p>解锁</p>
+<table width='100%' class='codestyle'><pre><code class="language-lua">local key = KEYS[1];  -- 锁的key
+local threadId = ARGV[1]; -- 线程id
+
+if (redis.call('hexists', key, threadId) == 0) then  -- 判断但钱锁是否还是被自己持有
+    return nil; --不是自己返回
+end;
+
+local count = redis.call('hincrby', key, threadId, -1); -- 是自己的锁，则重入减一
+
+if (count == 0) then -- 判断重入次数是否为0
+    redis.call('del', key); -- 是  释放锁
+    return nil;
+end;</code></pre></table>
+<p>java</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">package com.imooc.seckill.model;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
+
+import java.util.Collections;
+import java.util.UUID;
+
+@Getter
+@Setter
+public class RedisLock {
+
+    private RedisTemplate redisTemplate;
+    private DefaultRedisScript<Long> lockScript;
+    private DefaultRedisScript<Object> unlockScript;
+
+    public RedisLock(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        // 加载释放锁的脚本
+        this.lockScript = new DefaultRedisScript<>();
+        this.lockScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("lock.lua")));
+        this.lockScript.setResultType(Long.class);
+        // 加载释放锁的脚本
+        this.unlockScript = new DefaultRedisScript<>();
+        this.unlockScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("unlock.lua")));
+    }
+
+    /**
+     * 获取锁
+     * @param lockName 锁名称
+     * @param releaseTime 超时时间(单位:秒)
+     * @return key 解锁标识
+     */
+    public String tryLock(String lockName, long releaseTime) {
+        // 存入的线程信息的前缀，防止与其它JVM中线程信息冲突
+        String key = UUID.randomUUID().toString();
+
+        // 执行脚本
+        Long result = (Long)redisTemplate.execute(
+                lockScript,
+                Collections.singletonList(lockName),
+                key + Thread.currentThread().getId(), releaseTime);
+
+        // 判断结果
+        if(result != null && result.intValue() == 1) {
+            return key;
+        }else {
+            return null;
+        }
+    }
+    /**
+     * 释放锁
+     * @param lockName 锁名称
+     * @param key 解锁标识
+     */
+    public void unlock(String lockName, String key) {
+        // 执行脚本
+        redisTemplate.execute(
+                unlockScript,
+                Collections.singletonList(lockName),
+                key + Thread.currentThread().getId(), null);
+    }
+}</code></pre></table>
+<p>方法二：</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">package com.example.distributelock.lock;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.data.redis.core.types.Expiration;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+@Slf4j
+public class RedisLock implements AutoCloseable {
+
+    private RedisTemplate redisTemplate;
+    private String key;
+    private String value;
+    //单位：秒
+    private int expireTime;
+
+    public RedisLock(RedisTemplate redisTemplate,String key,int expireTime){
+        this.redisTemplate = redisTemplate;
+        this.key = key;
+        this.expireTime=expireTime;
+        this.value = UUID.randomUUID().toString();
+    }
+
+    /**
+     * 获取分布式锁
+     * @return
+     */
+    public boolean getLock(){
+        RedisCallback<Boolean> redisCallback = connection -> {
+            //设置NX
+            RedisStringCommands.SetOption setOption = RedisStringCommands.SetOption.ifAbsent();
+            //设置过期时间
+            Expiration expiration = Expiration.seconds(expireTime);
+            //序列化key
+            byte[] redisKey = redisTemplate.getKeySerializer().serialize(key);
+            //序列化value
+            byte[] redisValue = redisTemplate.getValueSerializer().serialize(value);
+            //执行setnx操作
+            Boolean result = connection.set(redisKey, redisValue, expiration, setOption);
+            return result;
+        };
+
+        //获取分布式锁
+        Boolean lock = (Boolean)redisTemplate.execute(redisCallback);
+        return lock;
+    }
+
+    public boolean unLock() {
+        String script = "if redis.call(\"get\",KEYS[1]) == ARGV[1] then\n" +
+                "    return redis.call(\"del\",KEYS[1])\n" +
+                "else\n" +
+                "    return 0\n" +
+                "end";
+        RedisScript<Boolean> redisScript = RedisScript.of(script,Boolean.class);
+        List<String> keys = Arrays.asList(key);
+
+        Boolean result = (Boolean)redisTemplate.execute(redisScript, keys, value);
+        log.info("释放锁的结果："+result);
+        return result;
+    }
+
+    @Override
+    public void close() throws Exception {
+        unLock();
+    }
+}
+</code></pre></table></div></div></div><h2>1.3、mysql</h2><div style="margin-left:0px;"><h3>1.3.1、sql优化</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<h2>mysql优化的准备工作</h2>
+<p><code>使用mysql官方测试数据库</code>
+<a href="https://github.com/datacharmer/test_db"><a href="https://github.com/datacharmer/test_db">https://github.com/datacharmer/test_db</a></a></p>
+<h2>慢查询日志</h2>
+<p>记录执行超过指定时间的sql语句</p>
+<h3>mysql查询的相关参数</h3>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th>参数</th>
+<th>作用</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>set global log_output</td>
+<td>表示日志输出的文件 可以设置为多种格式 FILE,TABLE</td>
+<td>FILE</td>
+</tr>
+<tr>
+<td>set global long_query_time</td>
+<td>执行sql超过的时间记录到慢sql日志中 单位秒</td>
+<td>10</td>
+</tr>
+<tr>
+<td>set global slow_query_log</td>
+<td>是否开启慢sql查询</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>set global log_queries_not_using_indexes</td>
+<td>记录没有使用索引的查询</td>
+<td>OFF</td>
+</tr>
+</tbody>
+</table>
+<h4>使用方式</h4>
+<p>方式一：修改my.cnf , 需要重启mysql</p>
+<table width='100%' class='codestyle'><pre><code class="language-sql">slow_query_log = 'ON';
+
+log_output = 'FILE,TABLE';
+
+long_query_time = 10;
+
+log_queries_not_using_indexes = 'ON';</code></pre></table>
+<p>方式二：全局上设置</p>
+<table width='100%' class='codestyle'><pre><code class="language-sql">set global slow_query_log = 'ON';
+
+set global log_output = 'FILE,TABLE';
+
+set global long_query_time = 10;
+
+set global log_queries_not_using_indexes = 'ON';</code></pre></table>
+<p>查询慢sql的日志</p>
+<table width='100%' class='codestyle'><pre><code class="language-sql">select * from `mysql`.slow_log; #基于TABLE</code></pre></table>
+<p>主要看sql_text字段的数据，记录了是那条sql语句</p>
+<table width='100%' class='codestyle'><pre><code class="language-sql">show variables like '%slow_query_log_file%' #基于FILE</code></pre></table>
+<p>通过命令行去服务器上看日志</p>
+<h2>EXPLAIN详解</h2>
+<p>EXPLAIN 使用 在sql语句前面加上这个关键字</p>
+<table width='100%' class='codestyle'><pre><code class="language-sql">explain select * from employees;</code></pre></table>
+<h3>重要的字段解析</h3>
+<p>id：</p>
+<p>id越大越在前面执行，id一样顺序执行</p>
+<p>type：</p>
+<p>system：只有一行数据被扫描。</p>
+<p>const：表最多有一个匹配行，针对主键或唯一索引。</p>
+<p>eq_ref：就是两张表通过其中一张表的主键或者唯一非空索引进行关联时，查询结果是一对一的关系。当使用了索引的全部组成部分，索引为 UNIQUE等才能使用该类型。</p>
+<p>ref：当满足索引的最左匹配原则，或者索引不是主键或者唯一索引才能触发，</p>
+<p>fulltext：使用了全文索引。</p>
+<p>range：使用索引去检索范围内的行，输出行中的键列指示使用哪个索引。基本上是用到了以下操作符： !=, <>, >, >=, <, <=, IS NULL, <=>, BETWEEN, LIKE, or IN()。</p>
+<p>index：全索引扫描。</p>
+<p>all：全表扫描，性能最差。</p>
+<p>rows：</p>
+<p>扫描的行数（优化的目的减少扫描的行数，sql才能提升性能）。</p>
+<p>Extra：</p>
+<p>using filesort：包含order by 操作，排序字段没有用到索引。</p>
+<p>using temporary：MySQL需要创建一个临时表来保存结果。如果查询包含GROUP BY和ORDER BY，通常会发生这种情况。</p>
+<h2>创建索引的原则</h2>
+<h3>建议创建索引</h3>
+<p>1、 频繁作为where条件的字段。（单独的索引、组合索引）</p>
+<ul>
+<li>注意组合索引需要遵从最<code>左匹配原则</code>
+`最左匹配原则：指的是索引按照最左优先的方式匹配 如给A,B,C三个字段创建索引
+<table width='100%' class='codestyle'><pre><code class="language-sql">where A=1；
+WHERE A=1 AND B=2 ；
+WHERE A=1 AND B=2 AND C=3； 可以使用
+where B=2；
+WHERE A=1 AND C=3； 不可以使用</code></pre></table></li>
+</ul>
+<p>2、频繁作为分组、排序的字段。</p>
+<p>3、distinct的字段。</p>
+<p>4、字段的只有唯一性约束。</p>
+<p>5、多表关联查询的字段需要创建索引<code>注意数据类型必须保持一致否则会有隐式转换问题，导致索引失效</code>。</p>
+<h3>不建议创建索引</h3>
+<ol>
+<li>
+<p>where条件种用不到的字段。</p>
+</li>
+<li>
+<p>表数据少。</p>
+</li>
+<li>
+<p>有大量重复的数据 比如枚举，年龄，性别等。</p>
+</li>
+<li>频繁需要修改更新的数据，如果创建索引要考虑到索引的开销。</li>
+</ol>
+<h3>索引失效的场景</h3>
+<ol>
+<li>索引列不独立。字段进行了表达式计算，字段是函数的参数
+<table width='100%' class='codestyle'><pre><code class="language-sql">where emp_no + 1 = 10003;
+解决方案：事先计算好表达式的值，再传过来，避免在SQLwhere条件 = 的左侧做计算
+where SUBSTRING(first_name, 1, 3) = 'Geo';
+解决方案：预先计算好结果，再传过来，在where条件的左侧，不要使用函数；或者使用等价的SQL去实现</code></pre></table></li>
+<li>使用了左模糊。
+<table width='100%' class='codestyle'><pre><code class="language-sql">where first_name like '%A%';
+解决方案：尽量避免使用左模糊，如果避免不了，可以考虑使用搜索引擎去解决</code></pre></table></li>
+<li>使用OR查询的部分字段没有索引。
+<table width='100%' class='codestyle'><pre><code class="language-sql">where A = 'A'
+or B = 'B';
+解决方案：分别为A以及B字段创建索引</code></pre></table></li>
+<li>字符串条件未使用''引起来。
+<table width='100%' class='codestyle'><pre><code class="language-sql">where dept_no = 3;
+解决方案：规范地编写SQL</code></pre></table></li>
+<li>
+<p>不符合最左前缀原则的查询。</p>
+</li>
+<li>索引字段建议添加NOT NULL约束。
+<code>MySQL官方建议尽量把字段定义为NOT NULL</code>：<a href="https://dev.mysql.com/doc/refman/8.0/en/data-size.html">https://dev.mysql.com/doc/refman/8.0/en/data-size.html</a></li>
+<li>隐式转换导致索引失效。</li>
+</ol>
+<h3>索引调优的技巧索引调优的技巧</h3>
+<ol>
+<li>
+<p>覆盖索引
+select的字段只需要从索引就能获取，不需要到表数据里面获取，这个的索引就叫覆盖索引
+select 后面更想的字段，减少网络的开销，还可能使用到覆盖索引</p>
+</li>
+<li>冗余、重复索引的优化
+<ul>
+<li>重复索引</li>
+</ul></li>
+</ol>
+<p>在相同的列上按照相同的顺序创建的相同类型的索引。
+应该避免创建这样的重复索引，发现之后也应该立即移除。</p>
+<ul>
+<li>冗余索引</li>
+</ul>
+<p>如果已经存在索引index（A,B），有创建了index（A），那么index（A）就是index（A,B）的冗余索引</p>
+<h2>JOIN优化</h2>
+<h3>join的种类</h3>
+<p><a href="http://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins"><img  style='max-width:500' src="https://img-blog.csdnimg.cn/img_convert/a35435422c2892d4e22ad5b32fd62d91.png" alt="" /></a></p>
+<p>图片来自于：<a href="http://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins"><a href="http://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins">http://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins</a></a></p>
+<p>cross join：笛卡尔连接  会把A表里面的数据和B表里面的数据任意的连接
+如果cross join带有on子句，就相当于inner join</p>
+<h3>join算法</h3>
+<table width='100%' class='codestyle'><pre><code class="language-sql">Table   Join Type
+t1      range
+t2      ref
+t3      ALL</code></pre></table>
+<ol>
+<li>Nested-Loop Join（NLJ-嵌套循环join）
+<table width='100%' class='codestyle'><pre><code class="language-sql">for each row in t1 matching range {
+for each row in t2 matching reference key {
+for each row in t3 {
+  if row satisfies join conditions, send to client
+}
+}
+}</code></pre></table></li>
+<li>Block Nested-Lopp Join（BNLJ块嵌套循环join）
+<table width='100%' class='codestyle'><pre><code class="language-sql">for each row in t1 matching range {
+for each row in t2 matching reference key {
+store used columns from t1, t2 in join buffer
+if buffer is full {
+  for each row in t3 {
+    for each t1, t2 combination in join buffer {
+      if row satisfies join conditions, send to client
+    }
+  }
+  empty join buffer
+}
+}
+}
+if buffer is not empty {
+for each row in t3 {
+for each t1, t2 combination in join buffer {
+  if row satisfies join conditions, send to client
+}
+}
+}</code></pre></table>
+<p>扫描次数计算公式：（S*C）/join_buffer_size+1</p></li>
+</ol>
+<h3>驱动表和被驱动表</h3>
+<p>外层循环的表是驱动表，内层循环的表是被驱动表</p>
+<h3>JOIN调优的原则</h3>
+<p>1、 用小表驱动大表</p>
+<ul>
+<li>
+<p>优化器回自动选择最优来执行</p>
+</li>
+<li>当优化器没有选择的时候可以用STRSIGHT_JOIN</li>
+</ul>
+<p>2、where条件使用索引，减少外层循环的数据量</p>
+<p>3、join on 的字段类型保持一致，否则会有隐式转换索引失效</p>
+<p>4、join的表不要太多</p>
+<p><code>阿里规范建议不要稍多三张</code></p>
+<h2>分页查询优化</h2>
+<p>方案一：覆盖索引</p>
+<p>方案二：覆盖索引+join</p>
+<p>方案三：覆盖索引+子查询</p>
+<p>方案四：禁止传入过大的页码（参考百度）</p>
+<h2>COUNT优化</h2>
+<ol>
+<li>
+<p>当没有非主键索引时，会使用主键索引</p>
+</li>
+<li>
+<p>如果存在非主键索引的话，会使用非主键索引</p>
+</li>
+<li>如果存在多个非主键索引，会使用一个最小的非主键索引</li>
+</ol>
+<table width='100%' class='codestyle'><pre><code class="language-sql">count(1) 和 count(*)</code></pre></table>
+<p>count(*)和count(1)没有区别</p>
+<p>官方文档：<a href="https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html"><a href="https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html">https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html</a></a></p>
+<p>对于MyISAM表，COUNT(*)如果SELECT从一个表中检索，没有检索到其他列，并且没有 WHERE子句， 则优化为非常快速地返回</p>
+<p>方案一：创建一个更小的非主键索引</p>
+<p>方案二：把数据库引擎换成MyISAM （建议不药使用）</p>
+<p>方案三：information_schema.tables</p>
+<table width='100%' class='codestyle'><pre><code class="language-sql">select TABLE_ROWS from `information_schema`.TABLES where TABLE_SCHEMA ='employees' and TABLE_NAME = 'employees';
+--好处：employees，不管employees有多少数据，都可以迅速地返回结果
+-- 缺点：估算值，并不是准确值</code></pre></table>
+<p>方案四：使用explain 有优缺点同上</p>
+<p>方案五：</p>
+<table width='100%' class='codestyle'><pre><code class="language-sql">show table status where Name = 'salaries';
+优缺点同上</code></pre></table>
+<h2>ORDER BY优化</h2>
+<p>我们在使用order by 可以使用索引，因为它是天然有序性的链表</p>
+<p><code>推荐看一下</code><a href="https://blog.csdn.net/zwx900102/article/details/106379268"><a href="https://blog.csdn.net/zwx900102/article/details/106379268">https://blog.csdn.net/zwx900102/article/details/106379268</a></a></p>
+<p>无法利用索引避免排序，升降序不一致 一个字段使用desc，一个使用asc</p>
+<p><code>mysql官方文档sql优化</code> <a href="https://dev.mysql.com/doc/refman/5.7/en/optimization.html"><a href="https://dev.mysql.com/doc/refman/5.7/en/optimization.html">https://dev.mysql.com/doc/refman/5.7/en/optimization.html</a></a></p>
+<blockquote>
+<p><strong>仅供自己学习作笔记使用！！！</strong></p>
+</blockquote></div><h3>1.3.2、分库分表</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<h2>实现读写分离和数据切分有两种方式</h2>
+<p>方式一：中间层代理（mycat）
+系统应用----->中间代理----->数据库</p>
+<p>方式二：客户端模式（Sharding-Jdbc） 只需要引入客户端的jar包</p>
+<p>区别：mycat是服务端代理 Sharding-jdbc是客户端代理
+mycat不支持同意库内的水平切分、Sharding-jdbc支持</p>
+<h2>垂直切分、水平切分</h2>
+<h3>垂直切分</h3>
+<ol>
+<li>
+<p>按业务去切分
+比如：订单，商品，用户都在一个数据库中，现在把这三张表分别放在不同数据库中，按照表的维度去切分</p>
+</li>
+<li>
+<p>每种业务表一个数据库</p>
+</li>
+<li>不同业务之间，禁止join联查（比较麻烦）</li>
+</ol>
+<h4>优点</h4>
+<ol>
+<li>
+<p>拆分后业务之间清晰明确</p>
+</li>
+<li>
+<p>系统之间容易扩展升级，不会影响待其他表</p>
+</li>
+<li>数据库维护简单</li>
+</ol>
+<h4>缺点</h4>
+<ol>
+<li>
+<p>业务表无法join，只能通过接口调用，增加了代码的复杂度</p>
+</li>
+<li>
+<p>跨库的事务难以处理</p>
+</li>
+<li>业务的数据量大时，也会存在性能的瓶颈</li>
+</ol>
+<h3>水平切分</h3>
+<p>将表的数据按照指定的规则切分到不同的库中
+比如：按照用户来切分订单，奇数偶数分别放在不同库里</p>
+<p>优点</p>
+<ol>
+<li>
+<p>解决了单库数据量大华人高平发性能瓶颈的问题</p>
+</li>
+<li>开发人员关注，由代理层代理</li>
+</ol>
+<p>缺点</p>
+<ol>
+<li>
+<p>拆分的规则难以做到全部统一
+比如：用户只需要根据id去查对应的数据库，而商户需要把所有的都查出来，再进行过滤</p>
+</li>
+<li>系统难于扩展升级（规则变动，需要迁移数据），维护难度大</li>
+</ol>
+<p><code>在项目中按照先垂直再水平，先按照不同的业务进行拆分，再选择按照规则进行拆分</code></p>
+<h2>MyCat</h2>
+<h3>环境的搭建</h3>
+<p><code>建议看一下</code><a href="https://www.cnblogs.com/fger/p/10387593.html"><a href="https://www.cnblogs.com/fger/p/10387593.html">https://www.cnblogs.com/fger/p/10387593.html</a></a>
+<code>mysql官网安装</code><a href="https://dev.mysql.com/doc/refman/8.0/en/linux-installation-yum-repo.html"><a href="https://dev.mysql.com/doc/refman/8.0/en/linux-installation-yum-repo.html">https://dev.mysql.com/doc/refman/8.0/en/linux-installation-yum-repo.html</a></a>
+<code>mycat官网安装</code><a href="https://www.yuque.com/ccazhw/gl7qp9/pbegu1"><a href="https://www.yuque.com/ccazhw/gl7qp9/pbegu1">https://www.yuque.com/ccazhw/gl7qp9/pbegu1</a></a></p>
+<h3>server.xml配置</h3>
+<p>配置mycat的用户名、密码、权限、Schema</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">  <!-- mycat的账号 -->
+  <user name="root" defaultAccount="true">
+    <!-- 密码 -->
+    <property name="password">alpha.mycat</property>
+    <!-- 该账号可以访问的逻辑库,对应schema.xml文件的schema节点的name-->
+    <property name="schemas">adnc_usr,adnc_maint,adnc_cus</property>
+    <!-- 只读的权限 -->
+    <property name="readOnly">true</property>
+  </user></code></pre></table>
+<p><code>server.xml官方</code> <a href="https://github.com/AlphaYu/Adnc/blob/master/doc/mycat/server.xml"><a href="https://github.com/AlphaYu/Adnc/blob/master/doc/mycat/server.xml">https://github.com/AlphaYu/Adnc/blob/master/doc/mycat/server.xml</a></a></p>
+<h3>schema.xml基础配置</h3>
+<p>配置dataHost（节点主机）包括读写host</p>
+<p>配置dataNode（数据节点）指定具体的数据库</p>
+<p>配置schema，表名、数据节点、分片规则</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"><?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+    <!-- 配置3个逻辑库-->
+    <!-- sqlMaxLimit:limlt语句 仅对分片表有效-->
+    <schema name="adnc_usr" checkSQLschema="true" sqlMaxLimit="100" dataNode="dn_usr"></schema>
+    <schema name="adnc_maint" checkSQLschema="true" sqlMaxLimit="100" dataNode="dn_maint"></schema>
+    <schema name="adnc_cus" checkSQLschema="true" sqlMaxLimit="100" dataNode="dn_cus"></schema>
+
+    <!-- 逻辑库对应的真实数据库-->
+    <dataNode name="dn_usr" dataHost="dh_adnc" database="adnc_usr" />
+    <dataNode name="dn_maint" dataHost="dh_adnc" database="adnc_maint" />
+    <dataNode name="dn_cus" dataHost="dh_adnc" database="adnc_cus" />
+
+    <!--真实数据库所在的服务器地址，这里配置了1主2从。主服务器(hostM1)宕机会自动切换到(hostS1) -->
+    <!--balance：0：不开启读写分离，都落在writeHost；1：第一个不读取writeHost；2：读写均匀随机分配 writeHost，readHost；3读在readHost -->
+    <!--writeType：0：落在第一个writeHost，1：随机落在writeHost -->
+    <dataHost name="dh_adnc" maxCon="1000" minCon="10" balance="1" writeType="0" dbType="mysql" dbDriver="native">
+        <heartbeat>select user()</heartbeat>
+        <writeHost host="hostM1" url="172.20.0.11:3306" user="root" password="alpha.abc" >
+            <readHost host="hostS2" url="172.20.0.13:3306" user="root" password="alpha.abc" />
+        </writeHost>
+        <writeHost host="hostS1" url="172.20.0.12:3306" user="root" password="alpha.abc" />
+    </dataHost>
+
+</mycat:schema></code></pre></table>
+<p><code>schema.xml官方</code>
+<a href="https://github.com/AlphaYu/Adnc/blob/master/doc/mycat/schema.xml"><a href="https://github.com/AlphaYu/Adnc/blob/master/doc/mycat/schema.xml">https://github.com/AlphaYu/Adnc/blob/master/doc/mycat/schema.xml</a></a></p>
+<p><code>mycat权威指南（第七章mycat配置文件解读）</code> <a href="http://www.mycat.org.cn/document/mycat-definitive-guide.pdf"><a href="http://www.mycat.org.cn/document/mycat-definitive-guide.pdf">http://www.mycat.org.cn/document/mycat-definitive-guide.pdf</a></a></p>
+<h3>mysql主从</h3>
+<p><code>主从配置查看</code> <a href="https://blog.csdn.net/weixin_45367838/article/details/117888130"><a href="https://blog.csdn.net/weixin_45367838/article/details/117888130">https://blog.csdn.net/weixin_45367838/article/details/117888130</a></a></p>
+<h3>枚举分片</h3>
+<h4>schema.xml配置其他标签</h4>
+<p>table标签里的rule属性：定义分片表的分片规则，规则名字在 rule.xml 中定义，必须与 tableRule 标签中 name 属性属性值一一对应。</p>
+<p><img  style='max-width:500' src="https://img-blog.csdnimg.cn/img_convert/465a282245984703585137772b4dff2d.png" alt="" /></p>
+<p><img  style='max-width:500' src="https://img-blog.csdnimg.cn/img_convert/3542db882df9eada9b11f1bd35bebfe7.png" alt="" /></p>
+<p>过在配置文件中配置可能的枚举 id，自己配置分片，本规则适用于特定的场景，比如有些业务需要按照省份或区县来做保存，而全国省份区县固定的，这类业务使用本条规则，（也会是分片的规则）</p>
+<p><img  style='max-width:500' src="https://img-blog.csdnimg.cn/img_convert/d0005f0fd3b49ea5d95e5be51ad39faf.png" alt="" /></p>
+<p>在这个文件下指定分片规则</p>
+<p><img  style='max-width:500' src="https://img-blog.csdnimg.cn/img_convert/f392f4c3369c2064bec7702d019b0be5.png" alt="" /></p>
+<p>可以通过mycat修改，会同步到其他库里面，插入的数据也要和上面规则保持一致0：表示第一个库； 1：表示第二个库； Default_Node=0：表示其他数字放在第一个库；</p>
+<p><code>其他分片规则可以参考指南</code></p>
+<p><code>mycat权威指南（第十章有mycat常用的分片规则）</code> <a href="http://www.mycat.org.cn/document/mycat-definitive-guide.pdf"><a href="http://www.mycat.org.cn/document/mycat-definitive-guide.pdf">http://www.mycat.org.cn/document/mycat-definitive-guide.pdf</a></a></p>
+<h3>不需要分片的表</h3>
+<h4>schema.xml配置其他标签</h4>
+<p>table标签里的type属性：global为全局表，不指定分片。
+该属性定义了逻辑表的类型，目前逻辑表只有“全局表”和”普通表”两种类型。对应的配置：</p>
+<p>• 全局表：global。</p>
+<p>• 普通表：不指定该值为 globla 的所有表。</p>
+<h3>子表</h3>
+<p>订单相关的表如果都分片的话，需要进行跨库比较麻烦，这个时候用子表在一个分片里join比较好</p>
+<h4>schema.xml配置其他标签</h4>
+<p>childTable标签在table里定义</p>
+<p>childTable标签：定义分片子表，通过标签上的属性与父表进行关联</p>
+<p>name属性：定义子表的表名。</p>
+<p>joinKey 属性：子表中的id，用于与父表做关联</p>
+<p>parentKey属性：父表中的id，与joinKey对应</p>
+<h2>Sharding-Jdbc</h2>
+<p>分布式的关系型数据库中间件</p>
+<p>客户端代理模式</p>
+<p>轻量级的java框架，jar包提供服务</p>
+<p>提供了四种配置方式
+Java Api、Yaml、SpringBoot、Spring（xml）</p>
+<p><code>Sharding-Jdbc官网</code> <a href="https://shardingsphere.apache.org/document/current/cn/overview/"><a href="https://shardingsphere.apache.org/document/current/cn/overview/">https://shardingsphere.apache.org/document/current/cn/overview/</a></a></p>
+<blockquote>
+<p><strong>仅供自己学习作笔记使用！！！</strong></p>
+</blockquote></div><h3>1.3.3、基本知识</h3><div style="margin-left:30px;"></div></div><h2>1.4、并发基础</h2><div style="margin-left:0px;"><h3>1.4.1、线程</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<h2>初始化线程</h2>
+<h3>新建线程</h3>
+<p>在很多博客说新建线程有很多种，这些都是基于自己的理解创建线程，但是oracle官网上明确给出只有两种，一种是将类声明为 的子类Thread，另一种方法是声明一个实现Runnable接口的类，有兴趣的小伙伴可以去看一下oracle官网：<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html">https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html</a></a></p>
+<p><strong>接下来我会针对这里两种做一个简单的说明：</strong></p>
+<table width='100%' class='codestyle'><pre><code class="language-java">Thread thread = new Thread();
+thread.statrt();</code></pre></table>
+<p>当我们调用statrt()方法时，线程Thread，实现了Runnable接口，所以有一个run()，statrt()方法就会新建一个线程，并让这个线程执行run()方法。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">Thread thread = new Thread();
+thread.run();</code></pre></table>
+<p>在我们调用run()方法时，其实是是作为一个普通的方法调用，相当于一个mian()方法，而不能新建线程。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> Runnable runnable = () -> {
+            System.out.println(Thread.currentThread().getName());
+        };
+        Runnable runnable1 = () -> System.out.println(Thread.currentThread().getName());
+        runnable1.run();
+        new Thread(runnable).start();
+
+输出：main
+    Thread-0</code></pre></table>
+<p>这就是调用stater()和run()的区别。</p>
+<p>当我们想在线程里做点什么的时候，就可以通过重写run()方法，把我们的业务代码写进去。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">        Thread thread= new Thread(){
+            @Override
+            public void run(){
+                System.out.println("重写run方法");
+            }
+        };
+        thread .start();
+
+        new Thread(() -> System.out.println("重写run方法")).start();</code></pre></table>
+<p>我们也可以继承Thread方法来重写run()方法，但是java是单继承，所以最好还是实现Runnable接口</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public interface Runnable {
+    public abstract void run();
+}</code></pre></table>
+<p>Thread方法中还有一个待Runnable接口的构造函数</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">    public Thread(Runnable target) {
+        init(null, target, "Thread-" + nextThreadNum(), 0);
+    }</code></pre></table>
+<p>我们只需要传入一个Runnable接口的实例，在调用start()时，新的线程就是执行Runnable.run()</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">    @Override
+    public void run() {
+        if (target != null) {
+            target.run();
+        }
+    }</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">implements Runnable{
+    public static void main(String[] args) {
+        Thread thread = new Thread(new ThreadSetName());
+        thread.start();
+    }
+    @Override
+    public void run() {
+        System.out.println("run方法");
+    }</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        thread.start();
+    }</code></pre></table>
+<p>可以避免Thread重写run()方法。</p>
+<p>在我们调用两次start()时就会出现异常</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">        Thread thread = new Thread();
+        thread.start();
+        thread.start();</code></pre></table>
+<p>原因是在thread类中有一个被volatile修饰的threadStatus，而start()被synchronized修饰，但我们调用两遍时，他的threadStatus就不等于0。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">private volatile int threadStatus = 0;
+
+public synchronized void start() {
+        if (threadStatus != 0)
+            throw new IllegalThreadStateException();
+        group.add(this);
+        boolean started = false;
+        try {
+            start0();
+            started = true;
+        } finally {
+            try {
+                if (!started) {
+                    group.threadStartFailed(this);
+                }
+            } catch (Throwable ignore) {
+                  it will be passed up the call stack */
+            }
+        }
+    }</code></pre></table>
+<h3>停止线程</h3>
+<p>通过看Thread源码，Thread还给我们提供了一个stop()的方法，但是这个方法被遗弃了，因为这个方法时立刻终止线程，当有两个线程来操作数据时，会导致线程还没有操作完数据就被终止了，会有脏数据出现。</p>
+<h3>线程中断</h3>
+<p>线程中断并不会像stop()一样了一样立刻中断线程，而是给线程发出一个通知，告诉线程有人希望你退出了，线程接受到通知后怎么处理，则完全由目标线程自行决定的，如果我们中断后，线程就立刻停止，那和stop()一样了</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">        Thread thread = new Thread();
+        thread.interrupt();  //中断线程
+        thread.isInterrupted(); //判断是否中断线程
+        thread.interrupted(); //判断是否中断线程，并删除当前中断状态</code></pre></table>
+<p>thread.interrupt()方法是通知目标线程中断，相当于设置一个中断标识位。thread.isInterrupted()通过检查中断标识位，来判断是否被中断。thread.interrupted()也是通过检查中断标识位，来判断是否被中断，并同时清除当前线程的中断标识位的状态。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">        Thread thread = new Thread(()->{
+            while (true) {
+                System.out.println("中断");
+            }
+        });
+        thread.start();
+        Thread.sleep(1000);
+        thread.interrupt();
+    }</code></pre></table>
+<p>虽然我们调用了interrupt()，但是在thread中并没有中断线程的逻辑，这里只是给线程设置了中断状态，并不会发生任何作用。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public static void main(String[] args) throws InterruptedException {
+        Thread thread = new Thread(()->{
+            while (true) {
+                if (Thread.currentThread().isInterrupted()){
+                    System.out.println("中断");
+                }
+                break;
+            }
+        });
+        thread.start();
+        Thread.sleep(1000);
+        thread.interrupt();
+    }</code></pre></table>
+<p>上面的Thread.currentThread().isInterrupted()判断当前线程是否有中断标记位，如果有就中断</p>
+<p><strong> Thread.sleep()</strong>
+Thread.sleep()方法会让当前线程休眠若干时间，他会抛出一个InterruptedException中断异常，当线程在sleep()休眠时，如果被中断就会抛出异常</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">Thread thread = new Thread(() -> {
+            while (true) {
+                if (Thread.currentThread().isInterrupted()) {
+                    System.out.println("中断");
+                }
+                break;
+            }
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                System.out.println("occur InterruptedException");
+                Thread.currentThread().interrupt();
+            }
+        });
+        thread.start();
+        Thread.sleep(1000);
+        thread.interrupt();
+    }</code></pre></table>
+<h3>等待（wait）和通知（notify）</h3>
+<ul>
+<li>
+<p>在JDK中还提供了两个非常重要的方法：等待（wait()）和通知(notify())，这两个方法并不在Thread中，而是在Object中，也就意味任务对象都可以调用这两个方法。</p>
+</li>
+<li>
+<p>当对象调用wait()时，当前线程则会在这个对象上等待，直到等到当前对象或者当前对象的另外一个线程调用notify()方法终止。</p>
+</li>
+<li>
+<p>notify()方法是随机唤醒一个线程，为不是有序的唤醒，所以他是不公平的。</p>
+</li>
+<li>
+<p>Object中还提供了一个notifyAll()，这个方法是唤醒所有等待的线程。</p>
+</li>
+<li>需要注意的是这几个方法，在调用他们之前，必须在synchronized语句中，无论是等待（wait()）和通知(notify())方法都需要首先获得当前对象的一个监听器。</li>
+</ul>
+<ol>
+<li>
+<p>在线程1在执行wait()方法前，必须获得object对象的监听器。</p>
+</li>
+<li>
+<p>再执行wait()方法后，会释放这个监听器。这样做的目的是使其他在等待object对象上的线程不会因为线程1休眠就全部无法执行。</p>
+</li>
+<li>线程2在执行notify()方法前，也必须获得object对象的监听器。</li>
+<li>
+<p>再执行notify()方法后，会释放监听器。</p>
+</li>
+<li>
+<p>当线程1被唤醒了不会立马执行，而是尝试再次获取监听器，而这个监听器正好是线程1当初执行。</p>
+</li>
+<li>wait()前持有的就会继续执行后面的代码，如果无法获得，则线程1必须等待这个监听器。</li>
+</ol>
+<p><img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/2115af50a6bda06c11452d85fbaf7dd8" alt="" /></p>
+<table width='100%' class='codestyle'><pre><code class="language-java">
+    public static Object object = new Object();
+
+    static class Thread1 extends Thread {
+
+        @Override
+        public void run() {
+            synchronized (object) {
+                System.out.println("线程"+"-" +System.currentTimeMillis()+"-"+Thread.currentThread().getName() + "开始执行了");
+                try {
+                    System.out.println("线程"+"-" +System.currentTimeMillis()+"-"+Thread.currentThread().getName() + "开始调用wait()");
+                    object.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("线程"+"-" + System.currentTimeMillis()+"-"+ Thread.currentThread().getName() + "获取到了锁。");
+            }
+        }
+    }
+
+    static class Thread2 extends Thread {
+
+        @Override
+        public void run() {
+            synchronized (object) {
+                System.out.println("线程"+"-" + System.currentTimeMillis()+"-"+ Thread.currentThread().getName() + "开始调用了notify()");
+                object.notify();
+                System.out.println("线程"+"-" + System.currentTimeMillis()+"-"+ Thread.currentThread().getName() + "调用了notify()");
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread1 thread1 = new Thread1();
+        Thread2 thread2 = new Thread2();
+        thread1.start();
+        thread2.start();
+    }
+
+    输出：线程-1629213315771-Thread-0开始执行了
+线程-1629213315771-Thread-0开始调用wait()
+线程-1629213315771-Thread-1开始调用了notify()
+线程-1629213315771-Thread-1调用了notify()
+线程-1629213315973-Thread-0获取到了锁。</code></pre></table>
+<h3>等待线程结束（join()）</h3>
+<p>在多线程应用中，很多时候一个的输入要依赖于另一个线程或者多个线程输出，这个时候就需要这个线程等待依赖的线程执行完毕，才能继续执行，JDK中提供了</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public final void join() throws InterruptedException
+public final synchronized void join(long millis) throws InterruptedException</code></pre></table>
+<p>第一个join方法表示无限等待，他会一直阻塞当前线程，直到目标线程执行完毕。第二个是给定一个最大的等待时间。如果超过给定的时间目标线程还在执行，当前线程也会继续往下执行。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread().getId() + "执行完毕");
+            }
+        });
+
+        thread.start();
+        System.out.println("开始等待子线程运行完毕");
+        thread.join();
+//        synchronized (thread) {
+//            thread.wait();
+//        }
+        System.out.println("所有子线程执行完毕");
+    }</code></pre></table>
+<p>生命周期
+<img  style='max-width:500' src="https://www.showdoc.com.cn/server/api/attachment/visitfile/sign/b61c94bd25c3e49211d0ad2d5b38a5c9" alt="" /></p></div><h3>1.4.2、同步控制器</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<h2>同步控制</h2>
+<h3>重入锁</h3>
+<p>在JDK5.0之前版本中，重入锁的性能要优越于synchronized，但在6.0之后synchronized做出了重大的改动。使之synchronized和ReentrantLock的性能几乎相差不大，两者并不是替代的作用。</p>
+<h4>synchronized和ReentrantLock</h4>
+<p>效率低：锁的释放情况少、获得锁时不能设定超时，不能中断一个试图获得锁的线程,因为释放锁不是由我们控制的</p>
+<p>不灵活：加锁和释放锁的时机单一，每个锁仅有当以得条件</p>
+<p>无法知道是否成功获得锁</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> private static ReentrantLock lock= new ReentrantLock();
+
+    private static void bookSeat(){
+        lock.lock();
+        try {
+            System.out.println(Thread.currentThread().getName()+"开始预定座位");
+            Thread.sleep(1000);
+            System.out.println(Thread.currentThread().getName()+"完成预定座位");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void main(String[] args) {
+        new Thread(()->bookSeat()).start();
+        new Thread(()->bookSeat()).start();
+        new Thread(()->bookSeat()).start();
+        new Thread(()->bookSeat()).start();
+    }</code></pre></table>
+<p>以上的代码就是使用ReentrantLock，我们可以看到他要调用lock()方法才能加锁，而释放锁时调用unlock()又必须放在finally里面，因为这样做的原因是如果在加锁的这边代码出现里异常，他也能都释放锁，避免了其他线程等不到锁而变成死锁。开发人员可以根据自己的业务情况进行加锁或者解锁。这样可以看出ReentrantLock相比之下要比synchronized更为灵活</p>
+<p>可重入顾名思义是可以对一段代码重复加锁和释放锁</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> private static ReentrantLock lock=new ReentrantLock();
+
+    public static void main(String[] args) {
+        System.out.println(lock.getHoldCount());
+        lock.lock();
+        System.out.println(lock.getHoldCount());
+        lock.lock();
+        System.out.println(lock.getHoldCount());
+        lock.lock();
+        System.out.println(lock.getHoldCount());
+        lock.unlock();
+        System.out.println(lock.getHoldCount());
+        lock.unlock();
+        System.out.println(lock.getHoldCount());
+        lock.unlock();
+        System.out.println(lock.getHoldCount());
+    }
+输出：0
+1
+2
+3
+2
+1
+0</code></pre></table>
+<p>有上面代码可以看出是可以重复加锁的，但是需要注意的是加了几把锁就要释放几把锁，避免造成死锁。如果释放过多就会抛出异常<code>java.lang.IllegalMonitorStateException</code>。</p>
+<p>可重入锁ReentrantLock和非可重入锁ThreafPoolExecutor的Worker类</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> 可重入
+       final boolean nonfairTryAcquire(int acquires) {
+            final Thread current = Thread.currentThread();
+            int c = getState();
+            if (c == 0) {
+                if (compareAndSetState(0, acquires)) {
+                    setExclusiveOwnerThread(current);
+                    return true;
+                }
+            }
+            else if (current == getExclusiveOwnerThread()) {
+            //获取锁时先判断，如果当前线程就已经占有锁的线程，则对status+1并放回非可重入锁
+                int nextc = c + acquires;
+                if (nextc < 0) // overflow
+                    throw new Error("Maximum lock count exceeded");
+                setState(nextc);
+                return true;
+            }
+            return false;
+        }
+
+        protected final boolean tryRelease(int releases) {
+        //释放锁时也是先判断当前线程是否时已占有线程，让后在判断status，如果status=0，才真正释放锁
+            int c = getState() - releases;
+            if (Thread.currentThread() != getExclusiveOwnerThread())
+                throw new IllegalMonitorStateException();
+            boolean free = false;
+            if (c == 0) {
+                free = true;
+                setExclusiveOwnerThread(null);
+            }
+            setState(c);
+            return free;
+        }</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">//非可重入锁
+        protected boolean tryAcquire(int unused) {
+            if (compareAndSetState(0, 1)) {//非可重入锁时直接尝试获取锁,0:表示没有热门持有。1：我想持有改为1
+                setExclusiveOwnerThread(Thread.currentThread());
+                return true;
+            }
+            return false;
+        }
+
+        protected boolean tryRelease(int unused) {
+            setExclusiveOwnerThread(null);
+            setState(0);//释放锁时也将status=0
+            return true;
+        }</code></pre></table>
+<h4>中断响应</h4>
+<p>对于 synchronized 来对，如果一个线程在等待锁，那么就有两种结果，要么它获得这把锁执行代码，要么等待这把锁被释放。而ReentrantLock重入锁，则有另一种可能性，那就是线程可以被中断，在等待锁的过程中，我们可以根据基本的业务取消对锁的请求。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">  private Lock lock=new ReentrantLock();
+
+    public static void main(String[] args) {
+        LockInterrupTibly lockInterrupTibly = new LockInterrupTibly();
+        Thread thread0 = new Thread(lockInterrupTibly);
+        Thread thread1 = new Thread(lockInterrupTibly);
+        thread0.start();
+        thread1.start();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        thread1.interrupt();
+    }
+    @Override
+    public void run() {
+        System.out.println("尝试获取锁"+Thread.currentThread().getName());
+        try {
+            lock.lockInterruptibly();
+            try {
+                System.out.println("拿到了锁"+Thread.currentThread().getName());
+                Thread.sleep(5000);
+            }catch (InterruptedException e){
+                System.out.println("睡眠期间被中断"+Thread.currentThread().getName());
+            }finally {
+                lock.unlock();
+                System.out.println("释放了锁"+Thread.currentThread().getName());
+            }
+        } catch (InterruptedException e) {
+            System.out.println("获得锁期间被中断了"+Thread.currentThread().getName());
+        }
+    }</code></pre></table>
+<p>lock()方法不能被中断，一旦陷入死锁，lock()就会永久等待</p>
+<p>tryLock()用于尝试获取锁，如果当前所没有被其他线程所占用，则获取成功，则返回true，否则就返回false，该方法会立即返回，即使在拿不到锁的情况下，也不会一直等待</p>
+<p>tryLock(long time, TimeUnit unit)会等待一段时间，超过了这段时间就放弃等待，返回false</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">   int flag = 1;
+    static Lock lock1 = new ReentrantLock();
+    static Lock lock2 = new ReentrantLock();
+
+    public static void main(String[] args) {
+        TryLockDeadlock r1 = new TryLockDeadlock();
+        TryLockDeadlock tryLockDeadlock2 = new TryLockDeadlock();
+        r1.flag = 1;
+        r1.flag = 0;
+
+        new Thread(r1).start();
+        new Thread(tryLockDeadlock2).start();
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 1000; i++) {
+            if (flag == 1) {
+                try {
+                    if (lock1.tryLock(800, TimeUnit.MILLISECONDS)) {
+                        try {
+                            System.out.println("线程1获取到了锁1");
+                            Thread.sleep(new Random().nextInt(1000));
+                            if (lock2.tryLock(800, TimeUnit.MILLISECONDS)) {
+                                try {
+                                    System.out.println("线程1获取到了锁2");
+                                    System.out.println("线程1获取到了两把锁");
+                                    break;
+                                } finally {
+                                    lock2.unlock();
+                                }
+                            } else {
+                                System.out.println("线程1获取到了锁2 失败");
+                            }
+                        } finally {
+                            lock1.unlock();
+                            Thread.sleep(new Random().nextInt(1000));
+                        }
+                    } else {
+                        System.out.println("线程1获取到了锁1失败======");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (flag == 0) {
+                try {
+                    if (lock2.tryLock(800, TimeUnit.MILLISECONDS)) {
+                        try {
+                            System.out.println("线程2获取到了锁2");
+                            Thread.sleep(new Random().nextInt(1000));
+                            if (lock1.tryLock(800, TimeUnit.MILLISECONDS)) {
+                                try {
+                                    System.out.println("线程2获取到了锁1");
+                                    System.out.println("线程2获取到了2把锁");
+                                    break;
+                                } finally {
+                                    lock1.unlock();
+                                }
+                            } else {
+                                System.out.println("线程2获取到了锁1 失败");
+                            }
+                        } finally {
+                            lock2.unlock();
+                            Thread.sleep(new Random().nextInt(1000));
+                        }
+                    } else {
+                        System.out.println("线程2获取到了锁2失败");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }</code></pre></table>
+<p>lockInterruptibly()相当于把tryLock(long time, TimeUnit unit)超时时间设置为无限，在等待所得过程中可以被中断</p>
+<h4>公平锁和非公平锁公平锁和非公平锁</h4>
+<p>在synchronized和ReentrantLock和中，锁的申请都是非公平的锁，首先线程1请求了锁A，接着线程2同时请求锁A，系统则是随机选出一个在等待的线程，这样会造成一个饥饿现象。而公平锁是会按照时间的先后顺序，保证先来先得，后来后得，这样的好处是不会有饥饿现象，保证了排队的线程都可以获得锁。</p>
+<p>ReentrantLock既是公平的也是非公平的</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">//非公平锁
+    public ReentrantLock() {
+        sync = new NonfairSync();
+    }</code></pre></table>
+<p>当我们传入一个true时，是公平锁，传入false时，非公平锁。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public ReentrantLock(boolean fair) {
+        sync = fair ? new FairSync() : new NonfairSync();
+    }</code></pre></table>
+<p>在我们开发中没有特殊的要求基本都是用非公平锁，因为公平锁的实现是需要维护一个有序的队列，成本比较高，性能低下。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> public  static void main(String[] args) {
+        PrintQueue prinQueue = new PrintQueue();
+        Thread thread[] = new Thread[10];
+        for (int i = 0; i < 10; i++) {
+            thread[i] = new Thread(new Job(prinQueue));
+        }
+        for (int i = 0; i < 10; i++) {
+            thread[i].start();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+}
+
+class Job implements Runnable {
+    PrintQueue printQueue;
+
+    public Job(PrintQueue printQueue) {
+        this.printQueue = printQueue;
+    }
+
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + "开始打印");
+        printQueue.printJob(new Object());
+        System.out.println(Thread.currentThread().getName() + "开始完毕");
+    }
+}
+
+class PrintQueue {
+    private Lock lock = new ReentrantLock(true);
+
+    public void printJob(Object document) {
+        lock.lock();
+        try {
+            int duration = new Random().nextInt(10) + 1;
+
+            System.out.println(Thread.currentThread().getName() + "正在打印，需要" + duration+"秒");
+            try {
+                Thread.sleep(duration * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            lock.unlock();
+        }
+
+        lock.lock();
+        try {
+            int duration = new Random().nextInt(10) + 1;
+
+            System.out.println(Thread.currentThread().getName() + "正在打印，需要" + duration+"秒");
+            try {
+                Thread.sleep(duration * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+</code></pre></table>
+<p>公平锁源码</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">protected final boolean tryAcquire(int acquires) {
+            final Thread current = Thread.currentThread();
+            int c = getState();
+            if (c == 0) {
+            //判断前面是不是又线程在队列中排队，没有我们在获取
+                if (!hasQueuedPredecessors() &&
+                    compareAndSetState(0, acquires)) {
+                    setExclusiveOwnerThread(current);
+                    return true;
+                }
+            }
+            else if (current == getExclusiveOwnerThread()) {
+                int nextc = c + acquires;
+                if (nextc < 0)
+                    throw new Error("Maximum lock count exceeded");
+                setState(nextc);
+                return true;
+            }
+            return false;
+        }
+    }</code></pre></table>
+<p>非公平锁</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">final boolean nonfairTryAcquire(int acquires) {
+            final Thread current = Thread.currentThread();
+            int c = getState();
+            if (c == 0) {
+            //非公平锁没有这个判断!hasQueuedPredecessors()
+                if (compareAndSetState(0, acquires)) {
+                    setExclusiveOwnerThread(current);
+                    return true;
+                }
+            }
+            else if (current == getExclusiveOwnerThread()) {
+                int nextc = c + acquires;
+                if (nextc < 0) // overflow
+                    throw new Error("Maximum lock count exceeded");
+                setState(nextc);
+                return true;
+            }
+            return false;
+        }</code></pre></table>
+<h3>Condition</h3>
+<p>这个接口和Object.wait()和Object.notify()大致一样，wait和notify需要在synchronized关键字下面使用，而Condition是与ReentrantLock相关联</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">    private ReentrantLock lock = new ReentrantLock();
+    private Condition condition = lock.newCondition();</code></pre></table>
+<p>利用这个Condition对象，我们可以让线程在合适的时间等待，或者在某个特定的时间等到通知，继续执行。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">void await() throws InterruptedException;
+void awaitUninterruptibly();
+long awaitNanos(long nanosTimeout) throws InterruptedException;
+boolean await(long time, TimeUnit unit) throws InterruptedException;
+boolean await(long time, TimeUnit unit) throws InterruptedException;
+boolean awaitUntil(Date deadline) throws InterruptedException;
+void signal();
+void signalAll();</code></pre></table>
+<ul>
+<li>
+<p>await()方法会使当前线程等待，同时释放当前锁，当其他线程中使用signal()方法或者signalAll()方法时，线程会重新获得锁并继续执行，或者当线程被中断时，也能跳出等待。</p>
+</li>
+<li>
+<p>awaitUninterruptibly()方法和await()基本一样，但是它并不会在等待过程中响应中断。</p>
+</li>
+<li>
+<p>signal()方法用于唤醒等待的线程，signalAll()方法用于唤醒所有等待的线程。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">private ReentrantLock lock = new ReentrantLock();
+private Condition condition = lock.newCondition();
+
+void method1() throws InterruptedException {
+    lock.lock();
+    try {
+        System.out.println("条件不满足，开始await");
+        condition.await();
+        System.out.println("条件满足,开始执行后续的任务");
+    } finally {
+        lock.unlock();
+    }
+}
+void method2() {
+    lock.lock();
+    try {
+        System.out.println("准备工作完成，唤醒其他线程");
+        condition.signal();
+    }finally {
+        lock.unlock();
+    }
+}
+
+public static void main(String[] args) throws InterruptedException {
+    ConditionDemo conditionDemo = new ConditionDemo();
+    new Thread(()->{
+        try {
+            Thread.sleep(1000);
+            conditionDemo.method2();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }).start();
+    conditionDemo.method1();
+}</code></pre></table>
+<p>Object.wait()和Object.notify()，当线程调用condition.await()方法之前，要求线程具有相关的可重入锁，在调用condition.await()之后，这个线程会释放这把锁。同理，在调用condition.signal()之前也会要求线程具有相关的可重入锁，在调用condition.signal()之后，系统会从当前Condition对象的等待队列中唤醒一个线程，一旦线程被唤醒，他会尝试会获取与之前绑定的重入锁，，一旦获取成功就可以执行。由此可见在调用condition.signal()之后，会释放锁，让给被唤醒的线程。</p>
+</li>
+</ul>
+<h3>信号量(Semaphore)</h3>
+<p>Semaphore可以用来限制或者管理数量有限的资源的使用情况</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">    public Semaphore(int permits)
+    public Semaphore(int permits, boolean fair) //第二个参数可指定是否公平</code></pre></table>
+<p>在构造Semaphore对象时，需要指定信号量的许可证，即同时能申请多少许可。当每个线程只能申请一次时，就相当于指定了多少个线程可以访问木一个资源。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public void acquire() throws InterruptedException
+public void acquireUninterruptibly()
+public boolean tryAcquire()
+public boolean tryAcquire(long timeout, TimeUnit unit)throws InterruptedException
+public void release()</code></pre></table>
+<p>acquire()方法获得一个许可证。如是无法获得，则线程会等待，直到有线程释放一个许可证或者当前线程被中断，acquireUninterruptibly()方法和acquire()方法相似，但是不响应中断。tryAcquire()方法尝试获得一个许可证，如果成功就返回true，失败就返回false，他不会进行等待，而是立刻返回。release()方法用于线程在访问资源结束后会释放一个许可证，使其他等待的线程可以进行资源访问。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">static Semaphore semaphore= new Semaphore(3,true);
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(50);
+        for (int i = 0; i < 100; i++) {
+            executorService.submit(new Task());
+        }
+        executorService.shutdown();
+    }
+    static class Task implements Runnable{
+
+        @Override
+        public void run() {
+            try {
+                semaphore.acquire(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName()+"拿到了许可证");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName()+"释放许可证");
+            semaphore.release(3);
+        }
+    }</code></pre></table>
+<h3>ReentrantReadWriteLock读写锁</h3>
+<ul>
+<li>
+<p>读写锁分离可以有效地帮助减少锁的竞争，提升锁的性能</p>
+</li>
+<li>
+<p>多个线程只申请读锁，都可以申请到</p>
+</li>
+<li>
+<p>如果有一个线程占用了已经占用了读锁，则此时其他线程如果要申请写锁，则这个线程要一直等待释放读锁</p>
+</li>
+<li>如果有一个线程占用了已经占用了写锁，则此时其他线程如果要申请写锁或读锁，则这个线程要一直等待释放写锁</li>
+</ul>
+<table width='100%' class='codestyle'><pre><code class="language-java">private static ReentrantReadWriteLock reentrantReadWriteLock=new ReentrantReadWriteLock(false);
+
+    private static ReentrantReadWriteLock.ReadLock readLock=reentrantReadWriteLock.readLock();
+
+    private static ReentrantReadWriteLock.WriteLock writeLock=reentrantReadWriteLock.writeLock();
+
+    private static void read(){
+        readLock.lock();
+        try {
+            System.out.println(Thread.currentThread().getName()+"得到了读锁，正在读取");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }finally {
+            System.out.println(Thread.currentThread().getName()+"释放了读锁");
+            readLock.unlock();
+        }
+    }
+    private static void write(){
+        writeLock.lock();
+        try {
+            System.out.println(Thread.currentThread().getName()+"得到了写锁，正在写入");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }finally {
+            System.out.println(Thread.currentThread().getName()+"释放了写锁");
+            writeLock.unlock();
+        }
+    }
+
+    public static void main(String[] args) {
+        new Thread(()->write(),"Thread1").start();
+        new Thread(()->read(),"Thread2").start();
+        new Thread(()->read(),"Thread3").start();
+        new Thread(()->write(),"Thread4").start();
+        new Thread(()->read(),"Thread5").start();
+
+    }</code></pre></table>
+<h3>CountDownLatch</h3>
+<p>流程：倒数结束之前，一直处于等待状态，直到到时结束了，此线程才继续工作</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">//进一个构造函数，参数count为需要倒数的数值
+    public CountDownLatch(int count) {
+        if (count < 0) throw new IllegalArgumentException("count < 0");
+        this.sync = new Sync(count);
+    }</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">//调用await()方法的线程会被挂起，他会等待到count值为0才继续执行
+   public void await() throws InterruptedException {
+        sync.acquireSharedInterruptibly(1);
+    }</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">//将count值减1，直到为0时，等到的线程才会被换起
+    public void countDown() {
+        sync.releaseShared(1);
+    }</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">CountDownLatch countDownLatch = new CountDownLatch(1);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        for (int i = 0; i < 5; i++) {
+            final int no = i + 1;
+            Runnable runnable = () -> {
+                System.out.println("no" + no + ":准备完毕，等待发令枪");
+                try {
+                    countDownLatch.await();
+                    System.out.println("no" + no + ":开始跑步了");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            };
+            executorService.submit(runnable);
+        }
+        Thread.sleep(5000);
+        System.out.println("比赛开始");
+        countDownLatch.countDown();</code></pre></table>
+<h3>CyclicBarrier</h3>
+<p>CyclicBarrier也是多线程并发控制的工具，它与CountDownLatch非常相似，在CountDownLatch我们只可以用一次，而CyclicBarrier可以循环使用，是因为他内部有一个reset()方法，可以重置。
+CyclicBarrier.await()方法可能抛出两个异常InterruptedException，也就是在前一章节和大家说的，线程在等待的过程中，线程被中断了。另外一个是CyclicBarrier特有的异常。一旦遇到这个异常就证明当前的CyclicBarrier已经被损坏，系统可能没有办法等到所有线程到齐。</p>
+<h3>LockSupport</h3>
+<p>LockSupport是一个线程阻塞工具，它可以在线程内任意位置让线程阻塞。与Thread.suspend()方法相比，弥补了由于resume()方法发生导致线程无法继续执行的现象，和Object.wait()相比，它不需要事先获取某个锁的对象，也不会抛出InterruptedException异常。</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public static void park()
+public static void parkNanos(long nanos)
+public static void parkUntil(long deadline)</code></pre></table>
+<p>他们内部的都是实现了同一个UNSAFE.park()</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> public static Object object = new Object();
+    public static void main(String[] args) throws InterruptedException {
+        Thread thread = new Thread(() -> {
+            synchronized (object){
+                System.out.println("线程名字" + Thread.currentThread().getName());
+            }
+            LockSupport.park();
+        });
+        Thread thread1 = new Thread(() -> {
+            synchronized (object){
+                System.out.println("线程名字" + Thread.currentThread().getName());
+            }
+            Thread.currentThread().suspend();
+        });
+        thread.start();
+        Thread.sleep(100);
+        thread1.start();
+        thread.resume();
+        thread1.resume();
+        thread.join();
+        thread1.join();
+    }</code></pre></table>
+<p>这里虽然运行正常，但是我们的程序并没有结束，是因为在休眠的时候线程1和线程2就已经被释放了，而线程2才启动，状态为RUNNABLE</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> public static Object object = new Object();
+    public static void main(String[] args) throws InterruptedException {
+        Thread thread = new Thread(() -> {
+            synchronized (object){
+                System.out.println("线程名字" + Thread.currentThread().getName());
+            }
+            LockSupport.park();
+        });
+        Thread thread1 = new Thread(() -> {
+            synchronized (object){
+                System.out.println("线程名字" + Thread.currentThread().getName());
+            }
+            LockSupport.park();
+        });
+        thread.start();
+        Thread.sleep(100);
+        thread1.start();
+        LockSupport.unpark(thread);
+        LockSupport.unpark(thread1);
+        thread.join();
+        thread1.join();
+    }</code></pre></table>
+<p>这里将原来的suspend()和resume()用park()和unpark()方法替换。这里我们依旧无法保证unpark()在park()后执行。但是这段代码他会正常的结束，线程2不会因为park()方法而永久的挂起。</p>
+<p>LockSupport类里面使用了类似于信号量的机制，它会为每个线程准备一个许可证，如果许可证可用，那么park()就会立刻退出，并且消费这个许可证，如果许可证不可用，就会阻塞，而unpark()则会是的一个许可证可用。</p></div><h3>1.4.3、线程池</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<p><img  style='max-width:500' src="https://img-blog.csdnimg.cn/img_convert/07fd845e3fca063b39a2114b58457074.png" alt="" /></p>
+<h2>线程池合适和场景</h2>
+<p>服务器接收到大量请求时，使用线程池合它可以大大减少线程的创建和销毁次数，提高服务器的工作效率</p>
+<h2>创建和停止线程池</h2>
+<h3>线程池构造函数的参数</h3>
+<table width='100%' class='codestyle'><pre><code class="language-java">    public ThreadPoolExecutor(int corePoolSize //核心线程数,
+                              int maximumPoolSize,//最大线程数
+                              long keepAliveTime,//保持存活的时间
+                              TimeUnit unit,//保持存货的时间单位
+                              BlockingQueue<Runnable> workQueue,//任务存队列
+                              ThreadFactory threadFactory,//需要新的线程时，会使用工厂的方式来生成新的线程（ThreadFactory）
+                              RejectedExecutionHandler handler//由于达到线程边界和队列容量会有拒接策略) {~~~~~~~~}
+
+//corePoolSize：线程池在初始化完成后，默认情况下，线程池种没有任何的任务，会一直等到有任务到来时，再创建新的线程执行任务
+
+//maximumPoolSize：科技理解为再核心线程数的基础上，额外添加一些线程，但是又一个最大线程的数量
+
+//keepAliveTime：如果线程池当前的线程数量多余corePoolSize，那么多余线程空闲的时间超过keepAliveTime时，就会被终止
+
+//threadFactory用于创建线程：默认使用 Executors.defaultThreadFactory()，创建出来的线程都在同一个线程组里面，拥有同样的NORM_PRIORITY优先级并且都不时守护线程。如果自己指定threadFactory，那么就可以改变线程名，线程组，优先级，是否是守护线程等
+//workQueue：1. 直接交换：SynchronousQueue  2. 无界队列：LinkedBlockingQueue 3. 有界队列：ArrayBlockingQueue
+</code></pre></table>
+<h4>基本工作原理</h4>
+<ol>
+<li>
+<p>如果线程数小于corePoolSize，其他线程处于空闲的状态，也会创建一个新线程来处理任务</p>
+</li>
+<li>
+<p>如果线程数大于（等于）corePoolSize，但是小于maximumPoolSize，则会加入到队列</p>
+</li>
+<li>
+<p>如果workQueue都满了，并且线程数小于maximumPoolSize，则会创建一个新线程来执行任务</p>
+</li>
+<li>如果workQueue都满了，并且线程数大于（等于）maximumPoolSize，则会handler拒接任务</li>
+</ol>
+<p><img  style='max-width:500' src="https://img-blog.csdnimg.cn/img_convert/513631cbc3b252d6c7916e502bd58983.png" alt="" /></p>
+<table width='100%' class='codestyle'><pre><code class="language-java">    public void execute(Runnable command) {
+        if (command == null)
+            throw new NullPointerException();
+        int c = ctl.get();
+        if (workerCountOf(c) < corePoolSize) {
+            if (addWorker(command, true))
+                return;
+            c = ctl.get();
+        }
+        if (isRunning(c) && workQueue.offer(command)) {
+            int recheck = ctl.get();
+            if (! isRunning(recheck) && remove(command))
+                reject(command);
+            else if (workerCountOf(recheck) == 0)
+                addWorker(null, false);
+        }
+        else if (!addWorker(command, false))
+            reject(command);
+    }</code></pre></table>
+<p>corePoolSize---->workQueue----->maximumPoolSize</p>
+<h4>线程的特点</h4>
+<ol>
+<li>
+<p>当corePoolSize和maximumPoolSize设置为相同数量时，就可以创建固定大小的线程池</p>
+</li>
+<li>
+<p>线程池要保持较少的线程数量，当负载很大时才会增加</p>
+</li>
+<li>
+<p>maximumPoolSize设置为最大时，就可以允许线程池容纳任意的并发任务</p>
+</li>
+<li>当队列无边界时（linkedblockingQueue）那么线程数量就不会超过corePoolSize，只有当队列满时才会创建多于corePoolSize的线程</li>
+</ol>
+<h3>手动创建还是自动创建</h3>
+<p>手动创建更好，因为这样可以让我们更加明确线程池的运行规则</p>
+<p>自动创建：</p>
+<p><code>java.util.concurrent</code>包里提供的 <code>Executors</code> 也可以用来创建线程池。</p>
+<ul>
+<li><code>newFixedThreadPool(int nThreads)</code> 固定大小线程的线程池 <code>nThreads</code></li>
+</ul>
+<table width='100%' class='codestyle'><pre><code class="language-java">    public static ExecutorService newFixedThreadPool(int nThreads //线程的大小) {
+        return new ThreadPoolExecutor(nThreads, nThreads,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue<Runnable>());
+    }
+    //由于队列用的是LinkedBlockingQueue没有容量上限的，所以当请求数量越来越多的，并且无法及时处理完，会占用大量的内存，会导致OOM
+</code></pre></table>
+<ul>
+<li><code>newSingleThreadExecuto</code> 单线程线程池，也就是线程池只有一个任务</li>
+</ul>
+<table width='100%' class='codestyle'><pre><code class="language-java">    public static ExecutorService newSingleThreadExecutor() {
+        return new FinalizableDelegatedExecutorService
+            (new ThreadPoolExecutor(1, 1,
+                                    0L, TimeUnit.MILLISECONDS,
+                                    new LinkedBlockingQueue<Runnable>()));
+    }</code></pre></table>
+<ul>
+<li><code>newCachedThreadPool()</code> 可缓存线程池，无界线程池，具有自动回收多余线程的功能</li>
+</ul>
+<table width='100%' class='codestyle'><pre><code class="language-java">    public static ExecutorService newCachedThreadPool() {
+        return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                      60L, TimeUnit.SECONDS,
+                                      new SynchronousQueue<Runnable>());
+    }
+    //SynchronousQueue：内部容量为0，所以任务不能放在里面
+    //maximumPoolSize为Integer.MAX_VALUE 也可能导致OOM</code></pre></table>
+<ul>
+<li><code>newScheduledThreadPool</code> 定时及周期性执行任务的线程池
+<table width='100%' class='codestyle'><pre><code class="language-java">public ScheduledThreadPoolExecutor(int corePoolSize) {
+    super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
+          new DelayedWorkQueue());
+}
+//DelayedWorkQueue 延迟队列：会根据时间来进行对任务的处理</code></pre></table></li>
+</ul>
+<p>手动：</p>
+<p><code>ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor();</code></p>
+<p>要根据不同业务场景手动来设置线程池</p>
+<h3>线程池里的线程数量的设定</h3>
+<ul>
+<li>
+<p>CUP密集型（计算等）：最佳线程数为CPU核心数的1-2倍</p>
+</li>
+<li>耗时IO型（数据库，文件等）：最佳线程数一般会大于CPU核心数很多倍，以JVM线程监控显示情况为依据  计算方式：CPU核心数 * （1+平均等待时间/平均工作时间）</li>
+</ul>
+<h3>停止线程池的方法</h3>
+<ul>
+<li>
+<p>shutdown()：初始化整个关闭的过程，会等待线程池种的任务执行完毕，后面有新的任务过来会抛出异常</p>
+</li>
+<li>
+<p>isShutdown()：返回一个布尔值 true和 false 告诉我们是否停止了</p>
+</li>
+<li>
+<p>isTerminated()：返回整个线程是不是已经完全终止了</p>
+</li>
+<li>
+<p>awaitTermination()：不是停止线程，而是等待一段时间后，如果线程都执行完毕后会返回一个true 没有执行完毕则返回false（用于检测）</p>
+</li>
+<li>shutdownNow():立刻停止线程（在队列种的会被返回）</li>
+</ul>
+<h2>拒接过多的任务</h2>
+<p>拒接时机</p>
+<ul>
+<li>
+<p>当Executor关闭时，提交新任务会被拒接</p>
+</li>
+<li>对最大线程和工作队列容量使用有限边界并且已经饱和</li>
+</ul>
+<p>拒接策略</p>
+<ul>
+<li>
+<p>AbortPolicy：抛出异常</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public static class AbortPolicy implements RejectedExecutionHandler {
+    public AbortPolicy() { }
+
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+        throw new RejectedExecutionException("Task " + r.toString() +
+                                             " rejected from " +
+                                             e.toString());
+    }
+}</code></pre></table>
+</li>
+<li>
+<p>DiscardPolicy：隐式拒接，不会通知</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public static class DiscardPolicy implements RejectedExecutionHandler {
+    public DiscardPolicy() { }
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+    }
+}</code></pre></table>
+</li>
+<li>
+<p>DiscardOldestPolicy：拒接最老的</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public static class DiscardOldestPolicy implements RejectedExecutionHandler {
+    public DiscardOldestPolicy() { }
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+        if (!e.isShutdown()) {
+            e.getQueue().poll();
+            e.execute(r);
+        }
+    }
+}</code></pre></table>
+</li>
+<li>CallerRunsPolicy：主线程给线程池提交任务，线程池满了，就会让提交任务的线程去执行
+<table width='100%' class='codestyle'><pre><code class="language-java">public static class CallerRunsPolicy implements RejectedExecutionHandler {
+    public CallerRunsPolicy() { }
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+        if (!e.isShutdown()) {
+            r.run();
+        }
+    }
+}</code></pre></table></li>
+</ul>
+<h2>线程池状态</h2>
+<ul>
+<li>
+<p>RUNNING：接受新任务并处理</p>
+</li>
+<li>
+<p>SHUTDOWN：不接受新任务，但处理队列中的任务</p>
+</li>
+<li>
+<p>STOP：不接受新任务，也不处理队列中的任务，并中断正在进行的任务</p>
+</li>
+<li>
+<p>TIDYING：所有任务都已经终止，workerCount为零时，线程会转换到TIDYING状态，并将运行termminate（）钩子方法</p>
+</li>
+<li>TERMINATED：terminate（）运行完成</li>
+</ul>
+<table width='100%' class='codestyle'><pre><code class="language-java">
+public class ExecutorsUtil extends ThreadPoolExecutor {
+
+    @Override
+    public void shutdown() {
+        System.out.println(
+                String.format(this.poolName +
+                                "Going to shutdown. Executed tasks: %d," +
+                                "Running tasks: %d, Pending tasks: %d",
+                        this.getCompletedTaskCount(),
+                        this.getActiveCount(), this.getQueue().size())
+        );
+        super.shutdown();
+    }
+
+    @Override
+    public List<Runnable> shutdownNow() {
+        System.out.println(
+                String.format(this.poolName +
+                                "Going to shutdownNow. Executed tasks: %d," +
+                                "Running tasks: %d, Pending tasks: %d",
+                        this.getCompletedTaskCount(),
+                        this.getActiveCount(), this.getQueue().size())
+        );
+        return super.shutdownNow();
+    }
+
+    @Override
+    protected void beforeExecute(Thread t, Runnable r) {
+        startTimes.put(String.valueOf(r.hashCode()), new Date());
+    }
+
+    @Override
+    protected void afterExecute(Runnable r, Throwable t) {
+
+        Date startDate = startTimes.remove(String.valueOf(r.hashCode()));
+        Date finishDate = new Date();
+        long diff = finishDate.getTime() - startDate.getTime();
+
+        System.out.println(String.format("task running time: %d", diff));
+    }
+
+    public static ExecutorService newFixedThreadPool(int nThreads, String poolName) {
+        return new ExecutorsUtil(
+                nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingDeque<>(), poolName
+        );
+    }
+
+    public static ExecutorService newThreadPool(int nThreads, int maxThreads,long keepAliveTime,TimeUnit unit,BlockingQueue<Runnable> workQueue,String poolName) {
+        return new ExecutorsUtil(
+                nThreads, maxThreads, keepAliveTime, unit,
+                workQueue, poolName
+        );
+    }
+
+    private ConcurrentHashMap<String, Date> startTimes;
+    private String poolName;
+
+    public ExecutorsUtil(int corePoolSize, int maximumPoolSize, long keepAliveTime,
+                         TimeUnit unit, BlockingQueue<Runnable> workQueue,
+                         String poolName) {
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit,
+                workQueue, new ExecutorsUtil.EventThreadFactory(poolName),new CallerRunsPolicy());
+        this.startTimes = new ConcurrentHashMap<>();
+        this.poolName = poolName;
+    }
+
+    static class EventThreadFactory implements ThreadFactory {
+
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        EventThreadFactory(String poolName) {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = poolName + "-pool-" + poolNumber.getAndIncrement() + "-thread";
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(
+                    group, r, namePrefix + threadNumber.getAndIncrement(),
+                    0
+            );
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+            return t;
+        }
+    }
+}
+</code></pre></table>
+<blockquote>
+<p><strong>仅供自己学习作笔记使用！！！</strong></p>
+</blockquote></div><h3>1.4.4、ThreadLocal</h3><div style="margin-left:30px;"><p>[TOC]</p>
+<h2>两大使用场景</h2>
+<ol>
+<li>
+<p>场景一：每个线程需要一个独享的对象（通常是工具类，比如SimpleDateFormat和Random）</p>
+</li>
+<li>场景二：每个线程内需要保存全局变量（比如在拦截器中获取用户信息），可以让不同方法直接时使用，避免参数传递的麻烦</li>
+</ol>
+<p>根据共享对象的生成时机不同，选择initialValue或set来保存对象</p>
+<ul>
+<li>
+<p>initialValue：在ThreadLocal第一次get的时候把对象给初始化出来，对象的初始化时机可以有我们控制</p>
+</li>
+<li>set：保存到ThreadLocal里的对象的生成时机不由我们随意控制，例如拦截器生成的用户信息，用ThreadLocal.set直接放到我们的ThreadLocal中去，以便后续使用</li>
+</ul>
+<h2>ThreadLocal的作用</h2>
+<ul>
+<li>
+<p>让某个需要用到的对象在线程间隔离（每个线程都有自己的独立的对象）</p>
+</li>
+<li>在任何方法中都可以轻松获取到该对象</li>
+</ul>
+<h3>ThreadLocal的优点</h3>
+<ul>
+<li>
+<p>达到线程安全</p>
+</li>
+<li>
+<p>不需要加锁，执行效率高</p>
+</li>
+<li>
+<p>更高效地利用内存、节省开销</p>
+</li>
+<li>免去传参的麻烦，降低的了代码的耦合度</li>
+</ul>
+<h2>源码解析</h2>
+<h3>ThreadLocal解读</h3>
+<ul>
+<li>
+<p>该方法会返回当前线程对应的初始值，这是一个延迟加载的方法，只有在调用get的时候才会触发</p>
+</li>
+<li>
+<p>当线程第一次使用get方法访问变量时，将调用此方法，除非线程先前调用了set方法，在这种情况下，不会为线程调用initialValue方法</p>
+</li>
+<li>
+<p>通常，每个线程最多调用一次此方法，但如果已经待用了remove（）后，则可以再调用get（）</p>
+</li>
+<li>如果不重写initialValue()，就会返回一个null值，一般使用匿名内部类的方法来重写initialValue()，以便再后续使用中可以初始化副本对象</li>
+</ul>
+<table width='100%' class='codestyle'><pre><code class="language-java">    protected T initialValue() {
+        return null;
+    }</code></pre></table>
+<p>注意：这个ThreadLocalMap和里面的key、value都是保存在线程中的，而不是保存在ThreadLocal中</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">ThreadLocal.ThreadLocalMap threadLocals = null;//是 Thread类里面的，而不是ThreadLocal里面的</code></pre></table>
+<p>为这个线程设置一个新值</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public void set(T value) {
+    //获取当前线程的引用
+    Thread t = Thread.currentThread();
+    //以当前线程为Key，获取ThreadLocalMap对象
+    ThreadLocalMap map = getMap(t);
+    //获取的ThreadLocalMap对象不为空
+    if (map != null)
+        //设置value的值（覆盖，把ThreadLocal当作key）
+        map.set(this, value);
+    else
+        //获取的ThreadLocalMap对象为空，创建Thread类中的threadLocals变量
+        createMap(t, value);
+}</code></pre></table>
+<p>get方法是先取出当前线程的ThreadLocalMap，然后调用map.getEntry方法，把本ThreadLocal的引用作为参数传入，取出map中属于本ThreadLocal的value</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public T get() {
+    //获取当前线程引用
+    Thread t = Thread.currentThread();
+    //获取当前线程的threadLocals的成员变量
+    ThreadLocalMap map = getMap(t);
+    //获取的threadLocals变量不为空
+    if (map != null) {
+        //返回本地变量对应的值（把当前的Threadlocal作为key去找，我们set进去的值）
+        ThreadLocalMap.Entry e = map.getEntry(this);
+        if (e != null) {
+            @SuppressWarnings("unchecked")
+            T result = (T)e.value;
+            return result;
+        }
+    }
+    //初始化threadLocals成员变量的值
+    return setInitialValue();
+}
+
+    private T setInitialValue() {
+        T value = initialValue();
+        Thread t = Thread.currentThread();
+        ThreadLocalMap map = getMap(t);
+        if (map != null)
+            map.set(this, value);
+        else
+            createMap(t, value);
+        return value;
+    }</code></pre></table>
+<p>以上通过源码可以看出setInitialValue和set最后都是要利用到 map.set(this, value);方法来设置值</p>
+<p>删除对应线程中的值</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public void remove() {
+    //根据当前线程获取threadLocals成员变量
+    ThreadLocalMap m = getMap(Thread.currentThread());
+    if (m != null)
+        //threadLocals成员变量不为空，则移除value值
+        m.remove(this);
+}</code></pre></table>
+<h3>ThreadLocalMap解读</h3>
+<p>ThreadLocalMap类是每个线程Thread类里面的变量，里面最重要的是一个键值对数组Entry[]table ；键值对：</p>
+<ul>
+<li>键：这个ThreadLocal</li>
+<li>值：实际需要的成员变量</li>
+</ul>
+<p>ThreadLocalMap他并不是一个真正的map，可以从源码中发现发并没有继承HashMap和实现map接口</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">    static class ThreadLocalMap {
+        static class Entry extends WeakReference<ThreadLocal<?>> {
+            Object value;
+
+            Entry(ThreadLocal<?> k, Object v) {
+                super(k);
+                value = v;
+            }
+        }
+    }</code></pre></table>
+<p>如果发生冲突，ThreadLocalMap是用线性探测法，就继续找下一个空位置，而不是链表和红黑树来解决</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">        private void set(ThreadLocal<?> key, Object value) {
+            Entry[] tab = table;
+            int len = tab.length;
+            int i = key.threadLocalHashCode & (len-1);//这一段来处理冲突
+            for (Entry e = tab[i];
+                 e != null;
+                 e = tab[i = nextIndex(i, len)]) {
+                ThreadLocal<?> k = e.get();
+                if (k == key) {
+                    e.value = value;
+                    return;
+                }
+                if (k == null) {
+                    replaceStaleEntry(key, value, i);
+                    return;
+                }
+            }
+            tab[i] = new Entry(key, value);
+            int sz = ++size;
+            if (!cleanSomeSlots(i, sz) && sz >= threshold)
+                rehash();
+        }</code></pre></table>
+<h2>ThreadLocal注意点</h2>
+<h3>内存泄露</h3>
+<p>要么是ThreadLocal泄露要么是value泄露，从源代码中可以看出 ThreadLocalMap类中的内部类Entry继承了WeakReference（弱引用）</p>
+<h4>ThreadLocal（key）</h4>
+<p>弱引用的特点：
+如果这个对象只被弱引用关联，那么这个对象那个就可以被回收，所以只要发生GC就会被回收</p>
+<h4>Value</h4>
+<p>是强引用，所以发生GC是不会被回收</p>
+<p>ThreadLocalMap的每个Entry都有一个key的弱引用，也有一个对value的强应用</p>
+<p>正常情况下，当项成终止，保存在ThreadLocal里的value会被GC回收（new Thread()），但是使用线程池的时候，如果线程不终止（反复使用） <code>ThreadLocal.ThreadLocalMap threadLocals ！= null</code>，那么value就不会被回收</p>
+<p>可以调用remove()方法，就会删除对应的Entry对象，可以避免内存泄漏，所以使用完ThreadLocal后，要调用remove()；<code>阿里规范</code></p>
+<table width='100%' class='codestyle'><pre><code class="language-java">    static class ThreadLocalMap {
+        static class Entry extends WeakReference<ThreadLocal<?>> {
+            Object value;
+            //利用WeakReference去赋值k
+            Entry(ThreadLocal<?> k, Object v) {
+                //弱引用
+                super(k);
+                //强引用
+                value = v;
+            }
+        }
+    }</code></pre></table>
+<h3>ThreadLocal具有空指针</h3>
+<p>主线程set进去的值，子线程get不到
+解决方法</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;</code></pre></table>
+<p>在上面我们说过key、value都是保存在线程中的
+从源码我们可以看出
+想要具有传递性<code>new InheritableThreadLocal<T>();</code></p>
+<table width='100%' class='codestyle'><pre><code class="language-java">    private void init(ThreadGroup g, Runnable target, String name,
+                      long stackSize, AccessControlContext acc,
+                      boolean inheritThreadLocals) {
+        if (inheritThreadLocals && parent.inheritableThreadLocals != null)
+            this.inheritableThreadLocals =
+                ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);
+
+    }</code></pre></table>
+<blockquote>
+<p><strong>仅供自己学习作笔记使用！！！</strong></p>
+</blockquote></div><h3>1.4.5、工具类</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code class="language-java">
+public class DateUtil {
+
+    /** 存放不同的日期模板格式的sdf的Map */
+    private static ThreadLocal<Map<String, SimpleDateFormat>> sdfMap = new ThreadLocal<Map<String, SimpleDateFormat>>() {
+        @Override
+        protected Map<String, SimpleDateFormat> initialValue() {
+            System.out.println(Thread.currentThread().getName() + " init pattern: " + Thread.currentThread());
+            return new HashMap<String, SimpleDateFormat>();
+        }
+    };
+
+    /**
+     * 返回一个SimpleDateFormat,每个线程只会new一次pattern对应的sdf
+     * 
+     * @param pattern
+     * @return
+     */
+    private static SimpleDateFormat getSdf(final String pattern) {
+        Map<String, SimpleDateFormat> tl = sdfMap.get();
+        SimpleDateFormat sdf = tl.get(pattern);
+        if (sdf == null) {
+            System.out.println(Thread.currentThread().getName()+" put new sdf of pattern " + pattern + " to map");
+            sdf = new SimpleDateFormat(pattern);
+            tl.put(pattern, sdf);
+        }
+        return sdf;
+    }
+
+    /**
+     * 这样每个线程只会有一个SimpleDateFormat
+     * 
+     * @param date
+     * @param pattern
+     * @return
+     */
+    public static String format(Date date, String pattern) {
+        return getSdf(pattern).format(date);
+    }
+
+    public static Date parse(String dateStr, String pattern)
+            throws ParseException {
+        return getSdf(pattern).parse(dateStr);
+    }
+
+}</code></pre></table></div><h3>1.4.6、默认页面</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code class="language-java"> final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                   boolean evict) {
+        Node<K,V>[] tab; Node<K,V> p; int n, i;
+        if ((tab = table) == null || (n = tab.length) == 0)
+//1、判断当 table 为 null 或者 tab 的长度为 0 时，即 table 尚未初始化，此时通过 resize() 方法得到初始化的 table
+            n = (tab = resize()).length;
+        if ((p = tab[i = (n - 1) & hash]) == null)
+//1.1、此处通过（n - 1） & hash 计算出的值作为 tab 的下标 i，并另 p 表示 tab[i]，也就是该链表第一个节点的位置。并判断 p 是否为 null
+            tab[i] = newNode(hash, key, value, null);
+//1.1.1、当 p 为 null 时，表明 tab[i] 上没有任何元素，那么接下来就 new 第一个 Node 节点，调用 newNode 方法返回新节点赋值给 tab[i]
+        else {
+//2.1 下面进入 p 不为 null 的情况，有三种情况：p 为链表节点；p 为红黑树节点；p 是链表节点但长度为临界长度 TREEIFY_THRESHOLD，再插入任何元素就要变成红黑树了。
+            Node<K,V> e; K k;
+            if (p.hash == hash &&
+                ((k = p.key) == key || (key != null && key.equals(k))))
+//2.1.1HashMap 中判断 key 相同的条件是 key 的 hash 相同，并且符合 equals 方法。这里判断了 p.key 是否和插入的 key 相等，如果相等，则将 p 的引用赋给 e
+
+                e = p;
+            else if (p instanceof TreeNode)
+//2.1.2 现在开始了第一种情况，p 是红黑树节点，那么肯定插入后仍然是红黑树节点，所以我们直接强制转型 p 后调用 TreeNode.putTreeVal 方法，返回的引用赋给 e
+                e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+            else {
+//2.1.3 接下里就是 p 为链表节点的情形，也就是上述说的另外两类情况：插入后还是链表 / 插入后转红黑树。另外，上行转型代码也说明了 TreeNode 是 Node 的一个子类
+                for (int binCount = 0; ; ++binCount) {
+// 我们需要一个计数器来计算当前链表的元素个数，并遍历链表，binCount 就是这个计数器
+
+                    if ((e = p.next) == null) {
+                        p.next = newNode(hash, key, value, null);
+                        if (binCount >= TREEIFY_THRESHOLD - 1) 
+// 插入成功后，要判断是否需要转换为红黑树，因为插入后链表长度加 1，而 binCount 并不包含新节点，所以判断时要将临界阈值减 1
+                            treeifyBin(tab, hash);
+// 当新长度满足转换条件时，调用 treeifyBin 方法，将该链表转换为红黑树
+                        break;
+                    }
+                    if (e.hash == hash &&
+                        ((k = e.key) == key || (key != null && key.equals(k))))
+                        break;
+                    p = e;
+                }
+            }
+            if (e != null) { // existing mapping for key
+                V oldValue = e.value;
+                if (!onlyIfAbsent || oldValue == null)
+                    e.value = value;
+                afterNodeAccess(e);
+                return oldValue;
+            }
+        }
+        ++modCount;
+        if (++size > threshold)
+            resize();
+        afterNodeInsertion(evict);
+        return null;
+    }</code></pre></table></div></div><h2>1.5、基础</h2><div style="margin-left:0px;"><h3>1.5.1、spring事务</h3><div style="margin-left:30px;"><table width='100%' class='codestyle'><pre><code class="language-java">@Transactional [trænˈzækʃən(ə)l]
+
+  指定异常回滚  Throwable的子类 有Error和RuntimeException
+@Transactional(rollbackFor [ˈrəʊlbæk] = Exception.class) [ˈrəʊlbæk]
+
+事务传播 - Propagation
+      REQUIRED:      使用当前的事务，如果当前没有事务，则自己新建一个事务，子方法是必须运行在一个事务中的；
+                     如果当前存在事务，则加入这个事务，成为一个整体。
+                     举例：领导没饭吃，我有钱，我会自己买了自己吃；领导有的吃，会分给你一起吃。
+      SUPPORTS:      如果当前有事务，则使用事务；如果当前没有事务，则不使用事务。(查询)
+                     举例：领导没饭吃，我也没饭吃；领导有饭吃，我也有饭吃。
+      MANDATORY:     该传播属性强制必须存在一个事务，如果不存在，则抛出异常
+                     举例：领导必须管饭，不管饭没饭吃，我就不乐意了，就不干了（抛出异常）
+      REQUIRES_NEW:  如果当前有事务，则挂起该事务，并且自己创建一个新的事务给自己使用；
+                     如果当前没有事务，则同 REQUIRED
+                     举例：领导有饭吃，我偏不要，我自己买了自己吃
+      NOT_SUPPORTED: 如果当前有事务，则把事务挂起，自己不适用事务去运行数据库操作
+                     举例：领导有饭吃，分一点给你，我太忙了，放一边，我不吃
+      NEVER:         如果当前有事务存在，则抛出异常
+                     举例：领导有饭给你吃，我不想吃，我热爱工作，我抛出异常
+      NESTED:        如果当前有事务，则开启子事务（嵌套事务），嵌套事务是独立提交或者回滚；
+                     如果当前没有事务，则同 REQUIRED。
+                     但是如果主事务提交，则会携带子事务一起提交。
+                     如果主事务回滚，则子事务会一起回滚。相反，子事务异常，则父事务可以回滚或不回滚。
+                     举例：领导决策不对，老板怪罪，领导带着小弟一同受罪。小弟出了差错，领导可以推卸责任。
+@Transactional(propagation  [ˌprɒpə'ɡeɪʃ(ə)n]  = Propagation.SUPPORTS)</code></pre></table>
+<p>事务失效：
+第一：数据库不支持事务
+第二：没有被Spring管理
+第三：方法不是 public 的，如果要在非 public 上使用事务 必须加上 AspectJ 代理模式
+第四：自身的调用出现问题
+比如</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">public void update(){
+    updateAll()
+}
+
+@Transactional
+public void updateAll(){
+    // todo
+}</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">@Transactional
+public void update(){
+    updateAll()
+}
+
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void updateAll(){
+    // todo
+}</code></pre></table>
+<p>第五点：数据源没有配置事务管理器
+第六点：不支持事务  NOT_SUPPORTED
+第七点：事务被异常吃了</p>
+<table width='100%' class='codestyle'><pre><code class="language-java"> try {
+            // todo
+        } catch {
+
+        }</code></pre></table>
+<p>第八点：异常类型错误 默认是RuntimeException，应该是指定</p>
+<table width='100%' class='codestyle'><pre><code class="language-java">@Transactional(rollbackFor = Exception.class)
+public void updateAll(){
+     try {
+            // todo
+        } catch {
+            throw new Exception("更新错误");
+        }
+}</code></pre></table></div><h2>1.5.1、设计模式</h2><div style="margin-left:0px;"></div></div><h2>1.6、错误记录</h2><div style="margin-left:0px;"><h3>1.6.1、注解@cache加过期时间</h3><div style="margin-left:30px;"><h4>注解cache 加过期时间</h4>
+<table width='100%' class='codestyle'><pre><code class="language-java">package com.inm.goods.center.config;
+
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.springframework.data.redis.cache.RedisCache;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
+
+import java.time.Duration;
+
+public class CustomRedisCacheManager extends RedisCacheManager {
+
+    public CustomRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
+        super(cacheWriter, defaultCacheConfiguration);
+    }
+
+    /**
+     * 重写createRedisCache方法
+     * @param name 原来的name只是作为redis存储键名
+     *             重写的name可通过&quot;#&quot;拼接过期时间：
+     *             1. 如果没有&quot;#&quot;则默认不设置过期时间
+     *             2. 拼接的第一个&quot;#&quot;后面为过期时间，第二个&quot;#&quot;后面为时间单位
+     *             3. 时间单位的表示使用: d(天)、h(小时)、m(分钟)、s(秒), 默认为h(小时)
+     * @param cacheConfig
+     * @return
+     */
+    @Override
+    protected RedisCache createRedisCache(String name, RedisCacheConfiguration cacheConfig) {
+        // 解析name,设置过期时间
+        if (StringUtils.isNotEmpty(name) &amp;&amp; name.contains(&quot;#&quot;)) {
+            String[] split = name.split(&quot;#&quot;);
+
+            // 缓存键名
+            String cacheName = split[0];
+            // &quot;#&quot;后第一位是时间
+            int expire = Integer.parseInt(split[1]);
+            // 过期时间，默认为h(小时)
+            Duration duration = Duration.ofHours(expire);
+            // 根据&quot;#&quot;后第二位字符判断过期时间的单位，设置相应的过期时间，默认时间单位是h(小时)
+            if (split.length == 3) {
+                switch (split[2]){
+                    case &quot;d&quot;:
+                        duration = Duration.ofDays(expire);
+                        break;
+                    case &quot;m&quot;:
+                        duration = Duration.ofMinutes(expire);
+                        break;
+                    case &quot;s&quot;:
+                        duration = Duration.ofSeconds(expire);
+                        break;
+                    default:
+                        duration = Duration.ofHours(expire);
+                }
+            }
+            return super.createRedisCache(cacheName, cacheConfig.entryTtl(duration));
+        }
+        return super.createRedisCache(name, cacheConfig);
+    }
+}
+</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java">package com.inm.goods.center.config;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.util.Objects;
+
+@Configuration
+@EnableCaching
+public class RedisConfig{
+
+    @Bean
+    public RedisTemplate&lt;String, Object&gt; redisTemplate(RedisConnectionFactory factory) {
+
+        RedisTemplate&lt;String, Object&gt; template = new RedisTemplate&lt;&gt;();
+        // 配置连接工厂
+        template.setConnectionFactory(factory);
+
+        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
+        Jackson2JsonRedisSerializer jacksonSeial = new Jackson2JsonRedisSerializer(Object.class);
+
+        ObjectMapper om = new ObjectMapper();
+        // 指定要序列化的域，field,get和set,以及修饰符范围，ANY是都有包括private和public
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+
+        // 指定序列化输入的类型，类必须是非final修饰的，final修饰的类，比如String,Integer等会跑出异常
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL); // 保留这行会报错：Unexpected token (VALUE_STRING)
+        jacksonSeial.setObjectMapper(om);
+
+        // 值采用json序列化
+        template.setValueSerializer(jacksonSeial);
+        //使用StringRedisSerializer来序列化和反序列化redis的key值
+        template.setKeySerializer(new StringRedisSerializer());
+
+        // 设置hash key 和value序列化模式
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(jacksonSeial);
+        template.afterPropertiesSet();
+
+        return template;
+    }
+
+    /**
+     * 实例化自定义的缓存管理器
+     * @param redisTemplate
+     * @return
+     */
+    @Bean
+    @SuppressWarnings(value = {&quot;unchecked&quot;, &quot;rawtypes&quot;})
+    public RedisCacheManager redisCacheManager(RedisTemplate redisTemplate) {
+        RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(Objects.requireNonNull(redisTemplate.getConnectionFactory()));
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getValueSerializer()));
+        return new CustomRedisCacheManager(redisCacheWriter, redisCacheConfiguration);
+    }
+}</code></pre></table>
+<table width='100%' class='codestyle'><pre><code class="language-java"> @Cacheable(value = {&quot;goodsShopRelation#30#d&quot;},key = &quot;#shopCode&quot;,sync = true)</code></pre></table></div></div></div></body></html>
