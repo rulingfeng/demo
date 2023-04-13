@@ -20,9 +20,11 @@ import io.netty.util.CharsetUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.internal.PlatformDependent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.net.InetAddress;
 import java.util.concurrent.ConcurrentMap;
 
@@ -45,7 +47,8 @@ public class ClientNettyHandler extends SimpleChannelInboundHandler<Object> {
     private WebSocketServerHandshaker handshaker;
     private static ClientNettyHandler clientNettyHandler;
 
-
+    @Resource
+    private ApplicationContext applicationContext;
 
     @PostConstruct
     public void init() {

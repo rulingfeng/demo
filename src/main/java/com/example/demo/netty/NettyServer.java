@@ -25,6 +25,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.net.InetAddress;
 
 /**
@@ -106,7 +107,8 @@ public class NettyServer implements CommandLineRunner {
      * 测试端口
      */
 //    private Integer clientPort = 1117,devicePort = 1116;
-
+    @Resource
+    private ClientChannelHandler clientChannelHandler;
     /**
      * 销毁
      */
@@ -125,7 +127,7 @@ public class NettyServer implements CommandLineRunner {
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .handler(new LoggingHandler(LogLevel.DEBUG))
-                .childHandler(new ClientChannelHandler());
+                .childHandler(clientChannelHandler);
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.ADVANCED);
 
 

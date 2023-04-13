@@ -19,13 +19,17 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.socket.WebSocketHandler;
+
+import javax.annotation.Resource;
 
 /**
  * @Author: Administrator
  * @Date: 2020-02-05 14:10
  * @Version 1.0
  */
+@Component
 public class ClientChannelHandler  extends ChannelInitializer<SocketChannel> {
 
         /**
@@ -38,6 +42,11 @@ public class ClientChannelHandler  extends ChannelInitializer<SocketChannel> {
      */
     @Value("${webSocket.netty.path:/webSocket}")
     String webSocketPath;
+
+    @Resource
+    private ClientNettyHandler clientNettyHandler;
+
+
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         socketChannel.pipeline()
@@ -46,7 +55,7 @@ public class ClientChannelHandler  extends ChannelInitializer<SocketChannel> {
                 .addLast("http-codec", new HttpServerCodec())
                 .addLast("aggregator", new HttpObjectAggregator(165536))
                 .addLast("http-chunked", new ChunkedWriteHandler())
-                .addLast(new ClientNettyHandler());
+                .addLast(clientNettyHandler);
 
 //                .addLast(new LoggingHandler(LogLevel.TRACE))
 //                // HttpRequestDecoder和HttpResponseEncoder的一个组合，针对http协议进行编解码
