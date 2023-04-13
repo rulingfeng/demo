@@ -50,11 +50,14 @@ public class ClientChannelHandler  extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         socketChannel.pipeline()
+                //参数对应 读空闲(客户端发送服务端)  写空闲(服务端发送客户端)  读写空闲(双向读写都没有反应)   0代表永久 默认秒
                 .addLast(new IdleStateHandler(60,0,0))
                // .addLast(new ClientHeartbeatHandler())
-                .addLast("http-codec", new HttpServerCodec())
-                .addLast("aggregator", new HttpObjectAggregator(165536))
+                .addLast("http-codec", new HttpServerCodec())// http编解码器，websocket 本身是基于http协议的
+                .addLast("aggregator", new HttpObjectAggregator(165536))// http的 chunked 的消息聚合为完成的请求FullHttpRequest，内容最大长度65535
                 .addLast("http-chunked", new ChunkedWriteHandler())
+                //心跳
+               //.addLast(new HeartBeatHandler())
                 .addLast(clientNettyHandler);
 
 //                .addLast(new LoggingHandler(LogLevel.TRACE))
