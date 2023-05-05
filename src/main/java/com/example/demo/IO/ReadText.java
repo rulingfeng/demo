@@ -32,14 +32,14 @@ public class ReadText {
             return;
         }
         System.out.println(strings.size());
-        String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
+        String url = "https://nainmsim.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
-        params.put("activityName","营养早餐超值券包");
-        params.put("activityDesc","领会员专属超值福利：3.9元抵14元");
-        params.put("activityTime","2023年2月16日 00:00");
-        params.put("activityDeadlineTime","2023年2月26日 24:00");
-        params.put("reminder","限量购买3份");
-        params.put("path","packageActivity/pages/couponGroup/detail/detail?aType=1&qd=406");
+        params.put("activityName","一鸣充值送现金活动最后2天！");
+        params.put("activityDesc","限时充值330元送30元福利");
+        params.put("activityTime","2023年4月24日 00:00");
+        params.put("activityDeadlineTime","2023年4月26日 24:00");
+        params.put("reminder","若已充值，请忽略本消息。");
+        params.put("path","packageMy/pages/my-rechargePage/my-rechargePage");
         params.put("msgType","18");
 
         for (String userId : strings) {
