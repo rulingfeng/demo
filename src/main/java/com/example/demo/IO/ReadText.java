@@ -1,13 +1,19 @@
 package com.example.demo.IO;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.internal.Maps;
 import com.example.demo.common.OkHttpUtil;
+import eleme.openapi.sdk.api.entity.order.OGoodsGroup;
+import eleme.openapi.sdk.api.entity.order.OGoodsItem;
+import eleme.openapi.sdk.api.entity.order.OOrder;
+import eleme.openapi.sdk.api.enumeration.order.OOrderDetailGroupType;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +27,7 @@ public class ReadText {
         //readLine();
         //System.out.println(longs.size());
         //readJson();
-        sendMsg();
+        sendMsgMEITUANPOSCREATEOrder();
 
 
     }
@@ -48,6 +54,184 @@ public class ReadText {
             System.out.println(userId);
         }
     }
+
+    public static void sendMsgPOSREJECTED() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        System.out.println(strings.size());
+        String url = "http://zt-pos.inm.cc:8028/JLESServer/POS_API?Type=OMS_CREATE_REJECTED";
+
+        Long a =  1438531L;
+        for (String userId : strings) {
+            String[] split = userId.split("\t");
+            Map<String, Object> params = Maps.newHashMap();
+            params.put("ORDER_NUNBER",a);
+            params.put("STORE",split[1]);
+            params.put("WSDH",split[0]);
+//            params.put("userId",userId);
+            String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
+//            System.out.println(userId);
+
+            System.out.println(split[0]+"+"+split[1]+"+"+post);
+            a++;
+        }
+    }
+
+    public static void sendMsgELEPOSCREATEOrder() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        System.out.println(strings.size());
+        String url = "http://zt-pos.inm.cc:8028/JLESServer/POS_API?Type=OMS_CREATE_ADVANCEORDER";
+
+        for (String thirdJson : strings) {
+            OOrder order = JSONObject.parseObject(thirdJson, OOrder.class);
+            //System.out.println(jsonObject);
+//
+            JSONObject jsonXml = new JSONObject();
+
+            jsonXml.put("STORE", "9996");   // SAP部门代码
+            jsonXml.put("SALES_AMOUNT", order.getTotalPrice());  //销售订单总金额
+            jsonXml.put("ZKJE_AMOUNT", 0);             //折扣金额
+
+            jsonXml.put("CARDID", "-1");          //会员卡号
+            jsonXml.put("VIPID","-1");   //会员内码
+            jsonXml.put("MEMBER_NAME", "-1");    //会员名称(没有传CARDID)
+            jsonXml.put("CUSTOMER_NAME", order.getConsignee());  //客户姓名
+
+            jsonXml.put("REMARK", order.getDescription());
+            jsonXml.put("ORDER_NUNBER", order.getId()); //预售订单单号
+            jsonXml.put("XFLX", "外卖");
+            jsonXml.put("QCSJ", order.getPickUpTime());       //取餐时间
+            jsonXml.put("THM", "-1");     //提货码
+
+
+            JSONArray skArray = new JSONArray();
+            //收款
+            JSONObject skJson = new JSONObject();
+            skJson.put("SK_CODE", "90");
+            skJson.put("SKFS_JE", order.getTotalPrice());
+            skArray.add(skJson);
+            jsonXml.put("SKLIST", skArray);
+
+
+            JSONArray spArray = new JSONArray();
+            for (OGoodsGroup group : order.getGroups()) {
+                if(!group.getType().equals(OOrderDetailGroupType.normal)){
+                    continue;
+                }
+                List<OGoodsItem> items = group.getItems();
+                for (OGoodsItem item : items) {
+                    String extendCode = item.getExtendCode();
+                    BigDecimal multiply = new BigDecimal(item.getPrice()).multiply(new BigDecimal(item.getQuantity()));
+
+                    JSONObject detailJson = new JSONObject();
+                    detailJson.put("SPYJ", item.getPrice());    //商品单价
+                    detailJson.put("XSJE", multiply.doubleValue());          //	商品销售金额
+                    detailJson.put("XSSL", item.getQuantity());             //	商品销售数量
+                    detailJson.put("SPNM", extendCode);         //	SAP物料代码
+                    detailJson.put("SP_ZKJE", 0);      //商品折扣金额
+                    spArray.add(detailJson);
+                }
+                jsonXml.put("SPLIST", spArray);
+            }
+
+
+
+            String post = OkHttpUtil.postJsonParams(url, jsonXml.toString());
+            System.out.println(post);
+            System.out.println(jsonXml.toString());
+        }
+    }
+
+
+
+
+    public static void sendMsgMEITUANPOSCREATEOrder() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        System.out.println(strings.size());
+        String url = "http://zt-pos.inm.cc:8028/JLESServer/POS_API?Type=OMS_CREATE_ADVANCEORDER";
+
+        for (String thirdJson : strings) {
+            String[] split = thirdJson.split("&");
+            JSONObject jsonObject = new JSONObject();
+            for (String s : split) {
+                String[] split1 = s.split("=");
+                if(split1.length>1){
+                    jsonObject.put(split1[0],split1[1]);
+                }else if(split1.length ==1){
+                    jsonObject.put(split1[0],"");
+                }
+
+            }
+            //System.out.println(jsonObject);
+//
+            JSONObject jsonXml = new JSONObject();
+
+            //   jsonXml.put("STORE", "9996");   // SAP部门代码
+            jsonXml.put("SALES_AMOUNT", jsonObject.get("total"));  //销售订单总金额
+            jsonXml.put("ZKJE_AMOUNT", 0);             //折扣金额
+
+            jsonXml.put("CARDID", "-1");          //会员卡号
+            jsonXml.put("VIPID","-1");   //会员内码
+            jsonXml.put("MEMBER_NAME", "-1");    //会员名称(没有传CARDID)
+            jsonXml.put("CUSTOMER_NAME", jsonObject.get("recipient_name"));  //客户姓名
+
+            jsonXml.put("REMARK", jsonObject.get("caution"));
+            jsonXml.put("ORDER_NUNBER", jsonObject.get("order_id")); //预售订单单号
+            jsonXml.put("XFLX", "外卖");
+            jsonXml.put("QCSJ", jsonObject.get("delivery_time"));       //取餐时间
+            jsonXml.put("THM", "-1");     //提货码
+
+
+            JSONArray skArray = new JSONArray();
+            //收款
+            JSONObject skJson = new JSONObject();
+            skJson.put("SK_CODE", "90");
+            skJson.put("SKFS_JE", jsonObject.get("total"));
+            skArray.add(skJson);
+            jsonXml.put("SKLIST", skArray);
+
+
+            JSONArray spArray = new JSONArray();
+            JSONArray detail = jsonObject.getJSONArray("detail");
+
+            for (Object o : detail) {
+                JSONObject jsonObject1 = JSONObject.parseObject(o.toString());
+                Object sku_id = jsonObject1.get("sku_id");
+                BigDecimal multiply = new BigDecimal( jsonObject1.get("price").toString()).multiply(new BigDecimal(jsonObject1.get("quantity").toString()));
+
+                JSONObject detailJson = new JSONObject();
+                detailJson.put("SPYJ",  jsonObject1.get("price"));    //商品单价
+                detailJson.put("XSJE", multiply.doubleValue());          //	商品销售金额
+                detailJson.put("XSSL", jsonObject1.get("quantity"));             //	商品销售数量
+                detailJson.put("SPNM", sku_id);         //	SAP物料代码
+                detailJson.put("SP_ZKJE", 0);      //商品折扣金额
+                spArray.add(detailJson);
+
+
+            }
+            jsonXml.put("SPLIST", spArray);
+
+
+
+//            String post = OkHttpUtil.postJsonParams(url, jsonXml.toString());
+//            System.out.println(post);
+            System.out.println(jsonXml.toString());
+        }
+    }
+
+
+
+
+
+
 
     public static void readLine() throws IOException {
         StringBuilder str = new StringBuilder(16);
