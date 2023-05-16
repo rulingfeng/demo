@@ -93,7 +93,7 @@ public class ReadText {
 //
             JSONObject jsonXml = new JSONObject();
 
-            jsonXml.put("STORE", "9996");   // SAP部门代码
+           // jsonXml.put("STORE", "9996");   // SAP部门代码
             jsonXml.put("SALES_AMOUNT", order.getTotalPrice());  //销售订单总金额
             jsonXml.put("ZKJE_AMOUNT", 0);             //折扣金额
 
@@ -107,6 +107,8 @@ public class ReadText {
             jsonXml.put("XFLX", "外卖");
             jsonXml.put("QCSJ", order.getPickUpTime());       //取餐时间
             jsonXml.put("THM", "-1");     //提货码
+            jsonXml.put("CHANNEL","ele");
+            jsonXml.put("XSLB","PT");
 
 
             JSONArray skArray = new JSONArray();
@@ -142,13 +144,12 @@ public class ReadText {
 
 
             String post = OkHttpUtil.postJsonParams(url, jsonXml.toString());
-            System.out.println(post);
-            System.out.println(jsonXml.toString());
+            System.out.println(post+"+"+jsonXml);
         }
     }
 
 
-
+    //TODO 对应门店 和 对应来源 ele，meituan
 
     public static void sendMsgMEITUANPOSCREATEOrder() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
@@ -170,7 +171,7 @@ public class ReadText {
                 }
 
             }
-            //System.out.println(jsonObject);
+           // System.out.println(jsonObject);
 //
             JSONObject jsonXml = new JSONObject();
 
@@ -188,7 +189,8 @@ public class ReadText {
             jsonXml.put("XFLX", "外卖");
             jsonXml.put("QCSJ", jsonObject.get("delivery_time"));       //取餐时间
             jsonXml.put("THM", "-1");     //提货码
-
+            jsonXml.put("CHANNEL","meituan");
+            jsonXml.put("XSLB","PT");
 
             JSONArray skArray = new JSONArray();
             //收款
@@ -221,9 +223,8 @@ public class ReadText {
 
 
 
-//            String post = OkHttpUtil.postJsonParams(url, jsonXml.toString());
-//            System.out.println(post);
-            System.out.println(jsonXml.toString());
+            String post = OkHttpUtil.postJsonParams(url, jsonXml.toString());
+            System.out.println(post+"+"+jsonXml);
         }
     }
 
