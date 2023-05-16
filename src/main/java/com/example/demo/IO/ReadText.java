@@ -27,7 +27,7 @@ public class ReadText {
         //readLine();
         //System.out.println(longs.size());
         //readJson();
-        sendMsgMEITUANPOSCREATEOrder();
+        getMeituanOrder();
 
 
     }
@@ -54,7 +54,48 @@ public class ReadText {
             System.out.println(userId);
         }
     }
+    public static void getEleOrder() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        for (String string : strings) {
+            String url = "https://nainmsim.inm.cc/inm-order-center/eleOrder/orderGetOrderDetail?orderNo="+string;
+            String post = OkHttpUtil.get(url, null);
+            JSONObject jsonObject = JSONObject.parseObject(post);
+            String data = jsonObject.getString("data");
+            JSONObject jsonObject1 = JSONObject.parseObject(data);
+            String rsp_content = jsonObject1.getString("rsp_content");
+            JSONObject jsonObject2 = JSONObject.parseObject(rsp_content);
+            String data1 = jsonObject2.getString("data");
 
+            OOrder order = JSONObject.parseObject(data1, OOrder.class);
+            System.out.println(JSONObject.toJSONString(order));
+
+
+        }
+    }
+
+    public static void getMeituanOrder() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        for (String string : strings) {
+            String url = "https://nainmsim.inm.cc/inm-order-center/meituanOrder/orderGetOrderDetail?orderNo="+string;
+            String post = OkHttpUtil.get(url, null);
+            JSONObject jsonObject9 = JSONObject.parseObject(post);
+            String data = jsonObject9.getString("data");
+            JSONObject jsonObject8 = JSONObject.parseObject(data);
+            String rsp_content = jsonObject8.getString("rsp_content");
+            JSONObject jsonObject7 = JSONObject.parseObject(rsp_content);
+            String data1 = jsonObject7.getString("data");
+            JSONObject jsonObject = JSONObject.parseObject(data1);
+            System.out.println(JSONObject.toJSONString(jsonObject));
+
+
+        }
+    }
     public static void sendMsgPOSREJECTED() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
         if(CollectionUtil.isEmpty(strings)){
