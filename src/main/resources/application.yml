@@ -15,6 +15,16 @@ spring:
 #    username: mall
 #    password: mall
 #    publisher-confirms: true #如果对异步消息需要回调必须设置为true
+#  rabbitmq:
+#    addresses: ${mq.addresses:10.11.2.51:30672}
+#    password: ${mq.password:guest}
+#    username: ${mq.username:guest}
+#    publisher-confirms: true
+#    publisher-returns : true
+#    virtual-host: /
+#    notifyExchange: BAS_ORDER_NOTIFY_LCACHE
+
+
   # redis
   redis:
 #    host: 120.26.81.182

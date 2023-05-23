@@ -27,7 +27,7 @@ public class ReadText {
         //readLine();
         //System.out.println(longs.size());
         //readJson();
-        getMeituanOrder();
+        sendMsgPOSREJECTED();
 
 
     }
@@ -104,7 +104,7 @@ public class ReadText {
         System.out.println(strings.size());
         String url = "http://zt-pos.inm.cc:8028/JLESServer/POS_API?Type=OMS_CREATE_REJECTED";
 
-        Long a =  1438531L;
+        Long a =  2438531L;
         for (String userId : strings) {
             String[] split = userId.split("\t");
             Map<String, Object> params = Maps.newHashMap();
