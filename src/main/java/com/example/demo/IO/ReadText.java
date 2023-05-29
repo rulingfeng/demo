@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.internal.Maps;
 import com.example.demo.common.OkHttpUtil;
+import com.google.common.collect.Lists;
 import eleme.openapi.sdk.api.entity.order.OGoodsGroup;
 import eleme.openapi.sdk.api.entity.order.OGoodsItem;
 import eleme.openapi.sdk.api.entity.order.OOrder;
@@ -12,8 +13,11 @@ import eleme.openapi.sdk.api.enumeration.order.OOrderDetailGroupType;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +31,44 @@ public class ReadText {
         //readLine();
         //System.out.println(longs.size());
         //readJson();
+        //OMS_CANCLE_ADVANCEORDER();
         sendMsgPOSREJECTED();
 
 
     }
 
+    public static void OMS_CANCLE_ADVANCEORDER() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        System.out.println(strings.size());
+        String url = "http://zt-pos.inm.cc:8028/JLESServer/POS_API?Type=OMS_CANCLE_ADVANCEORDER";
+
+
+        ArrayList<String> objects = Lists.newArrayList();
+        for (String userId : strings) {
+            Map<String, Object> params = Maps.newHashMap();
+            params.put("ORDER_NUNBER",userId);
+
+//            params.put("userId",userId);
+            String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
+//            System.out.println(userId)
+            JSONObject jsonObject = JSONObject.parseObject(post);
+            boolean posStatus = jsonObject.get("POS_STATUS").toString().equals("0");
+            if(posStatus){
+                objects.add(userId+"+"+post);
+            }
+            System.out.println(userId+"+"+post);
+        }
+
+        FileWriter fw = new FileWriter("src/main/resources/asd.txt", true);
+        PrintWriter pw = new PrintWriter(fw);
+        for (String object : objects) {
+            pw.println(object);
+            pw.flush();
+        }
+    }
     public static void sendMsg() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
         if(CollectionUtil.isEmpty(strings)){
@@ -105,6 +142,7 @@ public class ReadText {
         String url = "http://zt-pos.inm.cc:8028/JLESServer/POS_API?Type=OMS_CREATE_REJECTED";
 
         Long a =  2438531L;
+        ArrayList<String> objects = Lists.newArrayList();
         for (String userId : strings) {
             String[] split = userId.split("\t");
             Map<String, Object> params = Maps.newHashMap();
@@ -113,10 +151,21 @@ public class ReadText {
             params.put("WSDH",split[0]);
 //            params.put("userId",userId);
             String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
-//            System.out.println(userId);
-
+//            System.out.println(userId)
+            JSONObject jsonObject = JSONObject.parseObject(post);
+            boolean posStatus = jsonObject.get("POS_STATUS").toString().equals("0");
+            if(posStatus){
+                objects.add(split[0]+"+"+post);
+            }
             System.out.println(split[0]+"+"+split[1]+"+"+post);
             a++;
+        }
+
+        FileWriter fw = new FileWriter("src/main/resources/asd.txt", true);
+        PrintWriter pw = new PrintWriter(fw);
+        for (String object : objects) {
+            pw.println(object);
+            pw.flush();
         }
     }
 
@@ -134,7 +183,7 @@ public class ReadText {
 //
             JSONObject jsonXml = new JSONObject();
 
-           // jsonXml.put("STORE", "9996");   // SAP部门代码
+            // jsonXml.put("STORE", "9996");   // SAP部门代码
             jsonXml.put("SALES_AMOUNT", order.getTotalPrice());  //销售订单总金额
             jsonXml.put("ZKJE_AMOUNT", 0);             //折扣金额
 
@@ -212,7 +261,7 @@ public class ReadText {
                 }
 
             }
-           // System.out.println(jsonObject);
+            // System.out.println(jsonObject);
 //
             JSONObject jsonXml = new JSONObject();
 
