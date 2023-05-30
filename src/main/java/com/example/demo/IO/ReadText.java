@@ -32,11 +32,12 @@ public class ReadText {
         //System.out.println(longs.size());
         //readJson();
         //OMS_CANCLE_ADVANCEORDER();
-        sendMsgPOSREJECTED();
-
+//        sendMsgPOSREJECTED();
+        sendMsg();
 
     }
 
+    //取消预售单
     public static void OMS_CANCLE_ADVANCEORDER() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
         if(CollectionUtil.isEmpty(strings)){
@@ -69,6 +70,7 @@ public class ReadText {
             pw.flush();
         }
     }
+    //发送活动消息
     public static void sendMsg() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
         if(CollectionUtil.isEmpty(strings)){
@@ -77,12 +79,12 @@ public class ReadText {
         System.out.println(strings.size());
         String url = "https://nainmsim.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
-        params.put("activityName","一鸣充值送现金活动最后2天！");
-        params.put("activityDesc","限时充值330元送30元福利");
-        params.put("activityTime","2023年4月24日 00:00");
-        params.put("activityDeadlineTime","2023年4月26日 24:00");
-        params.put("reminder","若已充值，请忽略本消息。");
-        params.put("path","packageMy/pages/my-rechargePage/my-rechargePage");
+        params.put("activityName","61牛奶节火热进行中~");
+        params.put("activityDesc","常温奶卡限时7折！米可泡泡6.1元购！");
+        params.put("activityTime","2023年5月31日 00:00");
+        params.put("activityDeadlineTime","2023年6月1日 24:00");
+        params.put("reminder","活动商品库存有限，点击参与。");
+        params.put("path","packageMall/pages/diyPage/diyPage?p=1136");
         params.put("msgType","18");
 
         for (String userId : strings) {
@@ -133,6 +135,8 @@ public class ReadText {
 
         }
     }
+
+    //冲红
     public static void sendMsgPOSREJECTED() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
         if(CollectionUtil.isEmpty(strings)){
