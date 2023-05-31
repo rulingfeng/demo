@@ -6,10 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.internal.Maps;
 import com.example.demo.common.OkHttpUtil;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import eleme.openapi.sdk.api.entity.order.OGoodsGroup;
 import eleme.openapi.sdk.api.entity.order.OGoodsItem;
 import eleme.openapi.sdk.api.entity.order.OOrder;
 import eleme.openapi.sdk.api.enumeration.order.OOrderDetailGroupType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -20,12 +22,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author 茹凌丰
  * @Description:
  * @date 2021/1/9-13:27
  */
+@Slf4j
 public class ReadText {
     public static void main(String[] args)throws Exception {
         //readLine();
@@ -33,8 +40,8 @@ public class ReadText {
         //readJson();
         //OMS_CANCLE_ADVANCEORDER();
 //        sendMsgPOSREJECTED();
-        sendMsg();
-
+        //sendMsg();
+        sendMsgThread();
     }
 
     //取消预售单
@@ -70,6 +77,17 @@ public class ReadText {
             pw.flush();
         }
     }
+
+    private static final int coreThreads = Runtime.getRuntime().availableProcessors();
+
+    private static final ThreadFactory namedThread =
+            new ThreadFactoryBuilder().setNameFormat("activity-subscribe-thread-%d")
+                    .setUncaughtExceptionHandler((thread, throwable)-> log.error("activity subscribe ThreadPool {} got exception", thread,throwable))
+                    .build();
+
+    private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(coreThreads << 1, coreThreads << 2 + 1,
+            300, TimeUnit.SECONDS, new LinkedBlockingQueue<>(2 << 10), namedThread,new ThreadPoolExecutor.CallerRunsPolicy());
+
     //发送活动消息
     public static void sendMsg() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
@@ -77,7 +95,7 @@ public class ReadText {
             return;
         }
         System.out.println(strings.size());
-        String url = "https://nainmsim.inm.cc/inm-sms-center/public/app/sendMassage";
+        String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
         params.put("activityName","61牛奶节火热进行中~");
         params.put("activityDesc","常温奶卡限时7折！米可泡泡6.1元购！");
@@ -93,6 +111,43 @@ public class ReadText {
             System.out.println(userId);
         }
     }
+    public static void sendMsgThread() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        System.out.println(strings.size());
+        String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
+
+
+        List<List<String>> partition = Lists.partition(strings, 300);
+        for (List<String> stringList : partition) {
+            List<CompletableFuture<String>> completableResult = stringList.stream().map(userId -> CompletableFuture.supplyAsync(() -> {
+                Map<String, String> paramsbbb = Maps.newHashMap();
+                paramsbbb.put("activityName","61牛奶节火热进行中~");
+                paramsbbb.put("activityDesc","常温奶卡限时7折！米可泡泡6.1元购！");
+                paramsbbb.put("activityTime","2023年5月31日 00:00");
+                paramsbbb.put("activityDeadlineTime","2023年6月1日 24:00");
+                paramsbbb.put("reminder","活动商品库存有限，点击参与。");
+                paramsbbb.put("path","packageMall/pages/diyPage/diyPage?p=1136");
+                paramsbbb.put("msgType","18");
+                paramsbbb.put("userId",userId);
+                System.out.println(userId);
+                return OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(paramsbbb));
+            }, threadPoolExecutor)).collect(toList());
+
+
+            try{
+                TimeUnit.MILLISECONDS.sleep(500);
+            }catch (InterruptedException e){
+                log.info("活动开启订阅休眠失败");
+            }
+        }
+
+        System.out.println("全部完成");
+    }
+
+
     public static void getEleOrder() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
         if(CollectionUtil.isEmpty(strings)){
