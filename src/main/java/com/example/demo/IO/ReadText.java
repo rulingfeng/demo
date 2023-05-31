@@ -121,7 +121,7 @@ public class ReadText {
         String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
 
 
-        List<List<String>> partition = Lists.partition(strings, 500);
+        List<List<String>> partition = Lists.partition(strings, 300);
         for (List<String> stringList : partition) {
             List<CompletableFuture<String>> completableResult = stringList.stream().map(userId -> CompletableFuture.supplyAsync(() -> {
                 Map<String, String> paramsbbb = Maps.newHashMap();
@@ -133,8 +133,9 @@ public class ReadText {
                 paramsbbb.put("path","packageMall/pages/diyPage/diyPage?p=1136");
                 paramsbbb.put("msgType","18");
                 paramsbbb.put("userId",userId);
+                String s = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(paramsbbb));
                 System.out.println(userId);
-                return OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(paramsbbb));
+                return s;
             }, threadPoolExecutor)).collect(toList());
 
 
