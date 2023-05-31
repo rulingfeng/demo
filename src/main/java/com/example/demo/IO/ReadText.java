@@ -42,6 +42,7 @@ public class ReadText {
 //        sendMsgPOSREJECTED();
         //sendMsg();
         sendMsgThread();
+//        sendMsgThreadTest();
     }
 
     //取消预售单
@@ -120,7 +121,7 @@ public class ReadText {
         String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
 
 
-        List<List<String>> partition = Lists.partition(strings, 300);
+        List<List<String>> partition = Lists.partition(strings, 500);
         for (List<String> stringList : partition) {
             List<CompletableFuture<String>> completableResult = stringList.stream().map(userId -> CompletableFuture.supplyAsync(() -> {
                 Map<String, String> paramsbbb = Maps.newHashMap();
@@ -135,6 +136,40 @@ public class ReadText {
                 System.out.println(userId);
                 return OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(paramsbbb));
             }, threadPoolExecutor)).collect(toList());
+
+
+            try{
+                TimeUnit.MILLISECONDS.sleep(500);
+            }catch (InterruptedException e){
+                log.info("活动开启订阅休眠失败");
+            }
+        }
+
+        System.out.println("全部完成");
+    }
+
+    public static void sendMsgThreadTest() throws IOException{
+        List<Integer> integers = Lists.newArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9,10);
+
+
+
+        List<List<Integer>> partition = Lists.partition(integers, 500);
+        for (List<Integer> stringList : partition) {
+            for (int i = 0; i < stringList.size(); i++) {
+
+                int finalI = i;
+                CompletableFuture.supplyAsync(() -> {
+                    Integer s = finalI %5;
+
+                    if(s ==0 || s ==1){
+                        System.out.println("https://nainmsim.inm.cc/inm-sms-center/public/app/sendMassage");
+                    }else{
+                        System.out.println("https://nainm.inm.cc/inm-sms-center/public/app/sendMassage");
+                    }
+
+                    return "";
+                }, threadPoolExecutor);
+            }
 
 
             try{
