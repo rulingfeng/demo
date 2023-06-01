@@ -39,9 +39,9 @@ public class ReadText {
         //System.out.println(longs.size());
         //readJson();
         //OMS_CANCLE_ADVANCEORDER();
-//        sendMsgPOSREJECTED();
+        sendMsgPOSREJECTED();
         //sendMsg();
-        sendMsgThread();
+//        sendMsgThread();
 //        sendMsgThreadTest();
     }
 
