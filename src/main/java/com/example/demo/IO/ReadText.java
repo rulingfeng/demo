@@ -38,11 +38,14 @@ public class ReadText {
         //readLine();
         //System.out.println(longs.size());
         //readJson();
-        //OMS_CANCLE_ADVANCEORDER();
-        sendMsgPOSREJECTED();
-        //sendMsg();
-//        sendMsgThread();
+//        OMS_CANCLE_ADVANCEORDER();
+      //  sendMsgPOSREJECTED();
+//        sendMsg();
+        //sendMsgThread();
 //        sendMsgThreadTest();
+
+
+
     }
 
     //取消预售单
@@ -96,14 +99,14 @@ public class ReadText {
             return;
         }
         System.out.println(strings.size());
-        String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
+        String url = "https://nainmsim.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
-        params.put("activityName","61牛奶节火热进行中~");
-        params.put("activityDesc","常温奶卡限时7折！米可泡泡6.1元购！");
-        params.put("activityTime","2023年5月31日 00:00");
-        params.put("activityDeadlineTime","2023年6月1日 24:00");
-        params.put("reminder","活动商品库存有限，点击参与。");
-        params.put("path","packageMall/pages/diyPage/diyPage?p=1136");
+        params.put("activityName","666月充值送真的6，倒计时3天！");
+        params.put("activityDesc","充值就送奶，人气好奶任你选");
+        params.put("activityTime","2023年6月12日 00:00");
+        params.put("activityDeadlineTime","2023年6月14日 24:00");
+        params.put("reminder","各式好奶带回家！");
+        params.put("path","packageMy/pages/my-rechargePage/my-rechargePage?aType=91&qd=564");
         params.put("msgType","18");
 
         for (String userId : strings) {
@@ -118,7 +121,7 @@ public class ReadText {
             return;
         }
         System.out.println(strings.size());
-        String url = "https://nainm.inm.cc/inm-sms-center/public/app/sendMassage";
+        String url = "https://nainmtest.inm.cc/inm-sms-center/public/app/sendMassage";
 
 
         List<List<String>> partition = Lists.partition(strings, 300);
