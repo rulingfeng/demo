@@ -39,7 +39,7 @@ public class ReadText {
         //System.out.println(longs.size());
         //readJson();
 //        OMS_CANCLE_ADVANCEORDER();
-      //  sendMsgPOSREJECTED();
+        sendMsgPOSREJECTED();
 //        sendMsg();
         //sendMsgThread();
 //        sendMsgThreadTest();
@@ -238,6 +238,7 @@ public class ReadText {
         }
         System.out.println(strings.size());
         String url = "http://zt-pos.inm.cc:8028/JLESServer/POS_API?Type=OMS_CREATE_REJECTED";
+//        String url = "http://192.168.2.205:59100/JLESServer/POS_API?Type=OMS_CREATE_REJECTED";
 
         Long a =  2438531L;
         ArrayList<String> objects = Lists.newArrayList();
