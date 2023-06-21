@@ -39,12 +39,12 @@ public class ReadText {
         //System.out.println(longs.size());
         //readJson();
 //        OMS_CANCLE_ADVANCEORDER();
-        sendMsgPOSREJECTED();
+//        sendMsgPOSREJECTED();
 //        sendMsg();
         //sendMsgThread();
 //        sendMsgThreadTest();
 
-
+        sendMsgPOSREJECTEDsdgsdgsfgsdgsd();
 
     }
 
@@ -229,6 +229,39 @@ public class ReadText {
 
         }
     }
+
+
+    //冲红2
+    public static void sendMsgPOSREJECTEDsdgsdgsfgsdgsd() throws IOException{
+
+        String url = "http://10.11.2.204:8028/JLESServer/POS_API?Type=OMS_CREATE_REJECTED_SFPS";
+
+
+
+            Map<String, Object> params = Maps.newHashMap();
+            params.put("ORDER_NUNBER",124125125);
+            params.put("STORE","9996");
+            params.put("OLD_ORDER_NUNBER","8069730043432922398");
+            params.put("THSL","-1");
+            params.put("THDJ","0.01");
+//            params.put("VIPID",7105824);
+//            params.put("CARDID",7105824);
+
+        Map<String, Object> sku = Maps.newHashMap();
+        sku.put("SK_CODE",90);
+        sku.put("SKFS_JE","0.01");
+        JSONArray objects = new JSONArray();
+        objects.add(sku);
+        params.put("SKLIST",objects);
+
+
+        String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(params));
+        System.out.println(post);
+
+
+    }
+
+
 
     //冲红
     public static void sendMsgPOSREJECTED() throws IOException{
