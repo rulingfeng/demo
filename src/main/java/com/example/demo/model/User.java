@@ -11,7 +11,9 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.example.demo.annotation.FlagValidator;
 import com.example.demo.common.RSAUtil;
 import com.example.demo.mapstruct.UserConverter;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.codec.Decoder;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,8 @@ import java.util.stream.Stream;
 //        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 @Data
 @TableName("user")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User extends Model<User> implements Serializable {
     private static final long serialVersionUID = -7757471143347689303L;
     @TableId

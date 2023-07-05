@@ -28,7 +28,7 @@ spring:
   # redis
   redis:
 #    host: 120.26.81.182
-    host: localhost
+    host: 127.0.0.1
     port: 6379
 #  datasource:
 #    url: jdbc:mysql://120.26.81.182:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
@@ -121,7 +121,7 @@ jetcache:
         minIdle: 5
         maxIdle: 20
         maxTotal: 50
-      host: localhost
+      host: 127.0.0.1
       port: 6379
 
 

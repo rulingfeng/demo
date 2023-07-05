@@ -240,7 +240,7 @@ public class RedisTestController {
 //        }
         Integer start = (current - 1) * size;
         Integer end = start + size - 1;
-        Jedis jedis = new Jedis("localhost");
+        Jedis jedis = new Jedis("127.0.0.1");
         List<String> listObjectPage = jedis.lrange("listObjectPage", start, end);
         List<User> collect = listObjectPage.stream().map(i -> {
             String temp = org.apache.commons.lang3.StringEscapeUtils.unescapeJava(i);

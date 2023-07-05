@@ -373,7 +373,7 @@ public class TestController implements ApplicationEventPublisherAware {
     }
 
     public static void sgewq(){
-        redis.clients.jedis.Jedis jedis = new Jedis("localhost");
+        redis.clients.jedis.Jedis jedis = new Jedis("127.0.0.1");
         String lua =
                 "local key = KEYS[1] " +
                         " local limit = tonumber(ARGV[1]) " +
