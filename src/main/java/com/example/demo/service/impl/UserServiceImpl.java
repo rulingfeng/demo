@@ -7,6 +7,7 @@ import com.example.demo.common.RlfHttpUtils;
 import com.example.demo.dao.UserMapper;
 import com.example.demo.dataSource.DataSource;
 import com.example.demo.dataSource.DataSourceType;
+import com.example.demo.email.CouponThreadLocalContext;
 import com.example.demo.event.NoticeEventObj;
 import com.example.demo.model.Stock;
 import com.example.demo.model.User;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +38,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private CouponThreadLocalContext couponThreadLocalContext;
 
     @Autowired
     private UserMapper userMapper;
@@ -83,6 +87,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         Thread.sleep(1000);
         System.out.println(1);
         return;
+    }
+
+    @Override
+    public void getContext() {
+        String s = couponThreadLocalContext.getVerificationCoupon().get();
+        System.out.println("获取到"+s);
+
+
+        String s1 = couponThreadLocalContext.getNameCou().get();
+        System.out.println("获取到"+s1);
     }
 
     @Override

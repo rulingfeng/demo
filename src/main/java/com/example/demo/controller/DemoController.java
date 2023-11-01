@@ -11,6 +11,7 @@ import com.example.demo.model.SmsHomeBrand;
 import com.example.demo.model.User;
 import com.example.demo.model.WXTemplateMsgDto;
 import com.example.demo.service.ITestService;
+import com.example.demo.service.UserService;
 import com.github.pagehelper.Page;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.ApiParam;
@@ -70,6 +71,8 @@ public class DemoController {
     private RedisTemplate redisTemplate;
     @Autowired
     private ITestService testService;
+    @Resource
+    private UserService userService;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -79,7 +82,16 @@ public class DemoController {
     @Resource
     private HttpServletRequest request;
 
+    @GetMapping("/go22")
+    public String go11(@RequestParam String name,@RequestParam String namer){
 
+        testService.setContext(name,namer);
+
+        userService.getContext();
+
+        return "ok";
+
+    }
     @GetMapping("/go")
     public Object go() throws ExecutionException, InterruptedException {
         String token = request.getHeader("token");

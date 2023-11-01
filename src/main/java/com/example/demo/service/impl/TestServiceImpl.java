@@ -10,6 +10,7 @@ import com.example.demo.common.DataSourceTypeEnum;
 import com.example.demo.dao.TestMapper;
 import com.example.demo.dataSource.DataSource;
 import com.example.demo.dataSource.DataSourceType;
+import com.example.demo.email.CouponThreadLocalContext;
 import com.example.demo.model.*;
 import com.example.demo.service.ITestService;
 
@@ -55,6 +56,8 @@ public class TestServiceImpl implements ITestService {
     UserService userService;
     @Autowired
     UserCarService userCarService;
+    @Resource
+    private CouponThreadLocalContext couponThreadLocalContext;
     @Override
     public PageInfo<SmsHomeBrand> selectAll() {
         PageInfo<SmsHomeBrand> page = PageHelper.startPage(1, 5).doSelectPageInfo(() -> testMapper.selectAll());
@@ -195,5 +198,12 @@ public class TestServiceImpl implements ITestService {
         boolean save1 = userCarService.save(userCar);
 
         return save && save1;
+    }
+
+    @Override
+    public void setContext(String a ,String a2) {
+        System.out.println("设置");
+        couponThreadLocalContext.getVerificationCoupon().set(a);
+        couponThreadLocalContext.getNameCou().set(a2);
     }
 }

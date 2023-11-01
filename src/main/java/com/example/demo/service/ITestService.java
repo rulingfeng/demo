@@ -38,4 +38,8 @@ public interface ITestService {
 
     void compleableSave();
     boolean dfsdf(Integer num);
+    void setContext(String a ,String a2);
+
+
+
 }
