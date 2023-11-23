@@ -100,6 +100,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     }
 
     @Override
+    public void getContext2() {
+        String s = couponThreadLocalContext.getVerificationCoupon().get();
+        System.out.println("获取到两"+s);
+
+
+        String s1 = couponThreadLocalContext.getNameCou().get();
+        System.out.println("获取到两"+s1);
+    }
+
+    @Override
     public String getVerifyHash(Integer sid, Integer userId) throws Exception {
 
         // 验证是否在抢购时间内

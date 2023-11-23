@@ -40,11 +40,11 @@ public class ReadText {
         //readJson();
 //        OMS_CANCLE_ADVANCEORDER();
 //        sendMsgPOSREJECTED();
-//        sendMsg();
+        sendMsg();
         //sendMsgThread();
 //        sendMsgThreadTest();
 
-        sendMsgPOSREJECTEDsdgsdgsfgsdgsd();
+//        sendMsgPOSREJECTEDsdgsdgsfgsdgsd();
 
     }
 
@@ -101,12 +101,12 @@ public class ReadText {
         System.out.println(strings.size());
         String url = "https://nainmsim.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
-        params.put("activityName","666月充值送真的6，倒计时3天！");
-        params.put("activityDesc","充值就送奶，人气好奶任你选");
-        params.put("activityTime","2023年6月12日 00:00");
-        params.put("activityDeadlineTime","2023年6月14日 24:00");
-        params.put("reminder","各式好奶带回家！");
-        params.put("path","packageMy/pages/my-rechargePage/my-rechargePage?aType=91&qd=564");
+        params.put("activityName","双11充值送限时进行中");
+        params.put("activityDesc","充值就送无门槛优惠券，充越多送越多！");
+        params.put("activityTime","2023年11月9日 00:00");
+        params.put("activityDeadlineTime","2023年11月11日 24:00");
+        params.put("reminder","若已充值，请忽略本消息");
+        params.put("path","packageMy/pages/my-rechargePage/my-rechargePage");
         params.put("msgType","18");
 
         for (String userId : strings) {

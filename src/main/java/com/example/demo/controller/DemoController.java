@@ -88,6 +88,7 @@ public class DemoController {
         testService.setContext(name,namer);
 
         userService.getContext();
+        userService.getContext2();
 
         return "ok";
 

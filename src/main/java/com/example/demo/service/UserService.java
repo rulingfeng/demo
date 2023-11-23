@@ -28,5 +28,6 @@ public interface UserService extends IService<User> {
     void testTransational() throws InterruptedException;
 
     void getContext();
+    void getContext2();
 
 }
