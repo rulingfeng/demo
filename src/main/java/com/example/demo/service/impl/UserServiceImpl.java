@@ -171,5 +171,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     public void asyTest() throws InterruptedException {
         Thread.sleep(5000);
         System.out.println("111111");
+        System.out.println(Thread.currentThread().getName());
     }
 }
