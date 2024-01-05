@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.internal.Maps;
 import com.example.demo.common.OkHttpUtil;
+import com.example.demo.redis.util.BizMultiThread;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import eleme.openapi.sdk.api.entity.order.OGoodsGroup;
@@ -39,13 +40,171 @@ public class ReadText {
         //System.out.println(longs.size());
         //readJson();
 //        OMS_CANCLE_ADVANCEORDER();
-        sendMsgPOSREJECTED();
-//        sendMsg();
+//        sendMsgPOSREJECTED();
+       // sendMsg();
         //sendMsgThread();
 //        sendMsgThreadTest();
 
 //        sendMsgPOSREJECTEDsdgsdgsfgsdgsd();
 
+        complementaryIntegral();
+//        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+//        if(CollectionUtil.isEmpty(strings)){
+//            return;
+//        }
+//        FileWriter fw = new FileWriter("src/main/resources/asd.txt", true);
+//        PrintWriter pw = new PrintWriter(fw);
+//
+//        System.out.println(strings.size());
+//        String url = "https://nainm.inm.cc/inm-user-center/integral/changeMemberIntegral";
+//        ArrayList<String> objects = Lists.newArrayList();
+//        for (String msg : strings) {
+//            String[] split = msg.split("\t");
+//            String mobile = split[0];
+//            double pos = Double.parseDouble(split[1]);
+//            double oms = Double.parseDouble(split[2]);
+//            double diff = Double.parseDouble(split[3]);
+//            System.out.print(mobile+"，");
+//            System.out.print(pos+"，");
+//            System.out.print(oms+"，");
+//            System.out.println(diff);
+//        }
+
+    }
+
+
+    //补积分
+    public static void complementaryIntegral() throws IOException{
+        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
+        if(CollectionUtil.isEmpty(strings)){
+            return;
+        }
+        FileWriter fw = new FileWriter("src/main/resources/asd.txt", true);
+        PrintWriter pw = new PrintWriter(fw);
+
+        System.out.println(strings.size());
+        String url = "https://nainm.inm.cc/inm-user-center/integral/changeMemberIntegral";
+
+
+        BizMultiThread.quickStart(strings, 2500).execute(e -> {
+            List<String> subList = e;
+            for (String msg : subList) {
+                String[] split = msg.split("\t");
+                String mobile = split[0];
+                double pos = Double.parseDouble(split[1]);
+                double oms = Double.parseDouble(split[2]);
+                double diff = Double.parseDouble(split[3]);
+                if(diff == 0){
+                    pw.println(mobile+"没有差异");
+                    pw.flush();
+                    continue;
+                }
+                if(diff>0){
+                    pw.println(mobile+"大于不用处理");
+                    pw.flush();
+                    continue;
+                }
+
+
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("accountNumber",mobile);
+                jsonObject.put("accountType",0);
+                jsonObject.put("brandCode","inm");
+                jsonObject.put("businessType","2");
+                jsonObject.put("changeTime",System.currentTimeMillis());
+                jsonObject.put("changeType",2);
+
+                if(diff<0){
+                    System.out.println(mobile);
+                    jsonObject.put("integral",diff);
+                    jsonObject.put("requestId",mobile+"a"+System.currentTimeMillis()+"POS");
+                    jsonObject.put("source","POS");
+                    String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(jsonObject));
+
+                    JSONObject res = JSONObject.parseObject(post);
+                    boolean posStatus = res.getBoolean("success");
+                    if(!posStatus){
+                        pw.println(mobile+"失败原因:"+post);
+                        pw.flush();
+                        continue;
+                    }
+                    jsonObject.put("integral",Math.abs(diff));
+                    jsonObject.put("requestId",mobile+"a"+System.currentTimeMillis()+"INMFOODWX");
+                    jsonObject.put("source","INMFOODWX");
+                    String post2 = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(jsonObject));
+                    pw.println(mobile+"成功1:"+post+"成功2:"+post2);
+                    pw.flush();
+                    continue;
+                }
+//                if(diff>0){
+//                    jsonObject.put("integral",diff);
+//                    jsonObject.put("requestId",mobile+"a"+System.currentTimeMillis()+"POS");
+//                    jsonObject.put("source","POS");
+//                    String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(jsonObject));
+//                    pw.println(mobile+"成功:"+post);
+//                    pw.flush();
+//                }
+            }
+            return subList;
+        }).getList();
+
+
+
+//        for (String msg : strings) {
+//            String[] split = msg.split("\t");
+//            String mobile = split[0];
+//            double pos = Double.parseDouble(split[1]);
+//            double oms = Double.parseDouble(split[2]);
+//            double diff = Double.parseDouble(split[3]);
+//            if(diff == 0){
+//                pw.println(mobile+"没有差异");
+//                pw.flush();
+//                continue;
+//            }
+//            if(diff>0){
+//                pw.println(mobile+"大于不用处理");
+//                pw.flush();
+//                continue;
+//            }
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.put("accountNumber",mobile);
+//            jsonObject.put("accountType",0);
+//            jsonObject.put("brandCode","inm");
+//            jsonObject.put("businessType","2");
+//            jsonObject.put("changeTime",System.currentTimeMillis());
+//            jsonObject.put("changeType",2);
+//
+//            if(diff<0){
+//                jsonObject.put("integral",diff);
+//                jsonObject.put("requestId",mobile+"a"+System.currentTimeMillis()+"POS");
+//                jsonObject.put("source","POS");
+//                String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(jsonObject));
+//
+//                JSONObject res = JSONObject.parseObject(post);
+//                boolean posStatus = res.getBoolean("success");
+//                if(!posStatus){
+//                    pw.println(mobile+"失败原因:"+post);
+//                    pw.flush();
+//                    continue;
+//                }
+//                jsonObject.put("integral",Math.abs(diff));
+//                jsonObject.put("requestId",mobile+"a"+System.currentTimeMillis()+"INMFOODWX");
+//                jsonObject.put("source","INMFOODWX");
+//                String post2 = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(jsonObject));
+//                pw.println(mobile+"成功1:"+post+"成功2:"+post2);
+//                pw.flush();
+//                continue;
+//            }
+//            if(diff>0){
+//                jsonObject.put("integral",diff);
+//                jsonObject.put("requestId",mobile+"a"+System.currentTimeMillis()+"POS");
+//                jsonObject.put("source","POS");
+//                String post = OkHttpUtil.postJsonParams(url, JSONObject.toJSONString(jsonObject));
+//                pw.println(mobile+"成功:"+post);
+//                pw.flush();
+//            }
+//        }
     }
 
     //取消预售单
@@ -101,10 +260,10 @@ public class ReadText {
         System.out.println(strings.size());
         String url = "https://nainmsim.inm.cc/inm-sms-center/public/app/sendMassage";
         Map<String, String> params = Maps.newHashMap();
-        params.put("activityName","双11充值送限时进行中");
-        params.put("activityDesc","充值就送无门槛优惠券，充越多送越多！");
-        params.put("activityTime","2023年11月9日 00:00");
-        params.put("activityDeadlineTime","2023年11月11日 24:00");
+        params.put("activityName","龙年充值送限时进行中");
+        params.put("activityDesc","充值就送新鲜乳品，充越多送越多");
+        params.put("activityTime","2024年1月4日 00:00");
+        params.put("activityDeadlineTime","2024年1月5日 24:00");
         params.put("reminder","若已充值，请忽略本消息");
         params.put("path","packageMy/pages/my-rechargePage/my-rechargePage");
         params.put("msgType","18");
