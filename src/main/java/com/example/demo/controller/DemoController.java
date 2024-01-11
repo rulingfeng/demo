@@ -13,9 +13,11 @@ import com.example.demo.model.WXTemplateMsgDto;
 import com.example.demo.service.ITestService;
 import com.example.demo.service.UserService;
 import com.github.pagehelper.Page;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -81,6 +85,76 @@ public class DemoController {
     private ApplicationContext applicationContext;
     @Resource
     private HttpServletRequest request;
+
+
+    @GetMapping("/go22111")
+    public String getLimit(){
+        ArrayList<Long> objects = Lists.newArrayList();
+        for (long i = 1; i <= 50; i++) {
+            objects.add(i);
+        }
+        TreeMap<Long,Integer> map = new TreeMap<>(Comparator.reverseOrder());
+        map.put(60L,18);
+        map.put(1L,3);
+        long a = 0l;
+        for (Long shopId : objects) {
+            boolean flag = true;
+            List<Long> mapKeyList = Lists.newArrayList();
+            for (Map.Entry<Long, Integer> longIntegerEntry : map.entrySet()) {
+                boolean asf = asf(shopId,longIntegerEntry.getKey(),longIntegerEntry.getValue());
+                if(!asf){
+                    flag = false;
+                    //需要删除之前的key
+                    asfga(shopId,mapKeyList);
+                    break;
+                }
+                mapKeyList.add(longIntegerEntry.getKey());
+            }
+            if(flag){
+                System.out.println(shopId+"成功");
+                a++;
+            }else{
+                asfga(shopId,map.keySet().stream().collect(Collectors.toList()));
+            }
+
+
+
+
+        }
+        System.out.println(a);
+
+        return "OK";
+
+    }
+
+    public void asfga(Long shopId,List<Long> mapKeyList){
+        if(CollectionUtils.isEmpty(mapKeyList)){
+            return;
+        }
+        for (Long aLong : mapKeyList) {
+            redisTemplate.opsForZSet().remove("elemGetShop"+aLong, shopId);
+        }
+
+    }
+    public boolean asf(Long shopId,Long windowSizeInSeconds,Integer limit){
+
+        long currentTimeMillis = System.currentTimeMillis();
+        String key = "elemGetShop"+windowSizeInSeconds;
+        redisTemplate.opsForZSet().add(key,shopId,currentTimeMillis);
+        Set<ZSetOperations.TypedTuple<Long>> elements = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, -1);
+        for (ZSetOperations.TypedTuple<Long> element : elements) {
+            long elementTimestamp = element.getScore().longValue();
+            if (currentTimeMillis - elementTimestamp > windowSizeInSeconds * 1000) {
+                redisTemplate.opsForZSet().remove(key, element.getValue());
+            }
+        }
+        long size = redisTemplate.opsForZSet().size(key);
+        if (size-1>=limit) {
+            return false;
+        }
+
+        return true;
+    }
 
     @GetMapping("/go22")
     public String go11(@RequestParam String name,@RequestParam String namer){
@@ -165,6 +239,7 @@ public class DemoController {
         }else {
             System.out.println("else");
         }
+
     }
     public static void grw(String cc,String bb,String... aaa){
         System.out.println(aaa.length);

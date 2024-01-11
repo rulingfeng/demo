@@ -46,33 +46,19 @@ public class ReadText {
 //        sendMsgThreadTest();
 
 //        sendMsgPOSREJECTEDsdgsdgsfgsdgsd();
-
+        long currentTimeMillis = System.currentTimeMillis();
         complementaryIntegral();
-//        List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
-//        if(CollectionUtil.isEmpty(strings)){
-//            return;
-//        }
-//        FileWriter fw = new FileWriter("src/main/resources/asd.txt", true);
-//        PrintWriter pw = new PrintWriter(fw);
-//
-//        System.out.println(strings.size());
-//        String url = "https://nainm.inm.cc/inm-user-center/integral/changeMemberIntegral";
-//        ArrayList<String> objects = Lists.newArrayList();
-//        for (String msg : strings) {
-//            String[] split = msg.split("\t");
-//            String mobile = split[0];
-//            double pos = Double.parseDouble(split[1]);
-//            double oms = Double.parseDouble(split[2]);
-//            double diff = Double.parseDouble(split[3]);
-//            System.out.print(mobile+"，");
-//            System.out.print(pos+"，");
-//            System.out.print(oms+"，");
-//            System.out.println(diff);
-//        }
+        System.out.println(System.currentTimeMillis() - currentTimeMillis);
+
 
     }
 
 
+   //数据模版
+//    13758796213	547.3704	582.37	-35
+//    13776301167	18	20	-2
+//    13757729094	256	258	-2
+//    15057791873	14	15	-1
     //补积分
     public static void complementaryIntegral() throws IOException{
         List<String> strings = FileUtils.readLines(new File("src/main/resources/userId.txt"));
@@ -86,7 +72,7 @@ public class ReadText {
         String url = "https://nainm.inm.cc/inm-user-center/integral/changeMemberIntegral";
 
 
-        BizMultiThread.quickStart(strings, 2500).execute(e -> {
+        BizMultiThread.quickStart(strings, 5000).execute(e -> {
             List<String> subList = e;
             for (String msg : subList) {
                 String[] split = msg.split("\t");
